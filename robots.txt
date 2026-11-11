@@ -1,0 +1,9 @@
+# 深圳市顺凯达电梯有限公司官网
+# 部署于 GitHub Pages 项目站点，站点根路径为 /skd-elevator/
+User-agent: *
+Allow: /
+
+# 403/404 等状态页不必收录
+Disallow: /404.html
+
+Sitemap: https://lirael-calista.github.io/skd-elevator/sitemap.xml

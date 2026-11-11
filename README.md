@@ -70,7 +70,30 @@ git add -A && git commit -m "说明改了什么" && git push
 | push 无反应卡住 | 凭据管理器弹窗 | `git -c credential.helper= push` |
 | TLS/吊销检查报错 | 本机 schannel 吊销服务器不通 | `http.schannelCheckRevoke=false` + `curl --ssl-no-revoke` |
 
+## 站点附加文件（GitHub Pages 专用）
+
+| 文件 | 作用 | 改动注意 |
+|---|---|---|
+| `404.html` | 访问不存在的地址时的自定义页面（放仓库根目录 GitHub 自动接管） | 里面链接是**绝对路径** `/skd-elevator/…`，因为 404 会在任意层级渲染，相对路径会算错 |
+| `robots.txt` | 放行爬虫 + 声明 sitemap 地址 | 含完整域名 |
+| `sitemap.xml` | 12 个页面的收录清单 | 含完整域名 |
+| `favicon.ico` / `favicon-32.png` / `apple-touch-icon.png` | 标签页与手机桌面图标 | 由 `tools/make_favicon.py` 从 `assets/logo-mark.png` 生成，换商标后重跑脚本 |
+| `CNAME` | **仅在绑定自定义域名时**才需要 | 目前没有，不加；误加会让站点 404 |
+
+**若日后绑定自有域名**（如 `www.xxx.com` 指向站点根），必须同步改三处：
+
+1. `404.html` 里全部 `/skd-elevator/` 前缀 → `/`
+2. `robots.txt` 的 `Sitemap:` 行
+3. `sitemap.xml` 里每一条 `<loc>`
+
+重新生成图标：
+
+```bash
+python tools/make_favicon.py
+```
+
 ## 本地预览
+
 
 
 ```bash
