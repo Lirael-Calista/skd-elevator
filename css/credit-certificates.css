@@ -1,0 +1,129 @@
+/* ===================== 复用官网设计体系 ===================== */
+:root{
+  --primary:#1b2a87;  --primary-2:#2438a8;  --primary-3:#3a52cf;
+  --orange:#f26a21;   --orange-light:#ff9350;
+  --text:#2b3147;     --text-light:#747c92;
+  --border:#e9edf6;   --bg:#ffffff;  --bg-soft:#f6f9fd;
+  --shadow:0 10px 30px rgba(27,42,135,.06);
+  --shadow-lg:0 20px 50px rgba(27,42,135,.12);
+  --nav-h:74px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:"PingFang SC","Microsoft YaHei","Helvetica Neue",Helvetica,Arial,sans-serif;
+  color:var(--text);background:var(--bg);line-height:1.75;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+img{max-width:100%;display:block;}
+a{text-decoration:none;color:inherit;}
+.container{width:100%;max-width:1200px;margin:0 auto;padding:0 24px;}
+
+/* 顶部信息条 */
+.topbar{background:var(--primary);color:#b6c0e6;font-size:13px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.1);}
+.topbar .container{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;}
+.topbar span{display:inline-flex;align-items:center;gap:6px;}
+.topbar a:hover{color:var(--orange-light);}
+
+/* 导航：全站统一的白底玻璃条 —— 白底、深色标签、橙色按钮。
+   这四张证书详情页原先自带一套深蓝玻璃条，与「资质展示」等子页不是一套观感；
+   现按全站规范收敛为同一套：顶部态就是白底，滚动后只加深下沿细线与投影。 */
+.header{position:sticky;top:0;z-index:1000;height:var(--nav-h);background:rgba(255,255,255,.92);-webkit-backdrop-filter:blur(14px) saturate(1.06);backdrop-filter:blur(14px) saturate(1.06);border-bottom:1px solid rgba(27,42,135,.09);box-shadow:0 2px 12px rgba(20,30,90,.05);transition:background .3s,box-shadow .3s,border-color .3s;}
+.header.scrolled{background:rgba(255,255,255,.97);border-bottom-color:rgba(27,42,135,.12);box-shadow:0 6px 22px rgba(20,30,90,.10);}
+.header .container{height:100%;display:flex;align-items:center;justify-content:space-between;}
+.logo{display:flex;align-items:center;gap:13px;}
+.logo-img{height:52px;padding:3px 6px;box-sizing:border-box;width:auto;flex:0 0 auto;object-fit:contain;background:#fff;border-radius:11px;border:1px solid rgba(27,42,135,.08);box-shadow:0 3px 12px rgba(20,30,90,.14);}
+.logo-txt strong{display:block;font-size:19px;color:var(--primary);letter-spacing:1px;line-height:1.25;}
+.logo-txt small{display:block;font-size:10.5px;color:#6a6f88;letter-spacing:1.5px;}
+.nav{display:flex;align-items:center;gap:4px;}
+.nav a{padding:8px 15px;font-size:16.5px;color:#39405a;border-radius:6px;font-weight:600;transition:all .25s;position:relative;}
+.nav a:hover{background:rgba(27,42,135,.06);}
+.nav a:hover,.nav a.active{color:var(--primary);}
+.nav a.active::after,.nav a:hover::after{content:"";position:absolute;left:15px;right:15px;bottom:2px;height:2px;background:var(--orange);}
+/* 橙色「联系我们」按钮：白底上同样用品牌橙渐变，白字、投影略收 */
+.nav .tel{margin-left:12px;padding:9px 18px;color:#fff;border-radius:6px;font-weight:600;background:linear-gradient(135deg,var(--orange),var(--orange-light));box-shadow:0 8px 20px rgba(242,106,33,.30);display:inline-flex;align-items:center;gap:7px;font-size:16.5px;letter-spacing:0;}
+.nav .tel:hover{background:linear-gradient(135deg,#ffb27a,#ffc79b);color:#1e1003;box-shadow:0 10px 24px rgba(242,106,33,.42);}
+.nav .tel::after{display:none;}
+.hamburger{display:none;width:42px;height:42px;border:none;background:none;cursor:pointer;position:relative;}
+.hamburger i{position:absolute;left:9px;width:24px;height:2px;background:#2b3048;transition:all .3s;display:block;}
+.hamburger i:nth-child(1){top:13px;} .hamburger i:nth-child(2){top:20px;} .hamburger i:nth-child(3){top:27px;}
+.hamburger.open i:nth-child(1){top:20px;transform:rotate(45deg);}
+.hamburger.open i:nth-child(2){opacity:0;}
+.hamburger.open i:nth-child(3){top:20px;transform:rotate(-45deg);}
+
+/* 1081～1180 这段窄桌面：与全站一致，收一档标签内边距与公司名字号，
+   否则白底条上 7 个标签会把 logo 与导航挤到贴边 */
+@media (min-width:1081px) and (max-width:1180px){
+  .nav a{padding:8px 12px;}
+  .logo-txt strong{font-size:17px;letter-spacing:.5px;}
+}
+
+/* ===================== 子页内容 ===================== */
+.crumb{padding:22px 0 0;font-size:14px;color:var(--text-light);}
+.crumb a{color:var(--primary-3);}
+.crumb a:hover{color:var(--orange);}
+.crumb span{margin:0 8px;color:#c3cadf;}
+.crumb b{color:var(--text);font-weight:600;}
+.cert-main{padding:18px 0 70px;}
+.cert-main h1{font-size:28px;font-weight:700;letter-spacing:1px;color:var(--primary);}
+.cert-sub{color:var(--text-light);font-size:14px;margin-top:8px;margin-bottom:26px;}
+.cert-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:20px;}
+.cert-grid figure{margin:0;background:#fff;border-radius:10px;overflow:hidden;box-shadow:var(--shadow);cursor:zoom-in;transition:transform .25s,box-shadow .25s;}
+.cert-grid figure:hover{transform:translateY(-5px);box-shadow:var(--shadow-lg);}
+.cert-grid img{width:100%;height:300px;object-fit:contain;background:#fff;display:block;-webkit-user-drag:none;user-select:none;}
+.cert-grid figcaption{font-size:13px;color:#33406e;text-align:center;padding:10px 8px;border-top:1px solid #eef1f8;line-height:1.4;}
+
+/* 缩放查看器 */
+.zoom-viewer{position:fixed;inset:0;z-index:2000;display:none;background:rgba(6,11,34,.96);backdrop-filter:blur(3px);}
+.zoom-viewer.open{display:block;}
+.zoom-bar{position:absolute;top:0;left:0;right:0;z-index:3;display:flex;align-items:center;justify-content:flex-end;gap:12px;padding:14px 22px;color:#fff;}
+.zoom-info{margin-right:auto;font-size:14px;font-weight:600;letter-spacing:.5px;color:rgba(255,255,255,.88);max-width:60%;}
+.zoom-btn{border:1px solid rgba(255,255,255,.5);background:rgba(255,255,255,.12);color:#fff;font-size:14px;padding:7px 16px;border-radius:20px;cursor:pointer;transition:background .2s;}
+.zoom-btn:hover{background:rgba(255,255,255,.28);}
+.zoom-stage{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:grab;}
+.zoom-stage.grabbing{cursor:grabbing;}
+.zoom-stage img{max-width:90%;max-height:85%;object-fit:contain;border-radius:6px;box-shadow:0 12px 50px rgba(0,0,0,.6);transform-origin:center center;-webkit-user-drag:none;user-select:none;will-change:transform;}
+.zoom-nav{position:absolute;top:50%;transform:translateY(-50%);z-index:3;width:54px;height:54px;border-radius:50%;border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.12);color:#fff;font-size:30px;line-height:50px;text-align:center;cursor:pointer;transition:background .2s;user-select:none;}
+.zoom-nav:hover{background:rgba(255,255,255,.3);}
+.zoom-prev{left:22px;} .zoom-next{right:22px;}
+.zoom-tip{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);color:rgba(255,255,255,.6);font-size:13px;text-align:center;z-index:3;pointer-events:none;}
+
+/* 页脚 */
+.cert-footer{background:var(--primary);color:#cdd6f0;padding:30px 0;text-align:center;font-size:13px;line-height:2;}
+.cert-footer .cr{margin-top:6px;color:#9fabd9;}
+.cert-footer a{color:#ffd0ae;font-weight:600;}
+.cert-footer a:hover{color:var(--orange-light);}
+
+@media (max-width:900px){
+  /* 移动端下拉：与白色导航条连成一块白，面板里一律深色字 */
+  .nav{position:fixed;top:var(--nav-h);left:0;right:0;background:#fff;-webkit-backdrop-filter:blur(22px) saturate(1.2);backdrop-filter:blur(22px) saturate(1.2);border-bottom:1px solid rgba(27,42,135,.10);flex-direction:column;align-items:stretch;padding:12px 20px 20px;gap:2px;box-shadow:0 18px 38px rgba(20,30,90,.16);z-index:2;transform:translateY(-14px);opacity:0;visibility:hidden;transition:all .28s;max-height:calc(100vh - var(--nav-h));overflow-y:auto;}
+  .nav.open{transform:none;opacity:1;visibility:visible;}
+  .nav a{padding:12px 6px;border-bottom:1px solid rgba(27,42,135,.07);color:#333a52;}
+  .nav a.active{color:var(--primary);}
+  .nav a:hover{background:none;}
+  .nav a::after{display:none;}
+  .nav .tel{margin:12px 0 0;justify-content:center;}
+  .hamburger{display:block;}
+}
+@media (max-width:640px){
+  .container{padding:0 16px;}
+  .topbar{font-size:12px;}
+  .topbar .tb-right{display:none;}
+  .logo-img{height:44px;padding:3px 5px;border-radius:9px;}
+  .logo-txt strong{font-size:16px;}
+  .zoom-prev{left:8px;width:44px;height:44px;line-height:40px;font-size:24px;}
+  .zoom-next{right:8px;width:44px;height:44px;line-height:40px;font-size:24px;}
+  .cert-grid{grid-template-columns:repeat(2,1fr);gap:12px;}
+  .cert-grid img{height:200px;}
+}
+
+/* 窄屏（360~420）：商标加了白底板后宽了一点，收一档字号保证公司名一行放得下 */
+@media (max-width:420px){
+  .logo{gap:9px;min-width:0;}
+  .logo-img{height:41px;padding:2px 4px;border-radius:8px;}
+  .logo-txt{min-width:0;}
+  .logo-txt strong{font-size:clamp(14px,4.15vw,16px);letter-spacing:0;white-space:nowrap;}
+  .logo-txt small{font-size:clamp(7.5px,2.1vw,8.5px);letter-spacing:.2px;white-space:nowrap;}
+  .hamburger{width:38px;flex:0 0 38px;}
+  .hamburger i{left:7px;width:20px;}
+}

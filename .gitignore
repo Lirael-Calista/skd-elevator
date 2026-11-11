@@ -1,0 +1,22 @@
+# 系统 / 编辑器
+Thumbs.db
+desktop.ini
+.DS_Store
+.vscode/
+.idea/
+
+# 本地临时文件
+*.log
+*.tmp
+*.bak
+_notes/
+.github-token.txt
+token.txt
+.env
+
+# Python 生成脚本的缓存
+__pycache__/
+*.pyc
+
+# 部署脚本临时生成的凭据通道
+tools/.askpass.sh

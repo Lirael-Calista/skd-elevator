@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>深圳市顺凯达电梯有限公司 | 电梯销售 · 安装 · 维保 · 大修</title>
+<meta name="keywords" content="深圳电梯公司,顺凯达电梯,SKD,电梯维保,电梯改造,电梯安装,电梯维修,深圳电梯维保,电梯安全科普,顺应时势使命必达">
+<meta name="description" content="深圳市顺凯达电梯有限公司成立于2020年3月4日，专注电梯及零配件销售、电梯安装维修保养、装潢、电梯配套工程、电梯技术咨询、载荷试验与制动试验，以及特种设备安装、改造或维修。">
+<link rel="icon" href="assets/logo.jpg">
+<!-- 首屏背景图：提前以高优先级加载，配合下面的 js-anim 标记，
+     让页面打开的第一帧就是动画的起幅画面（不经过深蓝底、也不闪白） -->
+<link rel="preload" as="image" href="assets/home-city.jpg" fetchpriority="high">
+<script>
+  document.documentElement.classList.add('js-anim');
+  /* 兜底：若入场脚本没跑起来，3 秒后自动摘掉标记，回到清晰静态图 */
+  setTimeout(function(){ document.documentElement.classList.remove('js-anim'); }, 3000);
+</script>
+<link rel="stylesheet" href="css/style.css?v=20261111k">
+<link rel="stylesheet" href="css/nav-sub.css?v=20261111k">
+</head>
+<body>
+
+<!-- ===================== 导航 ===================== -->
+<header class="header header--over" id="header">
+  <div class="container">
+    <a href="#home" class="logo">
+      <!-- 公司商标 -->
+      <img class="logo-img" src="assets/logo.jpg" alt="顺凯达电梯 SKD 商标">
+      <div class="logo-txt">
+        <strong>深圳市顺凯达电梯有限公司</strong>
+        <small>SHUNKAIDA ELEVATOR · SINCE 2020</small>
+      </div>
+    </a>
+
+    <nav class="nav" id="nav">
+      <a href="#home" class="active">首页</a>
+      <a href="pages/about.html">企业介绍</a>
+      <a href="pages/services.html">业务范围</a>
+      <a href="pages/cases.html">项目案例</a>
+      <a href="pages/qualification.html">资质展示</a>
+      <a href="pages/safety.html">安全科普</a>
+      <a href="pages/contact.html" class="tel">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014.1 2h3a2 2 0 012 1.7c.1 1 .4 1.9.7 2.8a2 2 0 01-.5 2.1L8.1 9.9a16 16 0 006 6l1.3-1.3a2 2 0 012.1-.4c.9.3 1.8.6 2.8.7a2 2 0 011.7 2z"/>
+        </svg>
+        联系我们
+      </a>
+    </nav>
+
+    <button class="hamburger" id="hamburger" aria-label="菜单">
+      <i></i><i></i><i></i>
+    </button>
+  </div>
+</header>
+
+<!-- ===================== 首屏 ===================== -->
+<section class="hero" id="home">
+  <!-- 首屏背景图独立图层：不加滤镜与蒙层，按原始清晰度呈现；入场动画由 js/hero-intro.js 驱动 -->
+  <div class="hero-bg" aria-hidden="true"></div>
+  <!-- 压暗层：入场时只淡出这一层的透明度（结束值为 0，不留任何残留遮罩） -->
+  <div class="hero-scrim" aria-hidden="true"></div>
+
+  <!-- 城市剪影 -->
+  <svg class="hero-city" viewBox="0 0 1440 220" preserveAspectRatio="none">
+    <g fill="#1b2a87">
+      <rect x="40" y="120" width="70" height="100"/>
+      <rect x="130" y="70" width="56" height="150"/>
+      <rect x="200" y="140" width="90" height="80"/>
+      <rect x="310" y="40" width="60" height="180"/>
+      <rect x="390" y="110" width="80" height="110"/>
+      <rect x="490" y="80" width="52" height="140"/>
+      <rect x="560" y="150" width="86" height="70"/>
+      <rect x="670" y="30" width="62" height="190"/>
+      <rect x="750" y="120" width="74" height="100"/>
+      <rect x="845" y="90" width="58" height="130"/>
+      <rect x="920" y="155" width="94" height="65"/>
+      <rect x="1035" y="60" width="66" height="160"/>
+      <rect x="1120" y="130" width="78" height="90"/>
+      <rect x="1215" y="85" width="56" height="135"/>
+      <rect x="1290" y="145" width="90" height="75"/>
+      <rect x="1395" y="100" width="45" height="120"/>
+    </g>
+  </svg>
+
+  <div class="container">
+    <div class="hero-txt">
+      <!-- 首页商标展示 -->
+      <div class="hero-logo">
+        <img src="assets/logo-mark.png" alt="顺凯达电梯 SKD 商标">
+        <div class="divi"></div>
+        <div class="hl-txt">
+          <strong>深圳市顺凯达电梯有限公司</strong>
+          <small>SHUNKAIDA ELEVATOR · SKD</small>
+        </div>
+      </div>
+
+      <h1>一站式电梯销售·安装·维保<br><em>全周期运行安全·舒适·可控</em></h1>
+
+      <!-- 公司口号 -->
+      <div class="slogan">
+        <svg viewBox="0 0 24 24"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+        <strong>顺应时势 &nbsp;使命必达</strong>
+      </div>
+
+      <p class="sub">电梯销售 · 安装 · 维保 · 大修 · 技术咨询</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 数据统计 ===================== -->
+<section class="stats">
+  <div class="container">
+    <div class="stats-box">
+      <div class="item"><div class="num" data-count="2020">0</div><div class="label">公司成立年份（3 月 4 日）</div></div>
+      <div class="item"><div class="num" data-count="30">0</div><div class="label">应急响应（分钟）</div></div>
+      <div class="item"><div class="num" data-count="0">0</div><div class="label">重大安全责任事故（起）</div></div>
+      <div class="item"><div class="num" data-count="99">0</div><div class="label">客户满意度（%）</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 公司概况 ===================== -->
+<section class="section" id="about">
+  <div class="container">
+    <div class="sec-head reveal">
+      <div class="tag">COMPANY OVERVIEW</div>
+      <h2>公司概况</h2>
+      <p>顺应时势、使命必达 —— 我们以规范的资质体系与专业的技术团队，为每一台电梯的安全运行负责。</p>
+    </div>
+
+    <div class="about-wrap">
+      <div class="about-media"><!-- 左栏：图片 + 工商信息卡 -->
+      <div class="about-img reveal">
+        <!-- 单图展示（不要轮播）：原先是「商标 / 办公室 / 办公环境」三图每 2 秒轮播，
+             现已按要求换成一张公司前台实景 —— SKD 商标墙与公司铭牌同框。
+             素材 company-brand.jpg 为 1126×634（1.78:1）横图，与桌面端图片框
+             的比例（约 1.65:1）很接近，几乎不裁；手机端单列时框会变窄变高，
+             由 style.css 的 @media (max-width:900px) 把框改成同比例，避免左右截断。 -->
+        <img class="about-photo" src="assets/company-brand.jpg"
+             alt="深圳市顺凯达电梯有限公司前台实景：SKD 商标与公司铭牌" width="1126" height="634">
+        <div class="cap">
+          <strong>顺凯达 · 电梯一站式服务</strong>
+          <span>销售 · 安装 · 维保 · 大修</span>
+        </div>
+      </div>
+
+        <!-- 工商登记信息：置于图片展示框下方 -->
+        <div class="company-meta">
+          <div><b>成立日期</b>2020 年 03 月 04 日</div>
+          <div><b>注册地址</b>深圳市龙岗区龙城街道爱联社区名居广场 5 栋 C 座 3008</div>
+          <div><b>业务范围</b>电梯销售、安装、维保、大修</div>
+        </div>
+      </div>
+
+      <div class="about-txt reveal">
+        <h3>关于顺凯达</h3>
+        <p>
+          <b>深圳市顺凯达电梯有限公司成立于 2020 年 3 月 4 日</b>，注册地位于深圳市龙岗区龙城街道爱联社区名居广场 5 栋 C 座 3008，
+          是一家专业从事电梯及电梯零配件销售、电梯维修保养、
+          电梯装潢与电梯配套工程、电梯技术咨询，以及电梯安装、改造、大修的综合性企业。
+        </p>
+        <p>
+          目前公司承接的电梯维修保养部分项目有格兰云天创客栈酒店、顺意物业金鹏大酒店、深圳特发东部服务有限公司、凯中精密技术股份有限公司、力佳电机（深圳）有限公司、深圳市龙岗区第二人民医院、龙岗区平湖公共卫生服务中心、保利物业龙园印象、彩生活城市花园二期、雅江物业满园小区、威凤山庄、深圳市德琳学校、恒江地产锦绣华天小区等，并保持着强劲的发展势头。
+        </p>
+
+        <!-- 工商登记信息已移至左侧图片下方 -->
+
+        <ul class="about-list">
+          <li>
+            <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+            <span>持特种设备生产许可证</span>
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+            <span>A 级纳税人 · 小微企业</span>
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+            <span>电梯安装 / 维保 / 大修全链条</span>
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+            <span>载荷试验 · 制动试验专业承做</span>
+          </li>
+        </ul>
+        <a href="pages/services.html" class="btn btn--blue">
+          业务范围
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- 电梯服务经营范围 -->
+    <div class="scope-box reveal" id="scope">
+      <div class="scope-head">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9h10M7 13h6"/></svg>
+        <h3>电梯服务经营范围</h3>
+        <span>依据企业登记经营范围整理（电梯相关部分）</span>
+      </div>
+      <div class="scope-body">
+        <div class="scope-grid">
+          <div class="scope-item">
+            <h4><i></i>设备与配件销售</h4>
+            <p>机电产品、电梯、电梯零配件的销售，配套供应常用易损件与关键部件。</p>
+          </div>
+          <div class="scope-item">
+            <h4><i></i>维修保养</h4>
+            <p>电梯维修、保养，含装潢与电梯配套工程实施。</p>
+          </div>
+          <div class="scope-item">
+            <h4><i></i>技术咨询</h4>
+            <p>电梯技术咨询，含选型定型、方案论证与合规性指导。</p>
+          </div>
+          <div class="scope-item">
+            <h4><i></i>试验与检测配合</h4>
+            <p>电梯载荷试验、制动试验等专项试验的承做与配合。</p>
+          </div>
+          <div class="scope-item">
+            <h4><i></i>特种设备作业</h4>
+            <p>电梯安装、改造、大修（凭许可资质承接）。</p>
+          </div>
+        </div>
+
+        <!-- 经营范围拓展：可服务电梯类型 -->
+        <div class="scope-types reveal">
+          <div class="types-band">
+            <span class="tb-bg" aria-hidden="true"></span>
+            <div class="types-band-txt">
+              <strong>可服务电梯类型</strong>
+              <span>乘客 · 载货 · 自动扶梯 · 自动人行道 · 杂物 —— 全系电梯销售、安装、维保、大修全程承接</span>
+            </div>
+          </div>
+          <div class="types-grid">
+            <div class="type-card">
+              <div class="tc-media">
+                <img src="assets/types/passenger-1.jpg" alt="乘客电梯现场实拍 · 轿厢内" loading="lazy" decoding="async">
+                <img src="assets/types/passenger-2.jpg" alt="乘客电梯现场实拍 · 电梯厅双门" loading="lazy" decoding="async">
+              </div>
+              <div class="tc-body">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="7.2" r="2.7"/><path d="M6.4 20.4v-3.6a5.6 5.6 0 0 1 11.2 0v3.6"/></svg>
+                <h5>乘客电梯</h5>
+                <p>写字楼 · 住宅 · 酒店客用</p>
+              </div>
+            </div>
+            <div class="type-card">
+              <div class="tc-media">
+                <img src="assets/types/freight-1.jpg" alt="载货电梯现场实拍 · 观光货梯" loading="lazy" decoding="async">
+                <img src="assets/types/freight-2.jpg" alt="载货电梯现场实拍 · 双开货梯门" loading="lazy" decoding="async">
+              </div>
+              <div class="tc-body">
+                <svg viewBox="0 0 24 24"><path d="M3 8.5 12 4l9 4.5-9 4.5L3 8.5Z"/><path d="M3 8.5V16l9 4.5L21 16V8.5"/><path d="M12 13v7.5"/></svg>
+                <h5>载货电梯</h5>
+                <p>厂房仓储 · 大吨位货运</p>
+              </div>
+            </div>
+            <div class="type-card">
+              <div class="tc-media">
+                <img src="assets/types/escalator-1.jpg" alt="自动扶梯现场实拍 · 商场直梯" loading="lazy" decoding="async">
+                <img src="assets/types/escalator-2.jpg" alt="自动扶梯现场实拍 · 中庭" loading="lazy" decoding="async">
+              </div>
+              <div class="tc-body">
+                <svg viewBox="0 0 24 24"><path d="M3 20.5h4.2v-4.6h4.2v-4.6h4.2V6.2H20"/></svg>
+                <h5>自动扶梯</h5>
+                <p>商场 · 车站 · 公共空间</p>
+              </div>
+            </div>
+            <div class="type-card">
+              <div class="tc-media">
+                <img src="assets/types/walkway-1.jpg" alt="自动人行道现场实拍 · 地下通道" loading="lazy" decoding="async">
+                <img src="assets/types/walkway-2.jpg" alt="自动人行道现场实拍 · 机场" loading="lazy" decoding="async">
+              </div>
+              <div class="tc-body">
+                <svg viewBox="0 0 24 24"><circle cx="8" cy="5.8" r="2.2"/><path d="M4.6 13.2v-2.3a3.4 3.4 0 0 1 6.8 0v2.3"/><path d="M2.8 16.6h18.4"/><path d="M2.8 19.8h18.4"/><path d="M13.8 11.4h4.8"/><path d="M16.6 9.4 19 11.4l-2.4 2"/></svg>
+                <h5>自动人行道</h5>
+                <p>商场 · 平层接驳</p>
+              </div>
+            </div>
+            <div class="type-card">
+              <div class="tc-media">
+                <img src="assets/types/service-1.jpg" alt="杂物电梯现场实拍 · 轿厢" loading="lazy" decoding="async">
+                <img src="assets/types/service-2.jpg" alt="杂物电梯现场实拍 · 层门" loading="lazy" decoding="async">
+              </div>
+              <div class="tc-body">
+                <svg viewBox="0 0 24 24"><rect x="5.6" y="8.8" width="12.8" height="6.6" rx="1.4"/><path d="M8.4 11.7h7.2"/><path d="M12 6.6V3"/><path d="M10.4 4.6 12 3l1.6 1.6"/><path d="M12 17.4V21"/><path d="M10.4 19.4l1.6 1.6 1.6-1.6"/></svg>
+                <h5>杂物电梯</h5>
+                <p>厂房 · 餐厅 · 小型运载</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="scope-foot">
+          <b>说明：</b>以上为登记经营范围中与电梯服务直接相关的内容摘录整理。凡依法须经批准的项目，经相关部门批准后方可开展经营活动；
+          涉及特种设备安装、改造、维修的业务，均在国家许可范围内规范承接。
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 服务流程（极简条） ===================== -->
+<section class="section section--dark" id="process">
+  <div class="container">
+    <div class="sec-head reveal">
+      <div class="tag">SERVICE PROCESS</div>
+      <h2>服务流程</h2>
+      <p>从需求沟通到年检代办的六个环节，完整说明与交付物清单见「业务范围」页。</p>
+    </div>
+    <div class="flow-mini reveal">
+      <ol>
+        <li><span class="n">01</span><b>需求沟通</b></li>
+        <li><span class="n">02</span><b>现场勘测</b></li>
+        <li><span class="n">03</span><b>方案报价</b></li>
+        <li><span class="n">04</span><b>签约施工</b></li>
+        <li><span class="n">05</span><b>验收交付</b></li>
+        <li><span class="n">06</span><b>年检代办</b></li>
+      </ol>
+      <a class="flow-mini-link" href="pages/services.html#process">了解完整流程
+        <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 页脚 ===================== -->
+<footer class="footer">
+  <!-- 页脚口号条 -->
+  <div class="footer-slogan">
+    <div class="container">
+      <svg viewBox="0 0 24 24"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+      <strong>顺应时势 &nbsp;使命必达</strong>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="f-logo">
+          <img src="assets/logo.jpg" alt="顺凯达电梯 SKD 商标">
+          <div>
+            <strong>深圳市顺凯达电梯有限公司</strong>
+            <small>SHUNKAIDA ELEVATOR</small>
+          </div>
+        </div>
+        <p>
+          成立于 2020 年 3 月 4 日，专注电梯及零配件销售、电梯维修保养、
+          电梯装潢与配套工程、电梯技术咨询及电梯安装、改造、重大修理。
+        </p>
+      </div>
+      <div>
+        <h4>快速导航</h4>
+        <ul>
+          <li><a href="pages/about.html">企业介绍</a></li>
+          <li><a href="pages/services.html">业务范围</a></li>
+          <li><a href="pages/cases.html">项目案例</a></li>
+          <li><a href="pages/qualification.html">资质展示</a></li>
+          <li><a href="pages/smart-lift.html">智能梯控演示</a></li>
+          <li><a href="pages/safety.html">安全科普</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>核心服务</h4>
+        <ul>
+          <li><a href="pages/services.html">电梯及零配件销售</a></li>
+          <li><a href="pages/services.html">电梯维修保养</a></li>
+          <li><a href="pages/services.html">电梯装潢与配套工程</a></li>
+          <li><a href="pages/services.html">技术咨询与专项试验</a></li>
+		  <li><a href="pages/services.html">电梯安装、改造、重大修理</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>联系方式</h4>
+        <p>服务热线：0755-84290500<br>邮箱：806890200@qq.com</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 深圳市顺凯达电梯有限公司　版权所有</span>
+      <span>粤ICP备 XXXXXXXX 号 - 1　|　部分联系方式与案例数据为示例内容，正式上线前请替换为真实信息</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ===================== 侧边悬浮 ===================== -->
+<div class="side-float">
+  <a href="tel:0755-84290500" title="电话咨询">
+    <svg viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014.1 2h3a2 2 0 012 1.7c.1 1 .4 1.9.7 2.8a2 2 0 01-.5 2.1L8.1 9.9a16 16 0 006 6l1.3-1.3a2 2 0 012.1-.4c.9.3 1.8.6 2.8.7a2 2 0 011.7 2z"/></svg>
+    电话
+  </a>
+  <a href="#" id="toTop" title="回到顶部">
+    <svg viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6"/></svg>
+    顶部
+  </a>
+</div>
+
+<script>
+/* ============================================================
+   交互脚本
+   ============================================================ */
+(function () {
+  'use strict';
+
+  /* ---------- 1. 移动端菜单 ---------- */
+  var hamburger = document.getElementById('hamburger');
+  var nav = document.getElementById('nav');
+  /* 与企业介绍页同一套：菜单展开时导航条跟着变白，与下拉面板连成一块，
+     否则上面是透明条（压着夜景）、下面接白色面板，中间会露一道缝 */
+  var hud = document.getElementById('header');
+  var syncMenuSkin = function () {
+    if (hud) hud.classList.toggle('menu-open', nav.classList.contains('open'));
+  };
+  hamburger.addEventListener('click', function () {
+    hamburger.classList.toggle('open');
+    nav.classList.toggle('open');
+    syncMenuSkin();
+  });
+  nav.addEventListener('click', function (e) {
+    if (e.target.tagName === 'A') {
+      hamburger.classList.remove('open');
+      nav.classList.remove('open');
+      syncMenuSkin();
+    }
+  });
+
+  /* ---------- 2. 滚动效果：导航高亮 / 阴影 / 回到顶部 ---------- */
+  var header = document.getElementById('header');
+  var toTop = document.getElementById('toTop');
+  var navLinks = nav.querySelectorAll('a[href^="#"]');
+  var sections = [];
+  Array.prototype.forEach.call(navLinks, function (a) {
+    var id = a.getAttribute('href');
+    if (id && id !== '#' && document.querySelector(id)) {
+      sections.push({ link: a, el: document.querySelector(id) });
+    }
+  });
+
+  function onScroll() {
+    var y = window.pageYOffset || document.documentElement.scrollTop;
+    header.classList.toggle('scrolled', y > 10);
+    toTop.classList.toggle('show', y > 400);
+
+    var current = null;
+    for (var i = 0; i < sections.length; i++) {
+      if (sections[i].el.offsetTop - 120 <= y) current = sections[i];
+    }
+    Array.prototype.forEach.call(navLinks, function (a) { a.classList.remove('active'); });
+    if (current) current.link.classList.add('active');
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  toTop.addEventListener('click', function (e) {
+    e.preventDefault();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  /* ---------- 3. 数字滚动动画 ---------- */
+  function animateCount(el) {
+    var target = parseInt(el.getAttribute('data-count'), 10);
+    var dur = 1600, start = null;
+    function step(ts) {
+      if (!start) start = ts;
+      var p = Math.min((ts - start) / dur, 1);
+      var eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.floor(target * eased).toLocaleString('zh-CN');
+      if (p < 1) requestAnimationFrame(step);
+      else el.textContent = target.toLocaleString('zh-CN');
+    }
+    requestAnimationFrame(step);
+  }
+
+  /* ---------- 4. 滚动显现 ---------- */
+  var revealEls = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) {
+          en.target.classList.add('in');
+          var c = en.target.querySelector('[data-count]');
+          if (c && !c.dataset.done) { c.dataset.done = '1'; animateCount(c); }
+          if (en.target.classList.contains('stats-box')) {
+            var nums = en.target.querySelectorAll('[data-count]');
+            Array.prototype.forEach.call(nums, function (n) {
+              if (!n.dataset.done) { n.dataset.done = '1'; animateCount(n); }
+            });
+          }
+          io.unobserve(en.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    Array.prototype.forEach.call(revealEls, function (el) { io.observe(el); });
+    var statsBox = document.querySelector('.stats-box');
+    if (statsBox) io.observe(statsBox);
+  } else {
+    Array.prototype.forEach.call(revealEls, function (el) { el.classList.add('in'); });
+  }
+})();
+</script>
+<script>
+/* 首屏两大框入场动画：首次加载播放；点击「首页」/Logo/回到顶部时重播 */
+(function(){
+  var root = document.documentElement;
+  root.classList.add('anim-ok');
+  var boxes = Array.prototype.slice.call(document.querySelectorAll('.hero .hero-txt'));
+  if (!boxes.length) return;
+
+  function replay(){
+    boxes.forEach(function(el){ el.classList.remove('hero-in'); });
+    void document.body.offsetWidth;           /* 强制重排，重置动画 */
+    boxes.forEach(function(el){ el.classList.add('hero-in'); });
+  }
+
+  replay();                                    /* 打开网站时同时缓缓下落淡入 */
+
+  function matchHomeLink(node){
+    while (node && node !== document) {
+      if (node.tagName === 'A') {
+        var h = node.getAttribute('href');
+        if (h === '#home' || h === '#' || node.id === 'toTop') return node;
+        return null;
+      }
+      node = node.parentNode;
+    }
+    return null;
+  }
+
+  document.addEventListener('click', function(e){
+    if (!matchHomeLink(e.target)) return;
+    setTimeout(replay, 60);                    /* 回到首页后重播 */
+  });
+})();
+</script>
+<script>
+/* 企业介绍背景图：高度 = 内容最低点 +34px，收在一条 3px 封边线上；
+   与下方「电梯服务经营范围」卡片之间由 CSS 的 margin-top 留出呼吸位。
+   用 offsetTop 累加（不受 reveal 入场动画位移影响，量到的是排版真实位置） */
+(function () {
+  var about = document.getElementById('about');
+  if (!about) return;
+  /* 优先取右下角那颗跳转按钮（原「联系我们」，2026-11-08 改为「业务范围」→ pages/services.html），
+     找不到依次退回信息条、标题。按 class 取，与按钮文字无关 */
+  var anchor = about.querySelector('.about-txt .btn')
+            || about.querySelector('.company-meta')
+            || about.querySelector('.about-txt h3');
+
+  function offsetWithin(el, root) {
+    var y = 0, n = el;
+    while (n && n !== root && n !== document.body) {
+      y += n.offsetTop;
+      n = n.offsetParent;
+    }
+    return y;
+  }
+
+  /* 图底留白：内容最低点（左右两栏取更靠下者）往下再铺 48px。
+     原来留 78px，水面在最后一排卡下方铺得太厚，整块夜景显「拖」；
+     收到 48px 后仍有干净的倒影过渡，封边线也不会切到方框的投影。 */
+  var GAP_BOTTOM = 48;
+  /* 与下方卡片的保底间距：某些窄屏下卡片 margin 会收窄，这里兜一手，
+     任何情况下都至少留 40px 浅底，不会让封边线贴上卡片 */
+  var MIN_GAP = 40;
+
+  function setBgHeight() {
+    var media = about.querySelector('.about-media');
+    var wrapEl = about.querySelector('.about-wrap');
+    var scope = about.querySelector('.scope-box');
+    var mediaEnd = media ? offsetWithin(media, about) + media.offsetHeight : 0;
+    var btnEnd = anchor ? offsetWithin(anchor, about) + anchor.offsetHeight : 0;
+    var wrapEnd = wrapEl ? offsetWithin(wrapEl, about) + wrapEl.offsetHeight : 0;
+    var contentEnd = Math.max(mediaEnd, btnEnd, wrapEnd);
+    var edge = contentEnd + GAP_BOTTOM;
+    /* 卡片在的场合：确保图底与卡片上沿之间仍有 MIN_GAP，留白不被内容挤掉 */
+    var scopeTop = scope ? offsetWithin(scope, about) : 0;
+    if (scopeTop > 0) edge = Math.min(edge, scopeTop - MIN_GAP);
+    edge = Math.max(edge, contentEnd + 16);           /* 再低也不能压到内容 */
+    about.style.setProperty('--about-bg-h', Math.max(Math.round(edge), 200) + 'px');
+  }
+
+  setBgHeight();
+  window.__aboutBg = setBgHeight;               /* 供图片对齐脚本在尺寸变化后回调 */
+  window.addEventListener('load', setBgHeight);
+  window.addEventListener('resize', setBgHeight);
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(setBgHeight);
+  }
+})();
+</script>
+<script>
+/* 企业介绍：左侧图片框顶对齐正文首行、底对齐正文末行（“并保持着强劲的发展势头”） */
+(function(){
+  var wrap = document.querySelector('#about .about-wrap');
+  if (!wrap) return;
+  var img = wrap.querySelector('.about-img');
+  var txt = wrap.querySelector('.about-txt');
+  if (!img || !txt) return;
+  var ps = txt.querySelectorAll('p');
+  if (!ps.length) return;
+
+  /* 用 offsetTop 链测量布局位置：不受 .reveal 入场位移（transform）影响，
+     量到哪儿就是排版上的真实位置，避免图片被多推下一截 */
+  function offsetWithin(el, root){
+    var y = 0, n = el;
+    while (n && n !== root && n !== document.body) { y += n.offsetTop; n = n.offsetParent; }
+    return y;
+  }
+
+  function fit(){
+    /* 单列堆叠时（栅格只剩一条轨道）图片回到默认高度；
+       用实际轨道数判断，断点怎么改都不会错位 */
+    var cols = window.getComputedStyle(wrap).gridTemplateColumns.split(' ').length;
+    if (window.innerWidth <= 900 || cols < 2) {
+      img.style.height = '';
+      img.style.marginTop = '';
+      img.style.minHeight = '';
+    } else {
+      var media = wrap.querySelector('.about-media') || txt;
+      var base = offsetWithin(media, wrap);   /* 左右两栏同在栅格行首 */
+      /* 顶边对齐正文首行「深圳市顺凯达电梯有限公司成立于 2020 年 3 月 4 日」，
+         底边对齐末行「……并保持着强劲的发展势头」——图片框高度正好被这两段文案撑开 */
+      var firstTop = offsetWithin(ps[0], wrap) - base;
+      var lastP = ps[ps.length - 1];
+      var lastBottom = offsetWithin(lastP, wrap) + lastP.offsetHeight - base;
+      /* 行高含上下半行留白，补偿后图片边缘才与文字墨迹视觉齐平 */
+      var cs = window.getComputedStyle(ps[0]);
+      var lh = parseFloat(cs.lineHeight) || 32;
+      var fs = parseFloat(cs.fontSize) || 18;
+      var lead = Math.max(0, Math.round((lh - fs) / 2));
+      img.style.minHeight = '0';
+      img.style.marginTop = Math.max(0, Math.round(firstTop) + lead) + 'px';
+      img.style.height = Math.max(160, Math.round(lastBottom - firstTop - lead * 2)) + 'px';
+    }
+    /* 图片尺寸确定后重算背景收边，避免夜景边线卡在信息卡底部 */
+    if (window.__aboutBg) window.__aboutBg();
+  }
+
+  fit();
+  window.addEventListener('load', fit);
+  window.addEventListener('resize', fit);
+  if (document.fonts && document.fonts.ready) { document.fonts.ready.then(fit); }
+  /* 列宽/字号变化会让正文行数改变（图片高度随之作废），用 ResizeObserver 兜底重算 */
+  if (window.ResizeObserver) {
+    var lastKey = '';
+    new ResizeObserver(function () {
+      var key = txt.offsetHeight + 'x' + txt.offsetWidth;
+      if (key === lastKey) return;
+      lastKey = key;
+      fit();
+    }).observe(txt);
+  }
+  requestAnimationFrame(fit);
+})();
+</script>
+<script src="assets/vendor/gsap.min.js?v=20261111k"></script>
+<script src="js/hero-intro.js?v=20261111k"></script>
+<script src="js/nav-map.js?v=20261111k"></script>
+<script src="js/nav-sub.js?v=20261111k"></script>
+</body>
+</html>

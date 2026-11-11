@@ -1,0 +1,2536 @@
+/* ============================================================
+   深圳市顺凯达电梯有限公司 - 官网样式
+   配色体系取自公司商标：SKD 深宝蓝 / 亮橙 / 湖蓝
+   ============================================================ */
+:root{
+  --primary:#1b2a87;        /* 商标深宝蓝 - 主色 */
+  --primary-2:#2438a8;      /* 宝蓝 */
+  --primary-3:#3a52cf;      /* 亮宝蓝 */
+  --orange:#f26a21;         /* 商标亮橙 - 强调色 */
+  --orange-light:#ff9350;
+  --cyan:#1eaaf0;           /* 商标湖蓝 - 辅助色 */
+  --cyan-soft:#e7f5fe;
+  --text:#2b3048;
+  --text-light:#5b6074;     /* 底色回到蓝主紫辅后重新取样：页面 5.8:1、浅蓝组件 5.5:1、白卡 6.3:1 */
+  --border:#e1e4f6;         /* 描边比底色深一档且同族：冷底上不出现暖灰线 */
+  /* ---- 淡雅蓝紫：蓝为主、紫为辅 ----
+     色相 228~247，蓝在最外面、紫只留一点尾韵（红与绿几乎等高），
+     所以观感是「很淡的蓝紫」而不是「丁香紫」；明度仍在 96% 以上。 */
+  --bg:#ffffff;
+  --bg-page:#f4f4fd;        /* 页面整体底色：极淡蓝紫（红≈绿<蓝，蓝占主、紫只作尾韵） */
+  --bg-soft:#eef0fc;        /* 区块内组件（表单卡、表格头、图标底板）用色，比页面深一档 */
+  --bg-tint:#e6e9f9;
+  --primary-50:#f4f5fe;
+  --white:#fff;
+  --shadow:0 10px 30px rgba(27,42,135,.06);
+  --shadow-lg:0 20px 50px rgba(27,42,135,.12);
+  --radius:8px;
+  --nav-h:74px;
+
+  /* ---------- 子页顶部横幅高度 ----------
+     「企业介绍」与「业务范围」两页的横幅必须等高，所以高度只在这里定义一次，
+     两页都引用它；窄屏档在文件末尾的 @media 里整体改写这一个变量。
+     宽屏用 60vh：vw 会把横幅在宽屏上撑到视口八成、又在窄笔电上压扁；
+     上下限 320 / 640 保证小屏不塌、大屏不吞掉整屏。 */
+  --banner-h:clamp(320px,60vh,640px);
+
+  /* ---------- 玻璃阶：数值即「浓淡」，0 = 全透，1 = 实色 ----------
+     全站半透明容器只引用这几个变量，各断点不再各写一份，保证任何屏幕下浓淡一致。
+     思路：压在照片上的容器一律只留一层极薄纱；平底区块里的卡片只去掉实心白，
+     改由 1px 描边 + 投影维持轮廓。 */
+  --glass-hero:.56;      /* 首屏文字卡白度：底下是夜景，深色字需要这层白托底 */
+  --glass-plate:.52;     /* 首屏商标小底板白度 */
+  --glass-flat:.62;      /* 白底 / 浅底区块里的卡片白度，视觉几乎不变 */
+  --glass-nav:.16;       /* 顶部导航玻璃浓度（首页悬浮于夜景之上时） */
+
+  /* ---------- 白纱：经营范围 5 卡 + 电梯类型 5 卡，共 10 个卡片的统一参数 ----------
+     只在这里改一处，两组卡片同时生效，浓淡 / 模糊 / 描边永远同步。
+     --veil-tint  白纱底色（半透明）
+     --veil-sheen 纱的厚薄：顶部略厚、中段最薄、底部回一点，避免整块死白
+     --veil-blur  背景模糊，让背后的淡蓝纸面化开成柔和的底
+     --veil-line  外圈细边，白纱在白底上也能划出边界 */
+  --veil-tint:rgba(255,255,255,.34);
+  --veil-sheen:linear-gradient(180deg,
+    rgba(255,255,255,.28) 0%,
+    rgba(255,255,255,.06) 58%,
+    rgba(255,255,255,.16) 100%);
+  --veil-blur:blur(20px) saturate(1.22);
+  --veil-line:rgba(27,42,135,.10);
+
+  /* 业务范围 5 卡原来是压在夜景上的白磨砂（--svc-veil / --svc-veil-hover），
+     照片搬进顶部横幅后卡片改为纯白实底，这两个变量已无人引用，随本轮一并删除。 */
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--nav-h) + 10px);}
+html{background:var(--bg-page);}
+body{
+  font-family:"PingFang SC","Microsoft YaHei","Helvetica Neue",Helvetica,Arial,sans-serif;
+  color:var(--text);background:transparent;line-height:1.75;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+
+/* ---------- 页面底：一层极干净的固定渐变 ----------
+  上一版用三团径向「气团」加一层斜向薄光堆层次，效果是有了，但带出两个毛病：
+  · 径向渐变的边缘在浅底上会显出一圈发灰的晕，整屏像隔了层毛玻璃；
+  · 三团叠出来是「斑块状」的明暗，不是「坡状」，看久了发脏。
+  这一版只留三支很长的线性渐变，并且全部沿 150° 走同一个方向 —— 没有圆心、没有光斑，
+  颜色只在整屏尺度上平移，所以既看得出光从左上过来，又不会在局部糊成一团。
+  ① 白色薄光：左上偏亮 → 右下自然消失，负责「通透」；
+  ② 蓝紫尾韵：只在右下角极淡地压一点冷调，让画面不偏向纯白；
+  ③ 基色：竖向五站，只做极缓的明暗呼吸。
+  三层浓度都压在 .10 以内，落到底色上是 3%~6% 的色差；因为不带 blur、不叠噪点，
+  肉眼看到的是干净的纸面，而不是雾面。 */
+body::before{
+  content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;
+  background-color:var(--bg-page);
+  background-image:
+    /* ① 白色薄光：左上偏亮，沿 150° 方向衰减 */
+    linear-gradient(150deg,rgba(255,255,255,.58) 0%,rgba(255,255,255,.16) 44%,rgba(255,255,255,0) 68%),
+    /* ② 蓝紫尾韵：只在右下角淡淡出现，给白底一点色温，不形成气团 */
+    linear-gradient(150deg,rgba(126,132,240,0) 58%,rgba(126,132,240,.05) 82%,rgba(126,132,240,.095) 100%),
+    /* ③ 基色：竖向五站 */
+    linear-gradient(180deg,#fbfbff 0%,#f7f7fe 38%,#f3f4fd 70%,#f4f3fd 88%,#f8f7fe 100%);
+  background-repeat:no-repeat;
+}
+img{max-width:100%;display:block;}
+a{text-decoration:none;color:inherit;}
+ul,ol{list-style:none;}
+.container{width:100%;max-width:1200px;margin:0 auto;padding:0 24px;}
+.section{padding:88px 0;}
+/* 全站统一底色：浅色区块全部改为透明，让页面底那层固定渐变透上来 ——
+   原来是同一支实色铺满每一段，改渐变后若区块仍是实色，渐变会被整段盖死，
+   只剩首尾两处看得到，反而更断层。区块之间仍靠留白与标题分层，卡片照旧是纯白。 */
+.section--soft{background:transparent;}
+.section--dark{background:transparent;color:var(--text);}
+
+/* ---------- 通用标题 ---------- */
+.sec-head{text-align:center;margin-bottom:56px;}
+.sec-head .tag{
+  display:inline-block;font-size:13px;letter-spacing:3px;color:var(--orange);
+  text-transform:uppercase;margin-bottom:12px;font-weight:600;
+}
+.sec-head h2{
+  font-size:34px;font-weight:700;color:var(--primary);letter-spacing:2px;position:relative;
+  padding-bottom:18px;
+}
+.sec-head h2::after{
+  content:"";position:absolute;left:50%;bottom:0;transform:translateX(-50%);
+  width:64px;height:3px;background:linear-gradient(90deg,var(--cyan),var(--orange));
+}
+/* text-wrap:pretty 让窄屏下的末行不至于只剩一两个字（如「负责。」） */
+.sec-head p{margin-top:16px;color:var(--text-light);font-size:15px;max-width:760px;margin-left:auto;margin-right:auto;text-wrap:pretty;}
+.section--dark .sec-head h2{color:var(--primary);}
+.section--dark .sec-head p{color:var(--text-light);}
+
+/* ---------- 按钮 ---------- */
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:13px 30px;border-radius:4px;font-size:15px;font-weight:500;
+  transition:all .3s ease;cursor:pointer;border:1px solid transparent;
+}
+.btn--orange{background:linear-gradient(135deg,var(--orange),var(--orange-light));color:#fff;box-shadow:0 8px 20px rgba(242,106,33,.32);}
+.btn--orange:hover{transform:translateY(-2px);box-shadow:0 12px 26px rgba(242,106,33,.45);}
+.btn--ghost{border-color:var(--primary-2);color:var(--primary-2);}
+.btn--ghost:hover{background:rgba(36,56,168,.08);border-color:var(--primary-3);}
+.btn--blue{background:var(--primary-2);color:#fff;}
+.btn--blue:hover{background:var(--primary-3);transform:translateY(-2px);}
+
+/* ============================================================
+   顶部导航
+   ============================================================ */
+.topbar{
+  background:var(--primary);color:#b6c0e6;font-size:13px;padding:8px 0;
+  border-bottom:1px solid rgba(255,255,255,.1);
+}
+.topbar .container{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;}
+.topbar span{display:inline-flex;align-items:center;gap:6px;}
+.topbar a:hover{color:var(--orange-light);}
+/* ============================================================
+   顶部导航 · 全站统一规则
+   ------------------------------------------------------------
+   1) 页面顶部：
+      · 压在背景图上的页面（首页首屏、企业介绍页横幅）导航完全透明，
+        图片整片透上来，导航条与图同色，没有第二条色带；
+      · 其余页面本来就在浅色纸面上，用白色玻璃条，与页面底色同族。
+   2) 一旦向下滚动（.scrolled）：所有页面统一换成白底 + 深色字，
+      下沿一道细线加一层浅投影，与正文分层。
+   3) 字色跟着底色走：深色夜景上用白字，明亮晚霞上用深字，
+      白底上一律深色，保证任何状态下都读得清。
+   ============================================================ */
+.header{
+  position:sticky;top:0;z-index:1000;height:var(--nav-h);
+  background:rgba(255,255,255,.92);
+  -webkit-backdrop-filter:blur(14px) saturate(1.06);
+          backdrop-filter:blur(14px) saturate(1.06);
+  border-bottom:1px solid rgba(27,42,135,.09);
+  box-shadow:0 2px 12px rgba(20,30,90,.05);
+  transition:background .3s,box-shadow .3s,border-color .3s;
+}
+/* 滚动后：白得更实、投影更明确，与正文彻底分层 */
+.header.scrolled{
+  background:rgba(255,255,255,.97);
+  border-bottom-color:rgba(27,42,135,.12);
+  box-shadow:0 6px 22px rgba(20,30,90,.10);
+}
+/* 首页：首屏是深色夜景，用负 margin 把首屏顶上来，导航直接浮在图上 */
+.header--over{margin-bottom:calc(-1 * var(--nav-h));}
+.header--over:not(.scrolled){
+  background:transparent;
+  border-bottom-color:transparent;
+  box-shadow:none;
+  -webkit-backdrop-filter:none;
+          backdrop-filter:none;
+}
+/* 内页（全部子页面）：一律使用上面这条白底玻璃条，顶部态不再做任何透明处理。
+   以前内页分「压在照片上透明 + 白字」与「浅色纸面白条」两种，观感不统一；
+   现已全部收敛为同一套：白底、深色标签、橙色按钮，滚动后只是加深投影。
+   页面首屏若是照片（企业介绍横幅、业务范围晚霞图），照片从白条下沿开始铺，
+   不再钻到导航底下。 */
+/* 不支持背景模糊的浏览器：白底态退回接近实色，避免糊成灰片 */
+@supports not ((backdrop-filter:blur(2px)) or (-webkit-backdrop-filter:blur(2px))){
+  .header{background:rgba(255,255,255,.98);}
+  .header.scrolled{background:#fff;}
+}
+.header .container{height:100%;display:flex;align-items:center;justify-content:space-between;}
+
+/* 商标 Logo：源图是白底 JPG，给一枚白色圆角底板，形似一枚商标牌 */
+.logo{display:flex;align-items:center;gap:13px;position:relative;}
+.logo-img{
+  height:52px;padding:3px 6px;box-sizing:border-box;      /* 内容区仍是 46px 高 */
+  width:auto;flex:0 0 auto;object-fit:contain;
+  background:#fff;border-radius:11px;
+  border:1px solid rgba(27,42,135,.08);
+  box-shadow:0 3px 12px rgba(20,30,90,.14);
+}
+.logo-txt strong{display:block;font-size:19px;color:var(--primary);letter-spacing:1px;line-height:1.25;}
+.logo-txt small{display:block;font-size:10.5px;color:#6a6f88;letter-spacing:1.5px;}
+
+.nav{display:flex;align-items:center;gap:4px;}
+.nav a{
+  padding:8px 15px;font-size:16.5px;color:#39405a;border-radius:6px;font-weight:600;
+  transition:all .25s;position:relative;
+}
+.nav a:hover{background:rgba(27,42,135,.06);}
+.nav a:hover,.nav a.active{color:var(--primary);}
+.nav a.active::after,.nav a:hover::after{
+  content:"";position:absolute;left:15px;right:15px;bottom:2px;height:2px;background:var(--orange);
+}
+/* 品牌橙按钮：白底、深色夜景上都站得住，不随底色变 */
+.nav .tel{
+  margin-left:12px;padding:9px 18px;color:#fff;border-radius:6px;font-weight:600;
+  background:linear-gradient(135deg,var(--orange),var(--orange-light));
+  box-shadow:0 8px 20px rgba(242,106,33,.30);
+  display:inline-flex;align-items:center;gap:7px;font-size:16.5px;letter-spacing:0;
+}
+.nav .tel:hover{background:linear-gradient(135deg,#ffb27a,#ffc79b);color:#1e1003;box-shadow:0 10px 24px rgba(242,106,33,.42);}
+.nav .tel::after{display:none;}
+.hamburger{display:none;width:42px;height:42px;border:none;background:none;cursor:pointer;position:relative;}
+.hamburger i{
+  position:absolute;left:9px;width:24px;height:2px;background:#2b3048;
+  transition:all .3s;display:block;
+}
+.hamburger i:nth-child(1){top:13px;}
+.hamburger i:nth-child(2){top:20px;}
+.hamburger i:nth-child(3){top:27px;}
+.hamburger.open i:nth-child(1){top:20px;transform:rotate(45deg);}
+.hamburger.open i:nth-child(2){opacity:0;}
+.hamburger.open i:nth-child(3){top:20px;transform:rotate(-45deg);}
+
+/* ---------- 顶部透明态：logo 背后浮出一块白色品牌牌 ----------
+   公司名全站统一用 --primary(#1b2a87)，与企业介绍页取值一致（见 pages.css）。
+   深蓝直接压在夜景上实测只有 1.4～1.7:1（低于 3:1 的可读下限），所以只在
+   「导航压在照片上」的页面给一块白色圆角牌，牌内一律深色字；
+   内页背后本来就是浅色纸面，深蓝直接读得清，不加牌（否则白底上浮一张卡片）。
+   牌用伪元素 + 负 inset 撑开：不占布局宽度，滚动变白底、牌子撤掉时导航不会左右跳。 */
+.header--over:not(.scrolled) .logo::before{
+  content:"";position:absolute;inset:-5px -18px -5px -5px;
+  background:#fff;border-radius:12px;z-index:-1;
+  box-shadow:0 8px 22px rgba(3,8,24,.28);
+  transition:opacity .3s;
+}
+/* 牌内商标不再自带白卡描边与投影，否则会变成「牌里套牌」 */
+.header--over:not(.scrolled) .logo .logo-img{
+  border-color:transparent;box-shadow:none;
+}
+/* 与企业介绍页（.page--about）顶部态完全对齐：纯白 + 贴字投影。
+   白字压在夜景亮灯窗与晚霞天空上都会发飘，用字形投影勾边而不是给整幅图压暗。 */
+.header--over:not(.scrolled) .nav a{
+  color:#fff;
+  text-shadow:0 1px 2px rgba(5,9,24,.55),0 2px 7px rgba(5,9,24,.32);
+}
+/* :not(.tel) —— 橙色「联系我们」按钮的渐变底不能被透明悬停态盖掉 */
+.header--over:not(.scrolled) .nav a:not(.tel):hover{background:rgba(255,255,255,.18);color:#fff;}
+.header--over:not(.scrolled) .nav a.active{color:#fff;}
+.header--over:not(.scrolled) .hamburger i{background:#fff;}
+
+/* 1081～1180 这段窄桌面：白牌 + 7 个标签会把 logo 和导航挤到贴边（实测间距 0px），
+   收一档标签内边距与公司名字号把呼吸感补回来。1080 以下走汉堡菜单，不受影响。 */
+@media (min-width:1081px) and (max-width:1180px){
+  .nav a{padding:8px 12px;}
+  .logo-txt strong{font-size:17px;letter-spacing:.5px;}
+}
+
+/* 手机菜单展开时：导航条也跟着变白，与白色下拉面板连成整块 */
+.header.menu-open:not(.scrolled){
+  background:rgba(255,255,255,.98);
+  border-bottom-color:transparent;
+  box-shadow:none;
+  -webkit-backdrop-filter:none;
+          backdrop-filter:none;
+}
+/* 白面板里不能再带「压图白字」的深色投影，否则深字会被自己的影子糊出一圈 */
+.header.menu-open:not(.scrolled) .nav a{text-shadow:none;}
+/* 条子已经变白，logo 的白牌也会糊成一块，直接隐掉 */
+.header.menu-open:not(.scrolled) .logo::before{opacity:0;}
+.header.menu-open:not(.scrolled) .logo-txt strong{color:var(--primary);}
+.header.menu-open:not(.scrolled) .logo-txt small{color:#8a90a6;}
+.header.menu-open:not(.scrolled) .hamburger i{background:#2b3048;}
+
+/* ============================================================
+   首屏 Banner
+   ============================================================ */
+.hero{
+  position:relative;min-height:700px;display:flex;align-items:center;
+  background:#08122c;                 /* 图未就绪时的兜底底色，避免闪白 */
+  overflow:hidden;color:var(--text);
+}
+
+/* ---------- 城市夜景：独立图层，入场由 GSAP 驱动（见 js/hero-intro.js）；
+   只播一次「轻微推近」，播完即静止，不留任何常驻运动。
+   图层本身只挂一条 filter：brightness(1.12) —— 整张底图统一提亮一档（单次），
+   不改色相、不改饱和、不加蒙层，图片内容与布局原样保留。
+   因为只作用在这个空图层上，卡上的文字与商标底板不受影响。 ---------- */
+.hero-bg{
+  position:absolute;inset:0;z-index:0;
+  /* 锚点上移到 8%：画面整体下沉，春笋塔尖完整落在导航栏下方（cover 已是
+     1920 宽图在常见视口下的最小缩放，此处不再叠加推近，scale 固定 1） */
+  background:url("../assets/home-city.jpg") center 8%/cover no-repeat;
+  transform-origin:50% 46%;
+  transform:scale(1);
+  filter:brightness(1.12);
+  will-change:transform;
+  pointer-events:none;
+}
+
+/* JS 可用时，首帧就按「起幅」状态绘制：略微后拉 + 一层压暗。
+   动画只改 transform 与 scrim 的 opacity，不碰任何滤镜 —— 全程纯合成。 */
+.js-anim .hero-bg{
+  transform:translate(-1.2%,2.4%) scale(1.16);
+}
+@media (max-width:1080px){
+  .js-anim .hero-bg{
+    transform:translate(-0.6%,1.4%) scale(1.10);
+  }
+}
+
+/* 压暗层：盖在背景图上，入场由不透明淡到 0 */
+.hero-scrim{
+  position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:#050b1c;opacity:0;
+  will-change:opacity;
+}
+.js-anim .hero-scrim{opacity:.34;}
+@media (max-width:1080px){
+  .js-anim .hero-scrim{opacity:.28;}
+}
+/* 减弱动效偏好：直接给出稳定终态，不播放任何入场 */
+@media (prefers-reduced-motion:reduce){
+  .js-anim .hero-bg{transform:scale(1);}
+  .js-anim .hero-scrim{opacity:0;}
+  .hero-bg{will-change:auto;}                    /* 不播动画就不占合成层 */
+  .hero-scrim{will-change:auto;}
+}
+
+/* ---------- 首屏不再有任何氛围叠加层：冷暖光晕与暗角已移除，
+   背景图只保留图层自身那一条 brightness(1.12)，
+   不再叠蒙层、渐变或其它滤镜 ---------- */
+
+.hero-city{
+  position:absolute;bottom:0;left:0;right:0;height:220px;opacity:.06;pointer-events:none;display:none;
+}
+.hero .container{position:relative;z-index:2;max-width:1280px;display:grid;grid-template-columns:minmax(0,1fr);gap:0;align-items:center;justify-items:start;text-align:left;padding-top:56px;padding-bottom:96px;}
+
+/* 首页商标展示：小底板同样只留一层薄白，与文字卡同一档透光 */
+.hero-logo{
+  display:inline-flex;align-items:center;gap:14px;margin-bottom:22px;
+  padding:11px 15px;border-radius:12px;
+  background:rgba(255,255,255,var(--glass-plate));
+  box-shadow:0 8px 20px rgba(11,22,60,.14),inset 0 0 0 1px rgba(255,255,255,.34);
+}
+.hero-logo img{height:34px;width:auto;}
+.hero-logo .divi{width:1px;height:40px;background:var(--border);}
+.hero-logo .hl-txt strong{display:block;font-size:16px;color:var(--primary);letter-spacing:1px;line-height:1.35;}
+.hero-logo .hl-txt small{display:block;font-size:10.5px;color:#33405c;font-weight:600;letter-spacing:1.6px;}
+
+/* 首页文字区：半透明白卡，不含任何毛玻璃 / 背景模糊 —— 背景图在卡片内外都是原始清晰度。
+   白度取 --glass-hero（56%）：再往下调，窗格与楼体亮带会从字间透出来发花；
+   底沿加一道极淡的内侧亮光，把最下面那行说明字从楼体亮带上托起来。 */
+.hero-txt{
+  position:relative;isolation:isolate;overflow:hidden;
+  width:500px;max-width:100%;margin:0;padding:44px 38px 46px;border-radius:20px;
+  background:rgba(255,255,255,var(--glass-hero));
+  box-shadow:0 26px 62px rgba(3,10,32,.30),0 2px 8px rgba(3,10,32,.10),
+             inset 0 1px 0 rgba(255,255,255,.44),
+             inset 0 -64px 60px -52px rgba(255,255,255,.30);
+}
+/* 白纱：只留一层贴边的极淡柔光（比原来更薄），不再额外抬高整片白度 */
+.hero-txt::before{
+  content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;pointer-events:none;
+  background:
+    radial-gradient(150% 92% at 52% 104%,rgba(255,255,255,.08),rgba(255,255,255,0) 62%),
+    linear-gradient(166deg,rgba(255,255,255,.04) 0%,rgba(255,255,255,0) 44%,rgba(255,255,255,.03) 100%);
+}
+.hero .hero-txt .sub,.hero .hero-txt .desc,.hero .hero-txt .hero-badges div{color:#242e44;}
+.hero .hero-txt .sub{color:#242e44;font-weight:500;letter-spacing:.6px;}
+
+/* ---------- 首页首屏两大框入场动画：自上而下缓缓淡入 ---------- */
+@keyframes heroDropIn{
+  from{opacity:0;transform:translateY(-46px);}
+  to{opacity:1;transform:translateY(0);}
+}
+/* 由 JS 给 <html> 加 .anim-ok 后才隐藏，避免脚本失效时内容不可见 */
+.anim-ok .hero-txt,.anim-ok .hero .elevator{opacity:0;}
+/* 两大框同步入场（同一延迟、同一时长，不分先后）；.hero-in 由 JS 添加，可重复触发 */
+.anim-ok .hero-txt.hero-in,.anim-ok .hero .elevator.hero-in{
+  animation:heroDropIn 1.1s cubic-bezier(.22,.7,.3,1) .15s forwards;
+}
+@media (prefers-reduced-motion:reduce){
+  .anim-ok .hero-txt,.anim-ok .hero .elevator{opacity:1;animation:none;}
+}
+
+
+.hero-txt h1{
+  font-size:34px;font-weight:800;line-height:1.42;letter-spacing:1px;margin-bottom:22px;color:var(--primary);
+}
+.hero-txt h1 em{font-style:normal;color:var(--orange);}
+/* 公司口号 */
+/* 胶囊底色仍是原来的「橙 → 蓝」同一组颜色（242,106,33 / 30,170,240），
+   只把不透明度从 .12 / .10 提到 .30 / .24 —— 色相、渐变方向、
+   文字颜色一律不动，只是从「几乎看不出」变成白卡上一眼能认出的淡色胶囊。
+   .30 是在近白卡片上比对的：再淡（.12）在白色卡片里几乎消失，
+   再浓（.36 以上）会盖过上方深蓝标题与橙色副标题，开始抢注意力。 */
+.slogan{
+  display:inline-flex;align-items:center;gap:12px;margin-bottom:22px;
+  padding:11px 22px;border-radius:40px;
+  background:linear-gradient(90deg,rgba(242,106,33,.30),rgba(30,170,240,.24));
+  border:1px solid rgba(27,42,135,.14);
+}
+.slogan svg{width:18px;height:18px;stroke:var(--orange);fill:none;stroke-width:1.9;flex:0 0 18px;}
+.slogan strong{font-size:20px;letter-spacing:5px;font-weight:700;color:var(--primary);}
+/* 这行服务清单原来 16.5px，在卡片里偏轻；提到 18px（+1.5px）后与上面的口号、
+   下面的卡片边距都还对得上，仍是一行不折行。字色与字距不动。 */
+.hero-txt .sub{font-size:18px;color:#2f3a52;margin:0;letter-spacing:.6px;}
+.hero-txt .desc{font-size:18px;color:var(--text-light);margin:0 auto 30px;max-width:720px;line-height:1.9;letter-spacing:.2px;}
+.hero-btns{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;}
+.hero-badges{display:flex;gap:20px;margin-top:34px;flex-wrap:wrap;justify-content:center;}
+.hero-badges div{font-size:18px;color:var(--text-light);display:flex;align-items:center;gap:6px;letter-spacing:0;}
+.hero-badges svg{width:18px;height:18px;flex:0 0 18px;stroke:var(--orange);fill:none;stroke-width:1.8;}
+
+/* 电梯井动画（1F - 30F） */
+.elevator{
+  /* 首屏与二级页的电梯卡：背景是极浅的页面渐变，没有细节可糊，
+     所以不挂 backdrop-filter —— 去掉那层 18px 模糊后卡片更清、字更实，
+     白度略提一档补回原先由模糊带来的那点柔光。 */
+  background:rgba(255,255,255,.66);
+  border:1px solid rgba(255,255,255,.58);
+  border-radius:12px;padding:20px 20px 18px;
+  box-shadow:0 22px 52px rgba(10,22,60,.20),inset 0 1px 0 rgba(255,255,255,.6);
+}
+.hero .elevator .elevator-head span,.hero .elevator .elevator-foot span{color:#3f4a63;}
+.elevator-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;gap:10px;}
+.elevator-head span{font-size:16px;color:var(--text-light);letter-spacing:.4px;}
+.floor-display{
+  background:linear-gradient(180deg,var(--primary-2),var(--primary));
+  border:1px solid rgba(255,255,255,.4);border-radius:6px;
+  width:68px;height:68px;flex:0 0 68px;padding:0;   /* 标准正方形 */
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 14px rgba(27,42,135,.35);
+  font-family:"DS-Digital",Consolas,monospace;font-size:36px;font-weight:800;
+  color:#fff;letter-spacing:1px;text-shadow:0 1px 1px rgba(10,48,90,.72),0 0 3px rgba(10,48,90,.55),0 2px 7px rgba(0,0,0,.35);
+}
+.floor-display small{font-size:18px;color:rgba(255,255,255,.95);margin-left:4px;letter-spacing:0;text-shadow:0 1px 2px rgba(10,48,90,.6);font-weight:700;}
+/* 实时变化的楼层数字：显式指定白色（避免被 .elevator-head span 的 12px 灰色规则覆盖）；
+   字号由 36px 调小至 28px，与 68px 方框及右侧小「F」比例更协调 */
+.floor-display #floorNum{font-size:28px;font-weight:800;color:#fff;letter-spacing:1px;}
+.shaft{
+  position:relative;height:380px;border-radius:6px;
+  background:linear-gradient(180deg,rgba(236,242,252,.5),rgba(247,250,255,.5));
+  border-left:2px solid rgba(112,152,232,.42);border-right:2px solid rgba(112,152,232,.42);
+  overflow:hidden;
+}
+/* 中央导轨 */
+.shaft::before{
+  content:"";position:absolute;left:50%;top:8px;bottom:8px;width:2px;margin-left:-1px;z-index:0;
+  background:repeating-linear-gradient(180deg,rgba(74,116,214,.28) 0 5px,transparent 5px 13px);
+}
+/* 楼层刻度线（均匀参考网格，1F-30F） */
+.shaft .floor{
+  position:absolute;left:0;right:0;height:0;border-top:1px dashed rgba(28,40,108,.12);z-index:1;
+}
+/* 里程碑楼层：1F / 5F / 10F / 15F / 20F / 25F / 30F（等距、清晰标识） */
+.shaft .milestone{
+  position:absolute;left:0;right:0;height:0;border-top:1.5px solid rgba(56,96,204,.58);z-index:2;
+  transition:border-color .34s ease,box-shadow .34s ease;
+}
+/* 当前楼层那条横线跟着轿厢一起点亮：橙线 + 一层贴身橙晕。
+   以前只有左边胶囊标签变橙，车底压着的那条线仍然是蓝的，
+   看着就像车还没停到线上 —— 线亮了，才算「到站」。
+   晕是向下投的（offset 1px），正好落在轿厢脚边，被车厢盖住中间、两侧透出来。 */
+.shaft .milestone.active{
+  border-top-color:rgba(242,106,33,.95);
+  box-shadow:0 1px 6px rgba(242,106,33,.46),0 0 1px rgba(242,106,33,.62);
+}
+/* 里程碑楼层标识（柔和胶囊：浅色、小巧，置于横线上方，清晰可辨） */
+.shaft .milestone b{
+  position:absolute;left:8px;bottom:2px;
+  font-size:12.5px;font-weight:600;color:var(--primary);letter-spacing:.5px;white-space:nowrap;
+  background:rgba(56,86,196,.14);border:1px solid rgba(56,86,196,.42);
+  padding:2px 8px;border-radius:5px;box-shadow:0 1px 3px rgba(27,42,135,.12);
+  z-index:5;
+}
+/* 当前所在楼层标识高亮（柔和橙） */
+.shaft .milestone.active b{
+  color:var(--orange);background:rgba(242,106,33,.16);border-color:rgba(242,106,33,.55);
+  box-shadow:0 2px 6px rgba(242,106,33,.18);
+}
+/* 轿厢：高度在 js/lift-demo.js 的 layout() 里按「井道高 / 7」逐次写入，
+   保证停站时车身恰好占满一格里程碑、车底压在该格底部那条线上；
+   这里的 52px 只是脚本执行前的占位值。
+   宽度 68px = 门区 58 + 左右各 5px 门套：白边留着，门嵌在白边里，
+   既不是最早 96px 那种「相框套窗户」，也不是上一版把白边收没了的平板。 */
+.car{
+  position:absolute;left:50%;transform:translateX(-50%);width:68px;height:52px;z-index:3;
+  background:linear-gradient(180deg,#ffffff,#eaf0fb 46%,#d5dcf0 100%);border-radius:4px;
+  /* 投影收紧：原来是 0 8px 18px，车底下方拖出一片淡影，
+     停站时看着像车悬在横线上方一点；压到 0 2px 5px，车底才咬得住线 */
+  box-shadow:0 0 12px rgba(96,138,232,.22),0 2px 5px rgba(26,38,92,.10),
+             inset 0 0 0 2px rgba(26,38,92,.22),inset 0 2px 4px rgba(255,255,255,.9);
+  transition:top 2.6s cubic-bezier(.45,.05,.35,1);display:flex;align-items:center;justify-content:center;
+}
+/* 两侧橙色标记（导轨夹持位）：贴边 6px 短条，不外飘 */
+.car::before,.car::after{
+  content:"";position:absolute;top:50%;width:6px;height:2px;margin-top:-1px;border-radius:1px;
+  background:linear-gradient(90deg,var(--orange),rgba(242,106,33,.55));
+}
+.car::before{left:-6px;} .car::after{right:-6px;transform:scaleX(-1);}
+.car span{
+  font-size:11px;color:var(--primary);font-weight:700;letter-spacing:.8px;
+  text-shadow:0 1px 0 #fff;
+  transition:opacity .26s ease;
+}
+/* 开门时门上的 SKD 一起淡掉，否则字会浮在空门洞当中（留一点残影反而像水印，直接到 0） */
+.car.arrived span{opacity:0;}
+/* 轿厢门：嵌在白边里的一扇门 —— 四周同一圈 5px 门套（左右是侧壁、上下是门楣与门槛），
+   所以门区永远是「车宽 - 10」；车宽怎么加，门就怎么加，门套那一圈不变。
+   门缝不用 border 画（两扇各 1px 会叠成 2px），改用 .car-doors::after 定位在正中的 1px 亮线，
+   开门时把这根线淡掉，否则会有一道白线悬在门洞里。 */
+.car-doors{position:absolute;inset:5px;display:flex;overflow:hidden;border-radius:2px;}
+.car-doors::after{
+  content:"";position:absolute;left:50%;top:0;bottom:0;width:1px;margin-left:-.5px;
+  background:rgba(255,255,255,.62);transition:opacity .2s ease;
+}
+.car-doors i{
+  flex:1;background:rgba(27,42,135,.1);
+  transition:transform .3s cubic-bezier(.42,0,.2,1);
+}
+/* 到站开门：两扇门各自向门套里滑进去，中间露出车身那道浅底（当作舱内的光） */
+.car.arrived .car-doors i:first-child{transform:translateX(-46%);}
+.car.arrived .car-doors i:last-child{transform:translateX(46%);}
+.car.arrived .car-doors::after{opacity:0;}
+.elevator-foot{display:flex;justify-content:space-between;margin-top:16px;font-size:16px;color:var(--text-light);flex-wrap:wrap;gap:6px 12px;letter-spacing:0;}
+.elevator-foot b{color:var(--orange);font-weight:600;}
+
+/* ============================================================
+   数据统计
+   ============================================================ */
+/* 统计条与页面同底：原来是一条纯白横带，页面改浅蓝白后会显出一道亮带；
+   现在底透明，直接浮在页面渐变上，卡片的 .94 白正好压住首屏图的下沿 */
+.stats{background:transparent;padding:0;}
+.stats-box{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  /* 这一块横跨首屏图片下沿（负边距 -46px），必须留足白度，
+     否则图片会从卡片顶边穿出来，卡片轮廓断成两截 */
+  background:rgba(255,255,255,.94);border-radius:10px;border:1px solid var(--border);box-shadow:var(--shadow-lg);
+  margin-top:-46px;position:relative;z-index:5;overflow:hidden;
+}
+.stats-box .item{padding:32px 20px;text-align:center;border-right:1px solid var(--border);}
+.stats-box .item:last-child{border-right:none;}
+.stats-box .num{font-size:38px;font-weight:700;color:var(--primary);line-height:1.1;}
+.stats-box .label{font-size:14px;color:var(--text-light);margin-top:6px;letter-spacing:1px;}
+
+/* ============================================================
+   公司概况（首页 #about：轮播图 + 工商信息 + 经营范围）
+   ============================================================ */
+.about-wrap{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start;}
+.about-media{min-width:0;}
+.about-img{
+  position:relative;border-radius:10px;overflow:hidden;background:#e9eef9;
+  min-height:420px;
+}
+/* 单图（不轮播）：素材 1126×634（1.78:1）横图，桌面端图片框约 1.65:1，
+   两者比例接近，cover 之后只裁掉左右各一点点，所以取正中的 50% 即可。
+   （上一版是 1:1 方图，才需要 45% 的偏心取景；换图后这个补偿不再需要。） */
+.about-img .about-photo{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;object-position:center 50%;
+}
+/* 图片底部的「薄光晕」：一层浅淡的深蓝渐隐，只托住说明文字那一小条。
+   与早先那道 rgba(27,42,135,.8) 的厚遮罩不同 —— 那条从图片中段就开始起，
+   整块下三分之一都被压成蓝布；这层到说明文字上方才开始起雾（30% 处仅 .13），
+   照片主体（门头招牌、前台、桌面）完全不受影响，只有最底一行压到 .6 上下。
+   文字随之为纯白，靠这层薄底 + 短投影站住，不再需要给字加白描。 */
+.about-img .cap{
+  position:absolute;left:0;right:0;bottom:0;z-index:3;color:#fff;
+  padding:70px 30px 22px;
+  background-image:linear-gradient(180deg,
+    rgba(16,26,88,0) 0%,
+    rgba(17,28,94,.13) 30%,
+    rgba(18,30,102,.44) 66%,
+    rgba(20,33,110,.64) 100%);
+  /* 白字要压在三种不同的底上：白招牌（门头那张，最难的）、浅桌面、夜景玻璃。
+     近距不加描边 —— 24px 粗体加暗描会在白底上发脏；
+     靠底部这层薄蓝给它衬底，再补一道短投影把字从底上「抬」起来。 */
+  text-shadow:0 1px 3px rgba(3,8,34,.58),0 0 20px rgba(6,14,52,.42);
+}
+/* 一圈更柔的径向辉光：补在渐变下方，让「光晕」的横向边缘化开，
+   不至于在图幅两端切出直边 —— 纯渐变在宽图上贴着左右边会有硬分界。 */
+.about-img::after{
+  content:"";position:absolute;left:0;right:0;bottom:0;height:42%;z-index:2;
+  pointer-events:none;
+  background:radial-gradient(118% 132% at 50% 124%,
+    rgba(31,56,172,.34) 0%,
+    rgba(31,56,172,.17) 46%,
+    rgba(31,56,172,.05) 72%,
+    rgba(31,56,172,0) 86%);
+}
+.about-img .cap strong{display:block;font-size:22px;letter-spacing:1px;margin-bottom:6px;}
+.about-img .cap span{font-size:13px;color:rgba(226,236,255,.94);font-weight:500;}
+
+/* 单列（≤1080，栅格只剩一条轨道）时图片框改成与图同比例
+   ------------------------------------------------------------
+   桌面端框高由右侧正文撑开（约 1.65:1），和 1.78:1 的横图几乎一致，裁切可以忽略；
+   一旦变单列，框宽=屏宽、高仍是 min-height:420，390 宽的屏上就是 358×420（0.85:1），
+   cover 之后只剩中间 48% —— 铭牌上的「深圳市」「有限公司」两端都会被切掉。
+   所以这一档直接把框锁成素材比例，让整块铭牌完整入画；
+   框变矮后说明文字那条渐隐也要收窄，否则白字会盖住铭牌下半。 */
+@media (max-width:1080px){
+  .about-img{aspect-ratio:1126 / 634;min-height:0;}
+  .about-img .cap{padding:46px 20px 14px;}
+  .about-img .cap strong{margin-bottom:4px;}
+}
+/* 手机窄屏（≤600）：说明文字从「压在图上」改成「排在图下」
+   ------------------------------------------------------------
+   这张素材的铭牌一直排到画面下沿，而 ≤600 时框只有 200px 上下高，
+   那条 129px 高的渐隐会盖住「深圳市顺凯达电梯有限公司」整行。
+   所以这一档把说明挪到图外，用深宝蓝实底条承接，白字不再需要描边式补救。 */
+@media (max-width:600px){
+  .about-img{aspect-ratio:auto;min-height:0;background:#122260;}
+  .about-img .about-photo{position:static;width:100%;height:auto;display:block;}
+  .about-img::after{display:none;}
+  .about-img .cap{
+    position:static;z-index:auto;padding:13px 18px 15px;
+    background-image:linear-gradient(135deg,#122260 0%,#1a3a8f 100%);
+  }
+  .about-img .cap strong{font-size:20px;margin-bottom:3px;}
+  .about-img .cap span{font-size:13px;}
+}
+.about-txt h3{font-size:26px;color:var(--primary);margin-bottom:18px;letter-spacing:1px;}
+.about-txt p{color:var(--text-light);margin-bottom:16px;font-size:15px;}
+.about-txt p b{color:var(--primary);font-weight:600;}
+
+/* 工商信息条 */
+.company-meta{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:22px 0 24px;
+}
+.company-meta div{
+  background:var(--bg-soft);border-left:3px solid var(--cyan);border-radius:6px;
+  padding:11px 15px;font-size:13.5px;color:var(--text);
+}
+.company-meta div b{display:block;font-size:12px;color:var(--text-light);font-weight:400;margin-bottom:2px;}
+.company-meta div:nth-child(2){border-left-color:var(--orange);}
+
+.about-list{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:6px 0 22px;}
+.about-list li{
+  display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--text);
+  background:var(--bg-soft);padding:12px 14px;border-radius:6px;border-left:3px solid var(--orange);
+}
+.about-list li svg{width:18px;height:18px;flex:0 0 18px;margin-top:3px;stroke:var(--primary-3);fill:none;stroke-width:2;}
+
+/* 经营范围 */
+/* 模块底改为淡蓝灰纸面（不再纯白）：右上角一团极淡白雾 + 一道慢渐变，
+   卡片透上去才有明暗可糊，磨砂玻璃才看得见。 */
+.scope-box{
+  /* 宽屏时向两侧各溢出最多 64px：模块从 1152 拓到 1280，五张卡与下方电梯类型图
+     同步变宽。用 clamp 线性过渡而不是写死断点，缩窗口时模块宽度是连续变化的，
+     不会在某个宽度突然「跳」一下；100vw 含滚动条，但余量足够（最窄处也留 48px）。 */
+  /* 与上方「公司概况」夜景背景之间的呼吸位：夜景底边（含 3px 封边线）到本卡片
+     上沿留 68px 左右，两段各自独立、又同属一个模块，不黏在一起。
+     数值 = 图底留白 48px（见 JS 的 GAP_BOTTOM）+ 68px 间距，夜景加高时两者同步平移，
+     间距始终不变。断点收窄时同步递减，见 #about 段的媒体查询。 */
+  margin-top:116px;
+  margin-inline:clamp(-64px, calc((1248px - 100vw) * .26), 0px);
+  background:
+    radial-gradient(78% 62% at 86% 0%,rgba(255,255,255,.52),rgba(255,255,255,0) 60%),
+    linear-gradient(158deg,#ecf1fb 0%,#e7edf9 50%,#eff4fd 100%);
+  border:1px solid rgba(30,45,120,.10);border-radius:10px;
+  box-shadow:0 14px 34px rgba(20,35,90,.09);overflow:hidden;
+}
+.scope-head{
+  background:linear-gradient(100deg,var(--primary),var(--primary-2));
+  color:#fff;padding:20px 34px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+}
+.scope-head svg{width:26px;height:26px;stroke:var(--orange-light);fill:none;stroke-width:1.7;}
+/* 标题 18 → 22px、字重 600 → 700：这一行是整张卡的门头，
+   下方五张小卡的 h4 是 16.5px，只差 1.5px 时层级立不起来；
+   拉到 22px（约 h4 的 1.33 倍）后一眼能分出「这是整块叫什么」。
+   字距 1 → .6：字号变大后再保留 1px 会显得松散。 */
+.scope-head h3{font-size:22px;letter-spacing:.6px;font-weight:700;line-height:1.3;}
+.scope-head span{font-size:12.5px;color:#b6c0e6;margin-left:auto;}
+.scope-body{padding:26px 34px;}
+.scope-grid{
+  /* 五张卡的标题 / 说明文字字号只在这里定义一次，五卡同源，
+     任何断点要调也只改这两个值，不会再出现某一张卡字号跑偏 */
+  /* 标题 16.5 → 19（+15%）、正文 14 → 15.5（+11%）：上一版两者只差 2.5px，
+     比例 1.18，五张卡里「设备与配件销售」和它下面那两行几乎连成一段。
+     19 / 15.5 = 1.23，加上标题的粗体与深宝蓝、正文的常规与灰蓝，
+     一眼能分出「这是卡名、这是说明」。
+     19px 也是这一档的上限：卡内容区 196px，7 字标题 133 + 圆点 6 + 间距 7 = 146，
+     仍是一行；再往上会挤到门头 .scope-head h3 的 22px。 */
+  --scope-h4:19px;
+  --scope-p:15.5px;
+  display:grid;grid-template-columns:repeat(5,1fr);gap:18px;
+}
+/* 经营范围 · 五张小卡：白纱（半透明轻柔薄纱）+ 各自顶部实线取色的悬浮高亮
+   —— 每张卡用 --tone 记录自己顶部实线的颜色（默认湖蓝，2n 橙、3n 宝蓝，
+      规则见下方 nth-child），顶部线与 hover 高亮共用这一个变量，
+      所以五张卡规则完全一致，只是取色不同，加卡也不会错色。
+   —— 十张卡（本组 5 张 + 电梯类型 5 张）的白纱底色 / 模糊 / 描边全部引用
+      :root 里的 --veil-* 变量，改一处两处同步，永不跑偏。
+   —— 白纱是「两层」：底色 .34 的通明白 + 一层厚薄渐变（顶部 .28、中段 .06、
+      底部 .16），所以卡片有薄有厚、透得出背后的淡蓝纸面，不是一块死白。
+   —— padding / min-height / 栅格 / 顶部实线全部沿用原值。 */
+.scope-item{
+  --tone:var(--cyan);
+  position:relative;isolation:isolate;
+  /* 左右内距 20→16：五列时每张卡文字行宽 182→190px，正好每行多容一个字，
+     「技术咨询」的说明由 11/11/2 变成 13/11 两行，末行不再只剩「导。」 */
+  border-radius:8px;padding:24px 16px 22px;
+  background-color:var(--veil-tint);
+  background-image:var(--veil-sheen);
+  border-top:3px solid var(--tone);
+  -webkit-backdrop-filter:var(--veil-blur);
+          backdrop-filter:var(--veil-blur);
+  box-shadow:
+    0 0 0 1px var(--veil-line),                  /* 外圈蓝灰细边：白纱在白底上也能划界 */
+    0 10px 24px rgba(20,35,90,.08),              /* 轻投影：纱轻，投影也浅 */
+    inset 0 0 0 1px rgba(255,255,255,.72),       /* 内圈白色亮边：纱的边缘 */
+    inset 0 1px 0 rgba(255,255,255,.95);         /* 顶部一道反光 */
+  transition:transform .34s ease,box-shadow .34s ease,
+             background-color .34s ease,border-top-color .34s ease;
+  display:flex;flex-direction:column;justify-content:flex-start;min-height:232px;
+}
+/* 顶部再补一点纱的柔和感：白色部分已经压到 .06（厚重感交给 --veil-sheen），
+   只留 --tone 的 8% 让每张卡认得出自己的颜色 */
+.scope-item::before{
+  content:"";position:absolute;inset:0;border-radius:inherit;z-index:0;
+  pointer-events:none;opacity:1;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,0) 56%),
+    linear-gradient(180deg,color-mix(in srgb,var(--tone) 8%,transparent) 0%,transparent 34%);
+  transition:opacity .34s ease;
+}
+/* 悬浮高亮渐变层：只在「底部」亮起 —— 从下沿 0% 最浓，向上到 44% 处淡尽，
+   像光从桌面往上漫一小段，卡片上半部与标题区保持干净的白纱本色 */
+.scope-item::after{
+  content:"";position:absolute;inset:0;border-radius:inherit;z-index:0;
+  pointer-events:none;opacity:0;
+  background:linear-gradient(0deg,
+    color-mix(in srgb,var(--tone) 40%,transparent) 0%,
+    color-mix(in srgb,var(--tone) 14%,transparent) 22%,
+    color-mix(in srgb,var(--tone) 0%,transparent) 44%);
+  transition:opacity .34s ease;
+}
+/* 悬浮：底色不整体染色（那样满框都亮），只在底沿补一道本卡色调的细线，
+   高亮因此收在方框底部一条带上 */
+.scope-item:hover{
+  transform:translateY(-3px);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb,var(--tone) 22%,rgba(27,42,135,.08)),
+    0 16px 32px color-mix(in srgb,var(--tone) 14%,rgba(8,22,60,.10)),
+    inset 0 0 0 1px rgba(255,255,255,.82),
+    inset 0 -3px 0 color-mix(in srgb,var(--tone) 62%,transparent);
+}
+.scope-item:hover::before{opacity:.35;}
+.scope-item:hover::after{opacity:1;}
+.scope-item:nth-child(2n){--tone:var(--orange);}
+.scope-item:nth-child(3n){--tone:var(--primary-3);}
+.scope-item h4{position:relative;z-index:1;font-size:var(--scope-h4);color:var(--primary);margin-bottom:9px;letter-spacing:.5px;display:flex;align-items:center;gap:7px;}
+.scope-item h4 i{
+  width:6px;height:6px;border-radius:50%;background:var(--orange);flex:0 0 6px;
+}
+.scope-item p{
+  position:relative;z-index:1;font-size:var(--scope-p);color:var(--text-light);line-height:1.8;
+  /* 让浏览器优先避免「末行只剩一两个字」的孤行；不支持的浏览器退回普通换行，不影响版式 */
+  text-wrap:pretty;
+}
+/* 说明条：与 10 张卡同一套白纱，左侧改用橙色实线，作为整块的收尾 */
+.scope-foot{
+  margin-top:16px;padding:13px 18px;
+  background-color:var(--veil-tint);
+  background-image:var(--veil-sheen);
+  -webkit-backdrop-filter:var(--veil-blur);
+          backdrop-filter:var(--veil-blur);
+  border-radius:8px;
+  border-left:4px solid var(--orange);
+  box-shadow:
+    0 8px 20px rgba(20,35,90,.05),
+    inset 0 0 0 1px rgba(255,255,255,.72);
+  font-size:13.5px;color:var(--text);line-height:1.8;
+}
+.scope-foot b{color:var(--primary);}
+
+/* 经营范围拓展 · 可服务电梯类型 */
+.scope-types{margin-top:26px;padding-top:24px;border-top:1px dashed var(--border);}
+.types-band{
+  position:relative;aspect-ratio:1732/630;
+  border-radius:12px;overflow:hidden;
+  background:#0a1226;
+  display:flex;align-items:flex-end;
+}
+/* 底图层：比容器略大一圈，用超长周期的横向缓移做「镜头平移」，
+   与业务范围那块的 6 秒呼吸缩放刻意区分（一个推拉缩放、一个纯水平滑移） */
+.tb-bg{
+  position:absolute;left:-4%;top:-4%;width:108%;height:108%;z-index:0;
+  background:url("../assets/scope-elevator-lobby.jpg") 50% 52%/cover no-repeat;
+  animation:tbGlide 26s cubic-bezier(.45,.05,.55,.95) infinite alternate;
+  will-change:transform;
+}
+@keyframes tbGlide{
+  0%{transform:translate3d(-2%,-.8%,0);}
+  100%{transform:translate3d(2%,.8%,0);}
+}
+/* 老浏览器不支持 aspect-ratio 时的高度兜底 */
+@supports not (aspect-ratio:1732/630){
+  .types-band{height:390px;}
+}
+/* 不支持 aspect-ratio 的老浏览器：给类型卡图片区一个近似高度兜底 */
+@supports not (aspect-ratio:4/3){
+  .tc-media{height:156px;}
+}
+.types-band::before{
+  content:"";position:absolute;inset:0;z-index:1;
+  background:
+    linear-gradient(180deg,rgba(8,16,44,0) 0%,rgba(8,16,44,0) 54%,rgba(8,16,44,.07) 66%,rgba(8,16,44,.20) 75%,rgba(8,16,44,.40) 84%,rgba(7,17,52,.60) 91%,rgba(7,17,52,.72) 96%,rgba(7,17,52,.76) 100%),
+    linear-gradient(0deg,rgba(8,16,44,.02) 0%,rgba(8,16,44,.02) 100%);
+}
+/* 这句话 14.5 → 16px，最大宽度 700 → 780：整句 44 字，16px 下一行要 704px，
+   700 会把它折成两行、压到图片主体上；780 让它仍是干净的一行。
+   行高 1.8 不动，大字在照片上仍是松快的。 */
+.types-band-txt{position:relative;z-index:2;padding:0 40px 38px;max-width:780px;color:#fff;}
+.types-band-txt strong{
+  display:flex;align-items:center;gap:12px;
+  font-size:24px;font-weight:600;letter-spacing:2.4px;margin-bottom:12px;
+  text-shadow:0 1px 4px rgba(2,8,28,.85),0 2px 16px rgba(2,8,28,.7);
+}
+.types-band-txt strong::before{
+  content:"";width:4px;height:22px;border-radius:2px;background:var(--orange);flex:0 0 4px;
+}
+.types-band-txt span{display:block;font-size:16px;font-weight:500;line-height:1.8;letter-spacing:.4px;color:#fff;text-shadow:0 1px 3px rgba(2,8,28,.9),0 0 12px rgba(2,8,28,.6);}
+.types-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-top:18px;}
+/* 电梯类型卡：与上方经营范围 5 张卡共用同一套透明磨砂玻璃
+   —— 底色 rgba(255,255,255,.07)、backdrop-filter blur(26px) saturate(1.6)，
+      外圈蓝灰细边 + 内圈白亮边 + 顶部 1px 纯白反光 + 底部薄冷影，
+      与 .scope-item 的六个参数逐项对齐（透明度、模糊、描边亮度完全一致）。
+   —— 上半部是实拍图，不透明覆盖在卡片之上；玻璃感落在下方文字区与卡片四周，
+      两张卡并排时质感统一。边框仍保留 1px（改为品牌冷蓝细边），
+      不改变内宽与图片宽度，布局零位移。 */
+.type-card{
+  --tone:var(--orange);                          /* 悬浮高亮统一取品牌浅橙 */
+  position:relative;isolation:isolate;
+  background-color:var(--veil-tint);
+  background-image:var(--veil-sheen);
+  border:1px solid var(--veil-line);
+  border-radius:10px;overflow:hidden;
+  -webkit-backdrop-filter:var(--veil-blur);
+          backdrop-filter:var(--veil-blur);
+  box-shadow:
+    0 10px 24px rgba(20,35,90,.08),              /* 轻投影 */
+    inset 0 0 0 1px rgba(255,255,255,.72),       /* 内圈白色亮边 */
+    inset 0 1px 0 rgba(255,255,255,.95);         /* 顶部一道反光 */
+  text-align:center;
+  transition:transform .35s ease,box-shadow .35s ease,
+             border-color .35s ease,background-color .35s ease;
+  display:flex;flex-direction:column;
+}
+/* 悬浮高亮：只在「顶部」亮起 —— 上沿一道橙线（16px 内收软），
+   往下是浅橙晕，到图片区中段就淡尽，下方的文字区保持干净；
+   压在 z-index:1、文字在 z-index:2，文字不被染色。
+   顶线必须画在这一层上：卡片的 inset 阴影会被上方的实拍图挡住 */
+.type-card::after{
+  content:"";position:absolute;inset:0;border-radius:inherit;z-index:1;
+  pointer-events:none;opacity:0;
+  background:
+    linear-gradient(180deg,
+      color-mix(in srgb,var(--tone) 82%,transparent) 0px,
+      color-mix(in srgb,var(--tone) 26%,transparent) 3px,
+      color-mix(in srgb,var(--tone) 0%,transparent) 16px),
+    linear-gradient(180deg,
+      rgba(242,106,33,.18) 0%,
+      rgba(242,106,33,.10) 26%,
+      rgba(242,106,33,.03) 48%,
+      rgba(242,106,33,0) 62%);
+  transition:opacity .35s ease;
+}
+/* 悬浮：不再给整卡与四边描边染色（那会让底部也一起亮），
+   高亮全部交给上面那层橙罩（顶部实线 + 顶部晕），集中在方框上方一条带 */
+.type-card:hover{
+  transform:translateY(-5px);
+  box-shadow:
+    0 18px 36px color-mix(in srgb,var(--tone) 14%,rgba(8,22,60,.10)),
+    inset 0 0 0 1px rgba(255,255,255,.84);
+}
+.type-card:hover::after{opacity:1;}
+/* 图片区：两张图每 2 秒交叉淡入淡出，纯 CSS 实现，不占额外脚本 */
+.tc-media{position:relative;aspect-ratio:4/3;overflow:hidden;background:#e8eef7;}
+.tc-media img{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;
+  opacity:0;animation:tcFade 4s ease-in-out infinite;transition:transform .8s ease;
+}
+.tc-media img:first-child{opacity:1;}
+.tc-media img:last-child{animation-delay:-2s;}
+.type-card:hover .tc-media img{transform:scale(1.05);}
+@keyframes tcFade{
+  0%,44%{opacity:1}
+  50%,94%{opacity:0}
+  100%{opacity:1}
+}
+@media (prefers-reduced-motion:reduce){
+  .tc-media img{animation:none;}
+  .tc-media img:first-child{opacity:1;}
+  .type-card:hover .tc-media img{transform:none;}
+}
+/* 文字区补一层极淡的顶部反光，与 .scope-item 的 ::before 同参数（.06 → 透明），
+   让上下两组白纱卡的底色亮度落在同一档 */
+.tc-body{
+  position:relative;z-index:2;                   /* 高于悬浮橙罩，文字不被染色 */
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:16px 12px 18px;
+  background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,0) 72%);
+}
+.type-card svg{
+  display:block;width:26px;height:26px;margin:0 0 9px;
+  stroke:var(--primary-3);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;
+}
+/* 类型卡文字 15 / 12.5 → 17 / 14：五张卡并排，标题是卡名、下面一行是适用场景，
+   12.5px 在截图里几乎要凑近才认得出。17 与下方经营范围卡的 19 同属一个量级，
+   14 也追上了卡宽（内容区约 196px，一行能容 14 字，场景说明不会折得太碎）。 */
+.type-card h5{font-size:17px;font-weight:600;color:var(--primary);letter-spacing:.6px;margin-bottom:7px;}
+.type-card p{font-size:14px;line-height:1.7;color:var(--text-light);}
+
+/* ============================================================
+   业务范围 · 顶部横幅（带字成图，只去掉原公司名橙框）
+   ------------------------------------------------------------
+   与「企业介绍」页的 .about-banner 同一套做法：
+     · 高度取共用的 --banner-h（见 :root），两页横幅严格等高；
+     · 容器只负责「满幅 + cover 裁切」，不叠任何渐变 / 暗角 / 渐隐。
+       原来那套「顶部竖纱 + 全幅平纱 + 底部 44px 渐隐 + 入场缩放」
+       在文字下移那一轮已全部撤掉，本轮也没有加回来。
+     · 素材 services-banner-skd-warm-v4.jpg（2400×1090，2.2:1）：
+       图上是三行文字 —— 英文眉标 / 12 字主标题（深宝蓝）/
+       四条优势（正蓝 + 橙点）。文案：持证经营 · 全链条服务 ·
+       7×24 小时应急响应 · 规范维保。最下方公司名橙框已整块去掉
+       —— 白字离开橙底就不可读，留着等于一块白影，所以连字一起撤。
+       英文眉标四个词按下方中文四段对齐、词间留 150 净空并用橙点分隔，
+       颜色由 #EA5A00 加深到 #BA3A00（浅墙上对比从 1.6:1 提到 2.6:1）。
+     · 同一目录的 ...-v4-clean.jpg 是无字底图，窄屏与备用时使用。
+   ============================================================ */
+.svc-banner{
+  position:relative;
+  width:100%;
+  height:var(--banner-h);
+  /* 图未解码前先铺画面上占比最大的暖石材色：不闪白，也不闪黑 */
+  background-color:#efe8dc;
+  /* 用带字版（英文眉标 / 主标题 / 四条优势合成在图里，公司名橙框已去掉）。
+     文字在图内，所以取景不能随便裁 —— 下面的 42% 是按「三行字都不被切」
+     反推出来的，不是拍照习惯值。 */
+  background-image:url("../assets/services-banner-skd-warm-v4.jpg");
+  background-size:cover;
+  /* 纵向落点 42%：文字整体偏上，取 42% 让裁切优先吃掉底部的地面反光，
+     保住顶部短句那一行。各档实测裁掉的量（原图像素，上/下）：
+       1440×540  46 / 68      1920×640  97 / 135
+       2560×640 220 / 303     1280×432  62 / 87
+     最紧的 2560 档顶部英文上沿仍在画面内 41px；若改回 50%，
+     超宽屏会把最上面那行橙色英文推出画外。 */
+  background-position:center 42%;
+  background-repeat:no-repeat;
+  overflow:hidden;
+}
+
+/* 文字层默认关闭：>900 看到的是图里烘好的三行字，
+   这一层只在 ≤900 打开（见下面的 @media），两层互斥、不会重影。 */
+.svc-banner__txt{display:none;}
+
+/* ============================================================
+   业务范围横幅 · ≤900 换「无字底图 + 真实文字」
+   ------------------------------------------------------------
+   为什么必须换：成图是 2.2:1 的宽幅，而横幅在 ≤900 这一档由高度驱动
+   （--banner-h = 96vw，顶封 440），cover 之后横向只剩原图的四成多 ——
+   主标题两端会被切掉一两个字，四条优势也会跟着出画；若只靠缩小图里的字，
+   字号会掉到 10px 上下，糊成一片。
+   换成 HTML 文字后，字号用 clamp 跟着屏宽走，从 320 到 900 都不会裁切、
+   不会溢出，行距和两侧留白也始终一致。
+   ============================================================ */
+@media (max-width:900px){
+  .svc-banner{
+    background-image:url("../assets/services-banner-skd-warm-v4-clean.jpg");
+    background-position:center 50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  /* 暖白柔纱：门框是深钢色，深蓝字直接压上去会发闷。
+     只提亮文字所在的中段（中心最厚、四周散开），
+     顶上的天花与底下的地面仍保留照片本身的明暗，不至于糊成一块白纸。 */
+  .svc-banner::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    z-index:1;
+    background:radial-gradient(115% 82% at 50% 50%,
+      rgba(255,251,243,.72) 0%,
+      rgba(255,251,243,.58) 36%,
+      rgba(255,251,243,.20) 72%,
+      rgba(255,251,243,0) 100%);
+    pointer-events:none;
+  }
+  .svc-banner__txt{
+    position:relative;
+    z-index:2;
+    display:block;
+    width:100%;
+    max-width:min(560px, calc(100% - 44px));
+    text-align:center;
+  }
+  /* 英文眉标：与图里同色，字号偏小、字距略开，两行断在词与词之间。
+     色值直接用 #BA3A00 而不是 var(--orange)：图里那行已加深一档，
+     这里若还用商标橙 #EA5A00，手机与桌面会是两种橙。 */
+  .svc-banner__eb{
+    margin:0 0 clamp(11px, 2vw, 16px);
+    font-size:clamp(9.5px, 2.55vw, 14px);
+    font-weight:700;
+    line-height:1.75;
+    letter-spacing:.1em;
+    color:#ba3a00;
+  }
+  /* 主标题：与图里同色（深宝蓝），两行各 7~8 字，最宽 8 字仍留白 */
+  .svc-banner__ttl{
+    margin:0 0 clamp(16px, 2.8vw, 26px);
+    font-size:clamp(22px, 6.6vw, 40px);
+    font-weight:800;
+    line-height:1.32;
+    letter-spacing:.01em;
+    color:#122260;
+    /* 图里主标题带一层暖白光晕，这里用同样的手法把字从浅底上托起来，
+       比描边柔和，缩小后也不会糊成一圈 */
+    text-shadow:
+      0 0 10px rgba(255,251,243,.95),
+      0 1px 3px rgba(255,251,243,.75);
+  }
+  /* 四条优势：两列自动宽度，整块居中；圆点用实心橙点（8px 下画环+芯认不出来） */
+  .svc-banner__pts{
+    display:grid;
+    grid-template-columns:auto auto;
+    justify-content:center;
+    gap:clamp(9px, 1.6vw, 14px) clamp(16px, 2.4vw, 26px);
+    margin:0;
+    padding:0;
+    list-style:none;
+    font-size:clamp(12.5px, 3.2vw, 18px);
+    font-weight:700;
+    line-height:1.5;
+    color:#144080;                            /* 与成图里四条同色 */
+  }
+  .svc-banner__pts li{
+    display:flex;
+    align-items:center;
+    white-space:nowrap;
+  }
+  .svc-banner__pts li::before{
+    content:"";
+    flex:none;
+    width:.5em;
+    height:.5em;
+    margin-right:.5em;
+    border-radius:50%;
+    background:var(--orange);
+  }
+}
+
+/* 五项业务一行排开：五张卡统一为「白色磨砂半透明」——白色底纱 + 背景模糊，
+   晚霞与城市在纱下化开成一层柔光，不再是原来那层偏深的暗纱。
+   因为底色翻白，卡内文字同步改深（标题深宝蓝、正文深灰），
+   否则白字压在浅纱上会糊成一片；五张卡共用同一组变量，样式天然一致。 */
+/* 五张卡要装下「特种设备安装、改造、大修」这一整行标题（18px × 12 字 = 216px，
+   卡片内容区必须 ≥216 才排得进一行）。把这一段的容器放宽到 1400、列间距收到 16、
+   卡内左右内边距收到 17，1440 视口下卡片 258、内容区 224，标题才有 8px 余量。
+   只有这一节放宽，其余区块仍是 1200，避免整站版心被拉散。 */
+#services>.container{max-width:min(1400px, calc(100% - 48px));}
+.services-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;align-items:stretch;}
+.svc-card{
+  /* 纯白实底（原来是压在夜景上的半透明磨砂）：
+     照片搬进上方横幅后，卡片落在浅色纸面上，
+     这里若还留一层半透明白，底下的淡蓝会透上来、卡面发灰，
+     白字也就不是白了。纯白 + 1px 冷色描边 + 一层向下偏的柔影，
+     轮廓靠这三样撑住 —— 顺带自然省掉了五层 backdrop-filter。 */
+  background:#fff;
+  border:1px solid #e6ecf7;
+  border-radius:14px;padding:24px 17px 26px;
+  box-shadow:0 12px 28px -16px rgba(16,38,86,.26),0 1px 2px rgba(16,38,86,.05);
+  transition:background .35s ease,box-shadow .35s ease,transform .35s ease,border-color .35s ease;
+  position:relative;overflow:hidden;
+  display:flex;flex-direction:column;
+}
+.svc-card::before{
+  content:"";position:absolute;left:0;top:0;width:100%;height:3px;
+  background:linear-gradient(90deg,var(--orange),var(--cyan));transform:scaleX(0);
+  transform-origin:left;transition:transform .4s ease;
+}
+.svc-card:hover{
+  transform:translateY(-6px);background:#fff;border-color:#d6e1f3;
+  box-shadow:0 26px 48px -22px rgba(16,38,86,.34),0 2px 6px rgba(16,38,86,.06);
+}
+.svc-card:hover::before{transform:scaleX(1);}
+.svc-icon{
+  width:46px;height:46px;border-radius:11px;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,rgba(27,42,135,.10),rgba(30,170,240,.18));margin-bottom:15px;
+}
+.svc-icon svg{width:24px;height:24px;stroke:var(--primary-2);fill:none;stroke-width:1.7;}
+.svc-card:nth-child(2n) .svc-icon{background:linear-gradient(135deg,rgba(242,106,33,.12),rgba(242,106,33,.20));}
+.svc-card:nth-child(2n) .svc-icon svg{stroke:var(--orange);}
+/* 标题不再让浏览器平衡断行：五个标题在 1440 以上都能排进一行，
+   第 5 张（12 字）是最长的那个 —— 18px × 12 字 = 216px 整（CJK 字宽恒等于字号，
+   跨系统不会变），卡片内容区 222px，留 6px 余量；1440 以下整段改三列，内容区更宽。
+   所以这里不再预留「两行高」：min-height 收到一行（1.45em），标题与正文之间的
+   那段 26px 死空隙一并收掉 —— 标题和它下面那段话才是一组，贴紧才读得出层级。
+   万一某档真的折行，卡片有 align-items:stretch 兜着，不会整排错位。 */
+.svc-card h3{font-size:18px;line-height:1.45;min-height:1.45em;color:var(--primary);margin-bottom:10px;letter-spacing:0;}
+/* 标题下的正文与列表各提一档（15→16 / 15.5→16）：白纱底下压着夜景，
+   原来的字号偏小、偏细，截图里要凑近才读得清。字重 500 —— 标题是 700，
+   标题 18 对正文 16，加上字重与深宝蓝/深灰的色差，层级一眼能分出来。
+   字重写在第 2170 行附近的 #services 覆盖规则里（那条特异性更高）。 */
+.svc-card p{font-size:16px;line-height:1.75;color:var(--text-light);margin-bottom:13px;}
+.svc-card ul{margin-top:auto;}
+.svc-card ul li{font-size:16px;line-height:1.7;color:var(--text-light);padding-left:16px;position:relative;margin-bottom:7px;text-wrap:pretty;}
+.svc-card ul li::before{
+  content:"";position:absolute;left:0;top:.72em;width:4.5px;height:4.5px;border-radius:50%;background:var(--cyan);
+}
+.svc-card:nth-child(2n) ul li::before{background:var(--orange);}
+
+/* ============================================================
+   运行保障 · 智能梯控演示
+   ============================================================ */
+/* 蓝紫纸面：以蓝为主、紫只作尾韵（色相 231~237）——
+   上一版在底色上叠了两团会漂移的径向光球（monitorDriftA/B），当初是为了「让玻璃有东西可化」；
+   卡片改成干净白纱之后，这两团光就只剩副作用：圆形柔边在深底上是一块看得见的雾，
+   再叠上色彩阶，整块就「蒙」了。这一版把光球与相应 keyframes 全部删掉，
+   只留一条纯竖向的线性渐变 —— 没有圆心、没有斑块，任何一行像素横向都是同一个颜色，
+   所以画面是平的、干净的、透的。
+   ── 上下两端怎么和邻居接上 ──
+   上端：上方「业务范围」是原图直铺、底部贴齐的夜景（水岸），实测那一行像素平均
+   #534652；本区块原先把起点写成 #6f5f68（亮度差 25 级），所以交界处看到一条横线。
+   现在起点直接取 #534652，再用 12% 的缓坡往 #464c70 走 —— 只变色相（暖紫灰 → 蓝紫），
+   亮度几乎不动，因此坡上看不出「亮带」，只是很自然地滑进来。
+   下端：区块底色再淡也还是深色，硬切到白色永远是一条边。这一版把背景挪到 ::before，
+   用 mask 让它在最后一段渐变到完全透明 —— 底下露出的就是页面底那层浅色渐变本身，
+   不是「渐变成白」，所以接缝处的颜色天然相等，没有色差可挑；再叠一条缓入缓出的
+   alpha 曲线，深色是「化开」的而不是「切掉」的。
+   渐隐高度受内容约束（实测卡片下沿到区块底：桌面 130px、≤1240 宽 112px、≤640 宽 96px），
+   所以按断点收放成 120 / 102 / 88，始终留出 8~10px 空隙，绝不压到卡片和下方那行小字上。
+   主体仍是纯竖向匀速渐变：没有圆心、没有斑块，任何一行像素横向都是同一个颜色。
+   末段之所以不再往上抬：14px 正文是 95% 白，底色一旦亮过 L .13 就掉到 4.5:1 以下。 */
+#monitor{
+  --mon-edge:120px;
+  --mon-in:96px;
+  position:relative;overflow:hidden;isolation:isolate;
+  background:transparent;
+  border-top:0;
+  /* 底部留白 88 → 116：多出的 28px 全给渐隐带，
+     卡片下沿仍离渐变起点 10px，不会被「漂白」；这个区块因此高了 28px。 */
+  padding-bottom:116px;
+}
+#monitor::before{
+  content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+  /* 首行色 #3f4560（原 #534652）：上游从晚霞图换成了浅色「维保周期」卡片，
+     暖紫灰失去了「接照片」的依据，改为接浅色纸面 —— 偏蓝的过渡更自然。 */
+  background:linear-gradient(180deg,
+      #3f4560 0%,#404761 1.6%,#424a66 3.4%,#444c6b 6%,#454d6e 9%,#464c70 12%,
+      #494f73 30%,#4c5277 44%,#4f557b 58%,#52587f 72%,
+      #555b83 86%,#585e87 94%,#5b618a 98%,#5e648d 100%);
+  /* 顶部渐入（--mon-in，96px）：上方是浅色卡片，深紫若直接起头
+     就是一条硬边；用与底部同一套 smoothstep 曲线从透明渐入，
+     深色是「化上来」的而不是「切出来」的。 */
+  -webkit-mask-image:linear-gradient(180deg,
+      rgba(0,0,0,0) 0%,
+      rgba(0,0,0,.019) calc(var(--mon-in) * .08),
+      rgba(0,0,0,.067) calc(var(--mon-in) * .16),
+      rgba(0,0,0,.143) calc(var(--mon-in) * .24),
+      rgba(0,0,0,.257) calc(var(--mon-in) * .32),
+      rgba(0,0,0,.352) calc(var(--mon-in) * .40),
+      rgba(0,0,0,.463) calc(var(--mon-in) * .48),
+      rgba(0,0,0,.579) calc(var(--mon-in) * .56),
+      rgba(0,0,0,.696) calc(var(--mon-in) * .64),
+      rgba(0,0,0,.808) calc(var(--mon-in) * .72),
+      rgba(0,0,0,.896) calc(var(--mon-in) * .80),
+      rgba(0,0,0,.958) calc(var(--mon-in) * .88),
+      rgba(0,0,0,.99) calc(var(--mon-in) * .94),
+      #000 var(--mon-in),
+      #000 calc(100% - var(--mon-edge)),
+      rgba(0,0,0,.99) calc(100% - var(--mon-edge) * .94),
+      rgba(0,0,0,.958) calc(100% - var(--mon-edge) * .88),
+      rgba(0,0,0,.896) calc(100% - var(--mon-edge) * .80),
+      rgba(0,0,0,.808) calc(100% - var(--mon-edge) * .72),
+      rgba(0,0,0,.696) calc(100% - var(--mon-edge) * .64),
+      rgba(0,0,0,.579) calc(100% - var(--mon-edge) * .56),
+      rgba(0,0,0,.463) calc(100% - var(--mon-edge) * .48),
+      rgba(0,0,0,.352) calc(100% - var(--mon-edge) * .40),
+      rgba(0,0,0,.257) calc(100% - var(--mon-edge) * .32),
+      rgba(0,0,0,.143) calc(100% - var(--mon-edge) * .24),
+      rgba(0,0,0,.067) calc(100% - var(--mon-edge) * .16),
+      rgba(0,0,0,.019) calc(100% - var(--mon-edge) * .08),
+      rgba(0,0,0,0) 100%);
+  mask-image:linear-gradient(180deg,
+      rgba(0,0,0,0) 0%,
+      rgba(0,0,0,.019) calc(var(--mon-in) * .08),
+      rgba(0,0,0,.067) calc(var(--mon-in) * .16),
+      rgba(0,0,0,.143) calc(var(--mon-in) * .24),
+      rgba(0,0,0,.257) calc(var(--mon-in) * .32),
+      rgba(0,0,0,.352) calc(var(--mon-in) * .40),
+      rgba(0,0,0,.463) calc(var(--mon-in) * .48),
+      rgba(0,0,0,.579) calc(var(--mon-in) * .56),
+      rgba(0,0,0,.696) calc(var(--mon-in) * .64),
+      rgba(0,0,0,.808) calc(var(--mon-in) * .72),
+      rgba(0,0,0,.896) calc(var(--mon-in) * .80),
+      rgba(0,0,0,.958) calc(var(--mon-in) * .88),
+      rgba(0,0,0,.99) calc(var(--mon-in) * .94),
+      #000 var(--mon-in),
+      #000 calc(100% - var(--mon-edge)),
+      rgba(0,0,0,.99) calc(100% - var(--mon-edge) * .94),
+      rgba(0,0,0,.958) calc(100% - var(--mon-edge) * .88),
+      rgba(0,0,0,.896) calc(100% - var(--mon-edge) * .80),
+      rgba(0,0,0,.808) calc(100% - var(--mon-edge) * .72),
+      rgba(0,0,0,.696) calc(100% - var(--mon-edge) * .64),
+      rgba(0,0,0,.579) calc(100% - var(--mon-edge) * .56),
+      rgba(0,0,0,.463) calc(100% - var(--mon-edge) * .48),
+      rgba(0,0,0,.352) calc(100% - var(--mon-edge) * .40),
+      rgba(0,0,0,.257) calc(100% - var(--mon-edge) * .32),
+      rgba(0,0,0,.143) calc(100% - var(--mon-edge) * .24),
+      rgba(0,0,0,.067) calc(100% - var(--mon-edge) * .16),
+      rgba(0,0,0,.019) calc(100% - var(--mon-edge) * .08),
+      rgba(0,0,0,0) 100%);
+}
+@media (max-width:1240px){#monitor{--mon-edge:102px;--mon-in:72px;padding-bottom:112px;}}
+#monitor .container{position:relative;z-index:1;}
+#monitor .sec-head .tag{color:var(--orange-light);}
+#monitor .sec-head h2{color:#f4f7ff;}
+#monitor .sec-head h2::after{background:linear-gradient(90deg,#5c8cff,var(--orange));}
+/* 底色又减淡两层后，说明文字同步提亮（.87 → .92），实测 5.6:1，小字也压得住 */
+#monitor .sec-head p{color:rgba(238,244,255,.92);}
+
+.monitor-wrap{display:grid;grid-template-columns:1fr 1.04fr;gap:64px;align-items:center;}
+.monitor-metrics{display:flex;flex-direction:column;gap:24px;margin-bottom:36px;}
+.monitor-metrics > div{border-left:2px solid rgba(255,255,255,.34);padding-left:18px;}
+.monitor-metrics b{
+  display:block;font-size:33px;line-height:1.1;color:#f5f8ff;letter-spacing:1px;font-weight:700;
+}
+.monitor-metrics b em{font-style:normal;font-size:15px;font-weight:500;color:var(--orange-light);margin-left:5px;letter-spacing:0;}
+.monitor-metrics strong{display:block;font-size:16px;font-weight:500;color:rgba(242,246,255,.97);letter-spacing:.5px;margin-top:4px;}
+.monitor-metrics p{font-size:14px;color:rgba(233,239,251,.95);line-height:1.75;margin-top:4px;text-wrap:balance;}
+
+/* 演示外框：干净的白纱（不再是磨砂）
+   上一版靠 backdrop-filter:blur(20px) 把底色糊开做「磨砂」，代价是框内一切都发虚，
+   再叠一层 soft-light 噪点，整块卡片的观感就是「隔了层毛玻璃」。
+   这一版把模糊和噪点一起撤掉：框体只是一层均匀的半透明白（.51 → .45）。
+   背后那条竖向渐变本来就没有细节可糊，所以去掉 blur 后整体明度几乎不变，
+   但边缘、文字、线条立刻变清晰；边界靠 1px 白描边 + 外投影交代，
+   不依赖「框内比框外亮多少」，在白底和深底上都能立住。 */
+.lift-stage{
+  position:relative;
+  background:linear-gradient(180deg,rgba(255,255,255,.51) 0%,rgba(255,255,255,.45) 100%);
+  border:1px solid rgba(255,255,255,.62);
+  border-radius:18px;padding:20px 20px 14px;
+  box-shadow:
+    0 22px 48px rgba(3,8,26,.26),
+    0 4px 12px rgba(3,8,26,.10);
+}
+.lift-stage .shaft{
+  height:330px;border-radius:10px;
+  /* 井道：干净的白色纸面（第二层）——
+     原来 .62/.54/.50 的乳白磨砂 + blur(10px)，刻度线是「透过雾看」；
+     现在改成 .78 的均匀白，背后的渐变直接透上来而不被糊开，
+     1F→30F 的刻度与里程碑线是清晰的深色，不再是雾里的灰。
+     内阴影一并去掉：那是「玻璃内发光」的做法，会让小字边缘发毛。 */
+  background:linear-gradient(180deg,rgba(255,255,255,.78) 0%,rgba(255,255,255,.72) 100%);
+  border-left:1.5px solid rgba(116,152,232,.55);
+  border-right:1.5px solid rgba(116,152,232,.55);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.70);
+}
+/* 井道内部的线：导轨虚线、层高虚线、里程碑横线三档拉开——
+   导轨（中缝）#1f9fe0 加粗到 5/12 的节奏，层高线是浅灰蓝虚点，里程碑线最深最实，
+   一串 1F→30F 读下来能一眼分出「主刻度 / 次刻度」 */
+#monitor .shaft::before{
+  background:repeating-linear-gradient(180deg,rgba(74,110,214,.30) 0 5px,transparent 5px 13px);
+}
+#monitor .shaft .floor{border-top-color:rgba(28,40,108,.10);}
+/* 里程碑横线加到 2px 并压深：乳白磨砂底上 .32 的紫线几乎看不见，.62 才立得住；
+   当前楼层那条直接换成橙线，和胶囊标签一起走 */
+#monitor .shaft .milestone{border-top:2px solid rgba(54,86,196,.62);}
+/* 到站那条线给到 .95 并把橙晕放大一档：白纱井道上 .58 的橙线只算「偏暖」，
+   算不上高亮，要压过相邻的蓝线才能一眼认出车停在哪层 */
+#monitor .shaft .milestone.active{
+  border-top-color:rgba(242,106,33,.95);
+  box-shadow:0 2px 8px rgba(242,106,33,.40),0 0 1px rgba(242,106,33,.65);
+}
+#monitor .shaft .milestone b{
+  color:#25305f;background:rgba(255,255,255,.82);border-color:rgba(54,86,196,.34);
+  box-shadow:0 1px 2px rgba(28,40,108,.10);
+}
+#monitor .shaft .milestone.active b{
+  color:#d9541a;background:rgba(255,244,236,.94);border-color:rgba(242,106,33,.62);
+  box-shadow:0 1px 5px rgba(242,106,33,.22);
+}
+#monitor .car{
+  box-shadow:0 0 10px rgba(96,138,232,.18),0 2px 5px rgba(26,38,92,.09),
+             inset 0 0 0 2px rgba(26,38,92,.18),inset 0 2px 4px rgba(255,255,255,.9);
+}
+.lift-caption{
+  position:relative;z-index:1;                     /* 压在磨砂颗粒层之上，小字不发毛 */
+  display:flex;align-items:center;gap:8px;margin-top:12px;
+  font-size:12.5px;color:rgba(32,38,58,.92);letter-spacing:.6px;
+}
+.lift-caption i{
+  width:6px;height:6px;border-radius:50%;background:#28a06a;flex:0 0 6px;
+  box-shadow:0 0 7px rgba(40,160,106,.55);animation:liftPulse 1.8s ease-in-out infinite;
+}
+@keyframes liftPulse{0%,100%{opacity:.35;transform:scale(.85);}50%{opacity:1;transform:scale(1);}}
+@media (prefers-reduced-motion:reduce){.lift-caption i{animation:none;opacity:1;}}
+
+/* 硬指标条：深紫块内容之下、渐隐之上的三格横带 ——
+   左栏三条竖排是「承诺的语感」（7×24 / 30 分钟 / 全周期），
+   这格排是「事实的语感」（许可范围 / 覆盖区域 / 在保台量），
+   竖三横三，两个维度不重复。响应时效与 30 分钟、台账与全周期故意不在这里再出现。
+   （原第四格「累计项目」已删：数字长期是 XXX 占位，反而削弱可信度） */
+.mon-facts{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:54px;
+}
+/* 三格与右侧演示框（.lift-stage）用同一套「透明白纱」：
+   半透明白 ≈.51 → .45 + 62% 白描边，不糊底、不加噪点。
+   这一块底下是一整片平滑的紫色渐变，既没有细节可糊（blur 等于零），
+   噪点也只会在深底上浮出一层灰；反倒是这层薄白纱本身就够了 ——
+   它和上方演示框连成同一族材质，一竖三横读起来才是一套。
+
+   底色拆成「background-color + 极淡竖向渐变」而不是一整条 linear-gradient：
+   渐变之间不可插值，悬停换背景会硬切；拆开之后白色只靠 background-color
+   过渡，抬亮时是平滑长出来的。
+   文字用近黑（标题 #0A0E17 / 说明 #161B2A），白纱上对比 15:1 以上，
+   18px / 14.5px 的字阶放在 372px 宽的格里，标题与说明都是一眼即读。 */
+.mon-facts > div{
+  border:1px solid rgba(255,255,255,.62);
+  background-color:rgba(255,255,255,.46);
+  background-image:linear-gradient(180deg,rgba(255,255,255,.10) 0%,rgba(255,255,255,0) 100%);
+  border-radius:12px;padding:18px 20px 16px;
+  box-shadow:0 14px 30px rgba(3,8,26,.16),0 4px 12px rgba(3,8,26,.08);
+  transition:border-color .30s ease,background-color .35s ease,
+             box-shadow .35s ease,transform .30s ease;
+}
+/* 标题：近黑 #0F1729 + 左侧一道橙色小竖条。
+   实测卡片合成底色是 rgb(167,171,191)（不是纯白），以它为基准算对比：
+   近黑 7.85:1，而橙色文字只有 1.75:1、商标亮橙 1.3:1 —— 橙在这块灰紫玻璃上
+   做不到「又橙又清楚」，所以橙色退出字形、改做识别标记：
+   文字用最稳的近黑承担阅读，橙条负责第一眼定位，一竖一条就够。
+   竖条用绝对定位放在卡片左内距里（left:-12px，距卡片边 8px），
+   标题文字左缘一动不动 —— 若改成「条 + 间隙」的行内结构，标题会比说明文字
+   右移 13px，两行左缘就错开了；而卡片内宽只有 332px，整体右移又会让
+   第一格说明在 1440 下提前折行。绝对定位两者都不碰。 */
+.mon-facts b{
+  position:relative;
+  display:block;font-size:18px;font-weight:500;color:#0F1729;letter-spacing:.3px;
+}
+.mon-facts b::before{
+  content:"";position:absolute;left:-12px;top:50%;margin-top:-8px;
+  width:3px;height:16px;border-radius:2px;
+  background:linear-gradient(180deg,var(--orange-light) 0%,var(--orange) 100%);
+}
+.mon-facts span{
+  display:block;margin-top:6px;font-size:14.5px;line-height:1.62;
+  color:#161B2A;text-wrap:pretty;
+}
+/* 悬浮：三件事同时发生 —— 边框转橙并加一圈同色描边（读成「边框加粗」）、
+   白纱抬 10 个点、整块上浮 3px 带橙调柔影。字色不动，避免阅读时闪烁。
+   三个量都压在「一眼能看出、但不跳」的区间内，时长 .3–.35s。 */
+@media (hover:hover){
+  .mon-facts > div:hover{
+    border-color:rgba(242,106,33,.90);
+    background-color:rgba(255,255,255,.56);
+    box-shadow:0 0 0 1px rgba(242,106,33,.28),
+               0 16px 32px rgba(3,8,26,.18),
+               0 10px 24px rgba(242,106,33,.16);
+    transform:translateY(-3px);
+  }
+}
+/* 点按：边框再实一档、白纱再抬 6 个点，改为「压回去 1px」的回弹感 */
+.mon-facts > div:active{
+  border-color:rgba(242,106,33,1);
+  background-color:rgba(255,255,255,.62);
+  box-shadow:0 0 0 2px rgba(242,106,33,.30),
+             0 4px 12px rgba(3,8,26,.14),
+             0 8px 20px rgba(242,106,33,.18);
+  transform:translateY(-1px);
+}
+/* 只去掉位移，颜色与亮度的反馈保留 */
+@media (prefers-reduced-motion:reduce){
+  .mon-facts > div:hover,
+  .mon-facts > div:active{transform:none;}
+}
+/* 三格在窄屏落成两列会剩一个孤儿位，让第三格横跨整行 */
+@media (max-width:900px){
+  .mon-facts{grid-template-columns:repeat(2,1fr);gap:12px;}
+  .mon-facts > div:last-child{grid-column:1 / -1;}
+}
+@media (max-width:520px){
+  .mon-facts{grid-template-columns:1fr;}
+  .mon-facts > div:last-child{grid-column:auto;}
+}
+
+/* ============================================================
+   项目案例 · 已服务项目（按业态分组）
+   只放真实客户照片，不再补示例金额、工期、中标年份 —— 那是编的内容。
+   四组顺序固定：商业综合体 → 住宅小区 → 医疗教育 → 工业厂房。
+   卡片沿用全站语言（1px 边框 + 12px 圆角 + 纯白底 + hover 上浮），
+   图片统一 4:3 裁切，长宽比一致，所以换行、换屏都不会错位。
+   ============================================================ */
+.case-groups{display:flex;flex-direction:column;gap:56px;}
+.case-group__head{
+  display:flex;align-items:baseline;gap:14px;
+  padding-bottom:14px;border-bottom:1px solid var(--border);margin-bottom:22px;
+}
+.case-group__no{
+  font-size:12px;font-weight:700;letter-spacing:2px;color:var(--primary-3);
+  font-variant-numeric:tabular-nums;
+}
+.case-group__head h3{font-size:19px;font-weight:600;color:var(--primary);letter-spacing:1.5px;}
+.case-group__count{margin-left:auto;font-size:13px;color:var(--text-light);letter-spacing:.5px;}
+/* 三列而非四列：卡片从 273px 提到 368px（+35%），照片才是这个区块的主角。
+   四列时 1080 断点下每张只有 195px，缩略图像素被压得太狠、看不清楚。 */
+.case-gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+.case-shot{
+  margin:0;background:#fff;
+  border:1px solid var(--border);border-radius:12px;overflow:hidden;
+  /* 静态就带一层极浅投影：白卡浮在浅色渐变底上，边缘才有「相框」的实体感 */
+  box-shadow:0 3px 12px rgba(27,42,135,.055);
+  transition:transform .35s ease,box-shadow .35s ease,border-color .35s ease;
+}
+.case-shot:hover{transform:translateY(-5px);box-shadow:var(--shadow-lg);border-color:#c9d2ef;}
+.case-shot img{
+  display:block;width:100%;aspect-ratio:4/3;object-fit:cover;
+  background:var(--bg-soft);            /* 懒加载未到位时是浅色块，不是白洞 */
+  transition:transform .5s ease;
+}
+.case-shot:hover img{transform:scale(1.035);}
+/* 图注固定两行高并居中：项目名长短不一（「金龙酒店」vs「格兰云天 X-INN 创客栈酒店」），
+   不定高会让同一行的卡片底部参差 */
+.case-shot figcaption{
+  display:flex;align-items:center;justify-content:center;text-align:center;
+  min-height:3.1em;padding:13px 16px;font-size:14.5px;line-height:1.5;
+  color:var(--text);letter-spacing:.3px;
+}
+
+/* ============================================================
+   资质展示
+   ============================================================ */
+.qual-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;}
+.qual-card{
+  background:rgba(255,255,255,var(--glass-flat));border:1px solid var(--border);border-radius:8px;padding:22px 18px;text-align:center;
+  transition:all .35s;position:relative;
+}
+.qual-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-6px);border-color:rgba(30,170,240,.6);}
+.qual-paper{
+  height:170px;border:2px solid #d9e0f4;border-radius:4px;background:linear-gradient(180deg,#fdfdff,#f2f5fd);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;
+  position:relative;overflow:hidden;margin-bottom:16px;
+}
+.qual-paper::before{
+  content:"";position:absolute;top:10px;right:10px;width:46px;height:46px;border-radius:50%;
+  border:2px solid rgba(30,170,240,.35);
+}
+.qual-paper::after{
+  content:"★";position:absolute;top:20px;right:24px;font-size:18px;color:rgba(242,106,33,.55);
+}
+.qual-paper svg{width:38px;height:38px;stroke:var(--primary-2);fill:none;stroke-width:1.4;margin-bottom:10px;}
+.qual-paper .q-name{font-size:13px;color:var(--primary);font-weight:600;letter-spacing:.5px;line-height:1.6;}
+.qual-paper .q-no{font-size:11px;color:#7d88b5;margin-top:6px;}
+.qual-card h4{font-size:15px;color:var(--primary);margin-bottom:6px;}
+.qual-card p{font-size:12.5px;color:var(--text-light);}
+/* 第 4 张：链接到信用资质证书专页 */
+.qual-card--certs{display:block;text-decoration:none;color:inherit;cursor:pointer;}
+.qual-card--certs p{color:var(--primary-3);font-weight:600;}
+.qual-card--certs .q-view{display:block;margin-top:5px;font-size:12px;font-weight:600;color:var(--primary-3);letter-spacing:.5px;}
+
+/* ============================================================
+   服务流程
+   ============================================================ */
+.flow{display:grid;grid-template-columns:repeat(6,1fr);gap:16px;position:relative;}
+.flow-item{text-align:center;position:relative;}
+.flow-item .step{
+  width:66px;height:66px;margin:0 auto 16px;border-radius:50%;
+  border:2px solid rgba(30,170,240,.55);display:flex;align-items:center;justify-content:center;
+  font-size:22px;font-weight:700;color:var(--primary-2);background:#fff;
+  box-shadow:0 8px 20px rgba(27,42,135,.08);transition:all .3s;
+}
+.flow-item:hover .step{background:var(--orange);border-color:var(--orange);color:#fff;transform:scale(1.08);box-shadow:0 12px 24px rgba(242,106,33,.28);}
+.flow-item h4{font-size:16px;margin-bottom:8px;color:var(--primary);font-weight:500;letter-spacing:1px;}
+/* 六步说明句 13 → 14.5px：这一段是六张「小卡片」里唯一的正文，
+   13px 在 179px 的窄列里缩成一团灰字，几乎读不进去；
+   14.5px 仍低于 16px 的环节名（字重与字距也在分级），
+   行高收到 1.7，两行之间更紧凑、整块不至于被拉长。 */
+.flow-item p{font-size:14.5px;line-height:1.7;color:var(--text-light);text-wrap:pretty;}
+/* 六列每列只有 179px，「年检与复审代办、换证指引、改造升级建议」这句在
+   14.5px 下正好把「指引」劈成「换证指 / 引」；给这一个词加 nowrap，
+   浏览器会整体挪到第二行（换证 / 指引、改造升级建议），不影响其它列。 */
+.flow-item p .nw{white-space:nowrap;}
+.flow-item:not(:last-child)::after{
+  content:"";position:absolute;top:33px;left:calc(50% + 40px);right:calc(-50% + 40px);height:1px;
+  background:linear-gradient(90deg,rgba(30,170,240,.45),rgba(30,170,240,.1));
+}
+/* 第 5 步「验收交付」下的交付物小标签已删（验收报告 / 使用登记证 / 维保台账）——
+   三步流程已有「自检 + 特检院验收取证、资料移交」一句说清，
+   再挂三个胶囊只是把同一句话说第二遍，且六列里只有第 5 步有，节奏也不齐。 */
+/* 内页流程底部的「回首页看服务概览」回链已删：导航里本就有「首页」，
+   这条链接既不是必要路径、又给六步流程多加了一层落款，反而拖节奏。 */
+
+/* 首页 · 服务流程极简条：细线贯穿 + 六个圆点，序号在上、标题在下。
+   首页只负责「30 秒知道有标准流程」，细节全部交给业务范围页 #process；
+   这条线也承担首页唯一的节奏停顿 —— 从 hero 到页脚的卡片海里的一处静笔。
+
+   竖向节奏（改大后按像素排定，三个数必须互相对齐）：
+     序号 0–21（15px × 1.4）；圆点 29–53（20px + 2px 边 → 24px 盒，中心 41）；
+     连线 top:40 height:2 → 中心 41；标题从 66 起 → margin-top 45（= 66 − 21）。 */
+.flow-mini{max-width:960px;margin:0 auto;text-align:center;}
+.flow-mini ol{
+  list-style:none;margin:0;padding:0;
+  display:grid;grid-template-columns:repeat(6,1fr);position:relative;
+}
+.flow-mini ol::before{
+  content:"";position:absolute;left:8.33%;right:8.33%;top:40px;height:2px;border-radius:1px;
+  background:linear-gradient(90deg,rgba(27,42,135,.28),rgba(242,106,33,.45));
+}
+.flow-mini li{position:relative;}
+/* 序号 11.5 → 15px、字距收到 1.2：原来细如脚注，和下方 14.5px 的环节名
+   层级几乎持平；放大后「第几步」先被看见，环节名跟上。 */
+.flow-mini .n{display:block;font-size:15px;line-height:1.4;font-weight:600;letter-spacing:1.2px;color:#5F6884;}
+/* 圆点 13 → 20px（含 2px 边共 24px 盒）。默认白底品牌描边；
+   hover 时实心填充 + 外圈光环，是整个模块唯一可交互的反馈点。 */
+.flow-mini li::after{
+  content:"";position:absolute;left:50%;top:29px;transform:translateX(-50%);
+  width:20px;height:20px;border-radius:50%;background:#fff;
+  border:2px solid var(--primary);box-shadow:0 0 0 4px #fff;
+  transition:background .28s ease,border-color .28s ease,box-shadow .28s ease,transform .28s cubic-bezier(.34,1.4,.64,1);
+}
+.flow-mini li:last-child::after{border-color:var(--orange);}
+.flow-mini b{display:block;margin-top:45px;font-size:15px;font-weight:500;color:var(--primary);letter-spacing:.5px;transition:color .28s ease;}
+.flow-mini li:last-child b{color:var(--orange);}
+
+/* 悬浮：不再用深色实心填满（20px 的深块压在这条细线上太重），
+   改成「浅蓝玻璃珠」——浅蓝渐变填充 + 蓝色描边 + 顶部白色内高光，
+   底色比页面浅底明显更蓝、但仍透得出底下的连线，是「亮起来」而不是「变实心」。
+   末档同理，换成橙色系。放大 1.16 与淡光环保留，反馈依旧明显。 */
+.flow-mini li:hover::after{
+  background:linear-gradient(155deg,rgba(214,226,255,.80) 0%,rgba(160,186,255,.76) 48%,rgba(128,160,255,.80) 100%);
+  border-color:rgba(66,102,222,.86);
+  box-shadow:
+    0 0 0 4px #fff,
+    0 0 0 10px rgba(72,110,235,.18),
+    0 8px 20px rgba(43,74,199,.22),
+    inset 0 2px 6px rgba(255,255,255,.92);
+  transform:translateX(-50%) scale(1.16);
+}
+.flow-mini li:last-child:hover::after{
+  background:linear-gradient(155deg,rgba(255,232,208,.94) 0%,rgba(255,192,142,.90) 48%,rgba(255,168,106,.94) 100%);
+  border-color:rgba(220,116,30,.86);
+  box-shadow:
+    0 0 0 4px #fff,
+    0 0 0 10px rgba(242,106,33,.18),
+    0 8px 20px rgba(226,120,20,.22),
+    inset 0 2px 6px rgba(255,255,255,.92);
+}
+.flow-mini li:hover .n{color:var(--primary);}
+.flow-mini li:last-child:hover .n{color:var(--orange);}
+.flow-mini li:hover b{color:var(--primary);}
+.flow-mini li:last-child:hover b{color:var(--orange);}
+/* 系统开启「减少动态效果」时只保留颜色变化，不做缩放 */
+@media (prefers-reduced-motion:reduce){
+  .flow-mini li::after,
+  .flow-mini li:hover::after{transition:background .2s ease,border-color .2s ease;transform:translateX(-50%);}
+}
+.flow-mini-link{
+  display:inline-flex;align-items:center;gap:7px;margin-top:38px;
+  font-size:14px;color:var(--orange);transition:gap .25s ease;
+}
+.flow-mini-link:hover{gap:11px;}
+.flow-mini-link svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+@media (max-width:700px){
+  .flow-mini ol{grid-template-columns:repeat(3,1fr);gap:30px 0 6px;}
+  .flow-mini ol::before{display:none;}
+  .flow-mini li:nth-child(n+4) .n{margin-top:8px;}
+}
+
+/* ============================================================
+   电梯安全科普
+   ============================================================ */
+.safe-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;}
+.safe-card{
+  background:rgba(255,255,255,var(--glass-flat));border:1px solid var(--border);border-radius:10px;padding:28px 30px;transition:all .35s;
+}
+.safe-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-5px);}
+.safe-head{display:flex;align-items:center;gap:12px;margin-bottom:18px;}
+.safe-ico{
+  width:46px;height:46px;flex:0 0 46px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,rgba(27,42,135,.09),rgba(30,170,240,.16));
+}
+.safe-card:nth-child(2n) .safe-ico{background:linear-gradient(135deg,rgba(242,106,33,.1),rgba(242,106,33,.17));}
+.safe-ico svg{width:24px;height:24px;stroke:var(--primary-2);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
+.safe-card:nth-child(2n) .safe-ico svg{stroke:var(--orange);}
+.safe-head h3{font-size:18px;color:var(--primary);letter-spacing:1px;}
+.safe-card ul li{
+  font-size:14px;color:var(--text-light);padding-left:18px;position:relative;
+  margin-bottom:9px;line-height:1.85;
+}
+.safe-card ul li::before{
+  content:"";position:absolute;left:0;top:11px;width:6px;height:6px;border-radius:50%;background:var(--cyan);
+}
+.safe-card ul li b{color:var(--primary);font-weight:600;}
+.safe-card ul li.warn::before{background:#e0331c;}
+
+/* 应急处置提示条 */
+.sos-bar{
+  margin-top:26px;border-radius:10px;padding:22px 28px;
+  background:linear-gradient(100deg,#1b2a87,#2438a8 58%,#1eaaf0);
+  display:flex;align-items:center;gap:18px;flex-wrap:wrap;
+}
+.sos-ico{
+  width:52px;height:52px;flex:0 0 52px;border-radius:50%;background:rgba(255,255,255,.16);
+  border:2px solid rgba(255,255,255,.7);display:flex;align-items:center;justify-content:center;
+  animation:pulse 2s infinite;
+}
+.sos-ico svg{width:26px;height:26px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;}
+@keyframes pulse{
+  0%{box-shadow:0 0 0 0 rgba(255,255,255,.4);}
+  70%{box-shadow:0 0 0 14px rgba(255,255,255,0);}
+  100%{box-shadow:0 0 0 0 rgba(255,255,255,0);}
+}
+.sos-txt{flex:1;min-width:260px;}
+.sos-txt strong{display:block;color:#fff;font-size:17px;letter-spacing:1px;margin-bottom:4px;}
+.sos-txt p{font-size:13.5px;color:#dbe2f8;}
+.sos-txt p b{color:#ffd0ae;}
+
+/* 红头文件资料 */
+.doc-panel{
+  margin-top:30px;background:rgba(255,255,255,var(--glass-flat));border:1px solid var(--border);border-radius:10px;
+  overflow:hidden;box-shadow:var(--shadow);
+}
+.doc-head{
+  background:var(--bg-soft);border-bottom:1px solid var(--border);padding:18px 26px;
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;
+}
+.doc-head h3{font-size:17px;color:var(--primary);letter-spacing:1px;display:flex;align-items:center;gap:9px;}
+.doc-head h3 svg{width:20px;height:20px;stroke:#d92c17;fill:none;stroke-width:1.7;}
+.doc-head span{font-size:12.5px;color:var(--text-light);}
+.doc-list li{
+  display:flex;align-items:center;gap:16px;padding:18px 26px;
+  border-bottom:1px solid var(--border);transition:background .25s;
+}
+.doc-list li:last-child{border-bottom:none;}
+.doc-list li:hover{background:#f8fafc;}
+.doc-ico{
+  width:46px;height:58px;flex:0 0 46px;border:1px solid #f0c4b4;border-radius:3px;
+  background:linear-gradient(180deg,#fff9f6,#fdeee7);display:flex;align-items:center;justify-content:center;
+  position:relative;
+}
+.doc-ico svg{width:22px;height:22px;stroke:#d92c17;fill:none;stroke-width:1.6;stroke-linecap:round;}
+.doc-ico::after{
+  content:"官方";position:absolute;top:-9px;left:50%;transform:translateX(-50%);
+  font-size:9px;background:#d92c17;color:#fff;padding:1px 5px;border-radius:2px;letter-spacing:1px;
+}
+.doc-main{flex:1;min-width:220px;}
+.doc-main h4{font-size:16px;color:var(--primary);line-height:1.6;margin-bottom:5px;}
+.doc-main .meta{font-size:12.5px;color:var(--text-light);}
+.doc-no{
+  display:inline-block;background:#fdeee7;color:#d92c17;border:1px solid #f4d2c5;
+  font-size:11.5px;padding:1px 8px;border-radius:3px;margin-right:8px;
+}
+.doc-link{
+  flex:0 0 auto;padding:8px 18px;border:1px solid var(--primary-2);color:var(--primary-2);
+  border-radius:4px;font-size:13.5px;display:inline-flex;align-items:center;gap:6px;transition:all .3s;
+}
+.doc-link svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;}
+.doc-link:hover{background:var(--primary-2);color:#fff;border-color:var(--primary-2);}
+.doc-note{
+  padding:14px 26px;font-size:12.5px;color:var(--text-light);background:#fbfcfd;
+  border-top:1px dashed var(--border);
+}
+
+/* ============================================================
+   联系我们
+   ============================================================ */
+/* 两栏等高：左栏 4 条联系方式决定行高，右栏地图 stretch 撑满 ——
+   地图上沿与第 1 条齐平、下沿与第 4 条齐平，差值为 0。
+   （右栏原本是在线留言表单，r63 整块删除；地图从左上角下方挪到这里。）
+   地图改成绝对定位铺满父盒：父盒高度由网格行高（= 左栏）决定，
+   iframe 不会反过来把自己的 340px 撑成行高。 */
+.contact-wrap{display:grid;grid-template-columns:1fr 1fr;gap:46px;align-items:stretch;}
+.contact-info .item{
+  display:flex;gap:16px;padding:13px 0;border-bottom:1px dashed var(--border);
+}
+.contact-info .item:last-of-type{border-bottom:none;}
+.contact-info .ico{
+  width:46px;height:46px;flex:0 0 46px;border-radius:8px;background:var(--bg-soft);
+  display:flex;align-items:center;justify-content:center;
+}
+.contact-info .ico svg{width:22px;height:22px;stroke:var(--primary-2);fill:none;stroke-width:1.7;}
+/* 栏目标题 14 → 16px：四个小标题加大一号，与下方 16px 的加粗内容重新咬合；
+   颜色仍用浅灰蓝，保持「标签—内容」的层级不被标题抢走 */
+.contact-info h4{font-size:16px;color:var(--text-light);font-weight:400;margin-bottom:5px;letter-spacing:.2px;}
+.contact-info p{font-size:16px;color:var(--primary);font-weight:600;}
+.contact-info .sub{font-size:13px;color:var(--text-light);font-weight:400;margin-top:3px;}
+.map-box{
+  height:100%;min-height:288px;border-radius:8px;border:1px solid var(--border);
+  overflow:hidden;position:relative;background:#e9eef7;
+}
+/* 交互式位置图（Leaflet + 高德瓦片）
+   —— 画布铺满方框，拖动 / 滚轮 / 双击 / 双指都能缩放，未登录也不会有登录墙。
+   画布自带一张静态位置图做背景：单块瓦片取不到时由它兜底，不会露出大片白底。 */
+.map-box .map-canvas{
+  position:absolute;inset:0;z-index:0;
+  background:#e9eef7 url("../assets/company-map.jpg") 50% 50%/cover no-repeat;
+}
+.map-box .map-canvas.leaflet-container{background-color:#e9eef7;font:inherit;}
+.map-box .map-canvas:focus{outline:none;}
+.map-box .amap-tile{will-change:auto;}
+
+/* 定位针：divIcon 里的内联 SVG，iconAnchor 与针尖对齐（见 js/map.js） */
+.map-box .map-pin-wrap{background:none;border:0;}
+.map-box .map-pin-ico{
+  display:block;width:44px;height:56px;
+  filter:drop-shadow(0 7px 10px rgba(9,17,40,.32));
+}
+
+/* 信息卡：跟着针走的 Leaflet tooltip，内容是真实文本，任何屏幕下都不糊 */
+.map-box .leaflet-tooltip.map-card{
+  display:flex;flex-direction:column;gap:5px;
+  width:max-content;max-width:232px;white-space:normal;
+  padding:11px 15px 13px;border:0;border-radius:12px;
+  background:rgba(255,255,255,.97);color:var(--primary);
+  box-shadow:0 12px 28px rgba(9,17,40,.20),inset 0 0 0 1px rgba(27,42,135,.08);
+  pointer-events:none;
+}
+.map-box .leaflet-tooltip.map-card::before{border-top-color:rgba(255,255,255,.97);}
+.map-box .leaflet-tooltip.map-card em{
+  font-style:normal;align-self:flex-start;padding:2px 9px;border-radius:99px;
+  background:var(--orange);color:#fff;font-size:11px;font-weight:600;letter-spacing:.6px;
+}
+.map-box .leaflet-tooltip.map-card strong{font-size:15.5px;line-height:1.35;color:var(--primary);letter-spacing:.2px;}
+.map-box .leaflet-tooltip.map-card > span{font-size:12.5px;line-height:1.45;color:#4a526c;}
+
+/* 缩放按钮：右上角，白底圆角，和站内配色统一 */
+.map-box .leaflet-control-zoom{
+  border:0;border-radius:8px;overflow:hidden;
+  box-shadow:0 4px 14px rgba(9,17,40,.22);margin:10px 10px 0 0;
+}
+.map-box .leaflet-control-zoom a{
+  width:34px;height:34px;line-height:33px;font-size:19px;font-weight:400;
+  color:#1b2a87;background:rgba(255,255,255,.96);border-bottom:1px solid #e6e9f1;
+}
+.map-box .leaflet-control-zoom a:hover{background:#fff;color:#f26a21;}
+.map-box .leaflet-control-zoom a:last-child{border-bottom:0;}
+
+/* 底部浮条：只压住地图最下一条，不另占高度，左栏底边仍与地图框底沿对死。
+   一层 pointer-events:none，让浮条本身不吃拖拽手势，只有按钮可点。 */
+.map-actions{position:absolute;left:10px;right:10px;bottom:10px;z-index:600;
+  display:flex;align-items:flex-end;justify-content:space-between;gap:10px;flex-wrap:wrap;
+  pointer-events:none;}
+.map-actions .map-hint{pointer-events:none;font-size:12px;font-weight:500;line-height:1.45;color:#2b3452;
+  background:rgba(255,255,255,.9);
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+  padding:5px 10px;border-radius:6px;box-shadow:0 2px 10px rgba(9,17,40,.14);}
+.map-actions .map-open{pointer-events:auto;font-size:13px;font-weight:600;color:#fff;background:var(--primary);padding:7px 14px;border-radius:6px;text-decoration:none;transition:background .2s,box-shadow .2s;box-shadow:0 3px 10px rgba(27,42,135,.32);}
+.map-actions .map-open:hover{background:var(--primary-2);box-shadow:0 4px 14px rgba(27,42,135,.4);}
+/* 表单卡（在线留言）已整体移除：对应的 .form-card / .form-row / .form-group /
+   .form-note / .form-status / .is-error 规则一并删掉，页面上不再有表单，
+   也不再有 mailto 提交逻辑（js/site.js 里那一段同步删除）。
+   右栏现在放地图，与左栏四条联系方式上下对齐。 */
+
+/* 平板这一档地图被拉成 1032×320 的扁条，信息卡收一档，
+   保证卡片不越出框沿（手机档另有更小的尺寸） */
+@media (min-width:521px) and (max-width:1080px){
+  .map-box .leaflet-tooltip.map-card{padding:9px 13px 10px;gap:3px;max-width:214px;}
+  .map-box .leaflet-tooltip.map-card em{font-size:10px;padding:2px 8px;}
+  .map-box .leaflet-tooltip.map-card strong{font-size:14.5px;}
+  .map-box .leaflet-tooltip.map-card > span{font-size:11.5px;}
+}
+
+/* ============================================================
+   页脚
+   ============================================================ */
+/* 页脚：跟深色区块同一色相（240 左右），比区块最深一档再压暗，收住整页 */
+/* 深色区块整体减淡后，页脚跟着抬一档，避免底部过重 */
+.footer{background:#1d235c;color:#a9b1cd;padding:0 0 0;}
+/* 页脚口号条 */
+.footer-slogan{
+  background:linear-gradient(90deg,var(--orange),#ff8f47 55%,var(--cyan));
+  padding:16px 0;
+}
+.footer-slogan .container{display:flex;align-items:center;justify-content:center;gap:14px;}
+.footer-slogan svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:1.8;}
+.footer-slogan strong{color:#fff;font-size:19px;letter-spacing:8px;font-weight:700;}
+/* 页脚第四栏已从「关注我们 + 二维码」改为「联系方式」纯文字，列宽随之收窄一档 */
+.footer-grid{display:grid;grid-template-columns:1.7fr 1fr 1fr .95fr;gap:40px;padding:50px 0 40px;}
+.footer h4{color:#fff;font-size:16px;margin-bottom:18px;letter-spacing:1px;font-weight:600;}
+.footer p{font-size:13.5px;line-height:2;}
+.footer ul li{font-size:13.5px;padding:5px 0;}
+.footer ul li a:hover{color:var(--orange-light);}
+.footer .f-logo{display:flex;align-items:center;gap:14px;margin-bottom:18px;
+  background:rgba(255,255,255,.96);border-radius:8px;padding:10px 16px;width:fit-content;}
+.footer .f-logo img{height:40px;width:auto;}
+.footer .f-logo strong{color:var(--primary);font-size:15px;letter-spacing:.5px;line-height:1.35;display:block;}
+.footer .f-logo small{color:var(--text-light);font-size:10px;letter-spacing:1.5px;}
+/* .footer .qr 公众号二维码方框已整体删除（不再有扫码关注入口），样式同步移除 */
+.footer-bottom{
+  border-top:1px solid rgba(255,255,255,.1);padding:18px 0;text-align:center;font-size:12.5px;
+  display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;
+}
+
+/* ============================================================
+   回到顶部 / 侧边悬浮
+   ============================================================ */
+.side-float{
+  position:fixed;right:18px;bottom:80px;z-index:900;display:flex;flex-direction:column;gap:10px;
+}
+.side-float a{
+  width:48px;height:48px;border-radius:8px;background:#fff;box-shadow:var(--shadow);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  font-size:10px;color:var(--primary-2);transition:all .3s;
+}
+.side-float a svg{width:20px;height:20px;stroke:var(--primary-2);fill:none;stroke-width:1.7;}
+.side-float a:hover{background:var(--primary);color:#fff;}
+.side-float a:hover svg{stroke:#fff;}
+#toTop{opacity:0;visibility:hidden;transition:all .3s;}
+#toTop.show{opacity:1;visibility:visible;}
+
+/* 动画 */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease;}
+.reveal.in{opacity:1;transform:none;}
+
+/* ============================================================
+   响应式
+   ============================================================ */
+@media (min-width:1800px){
+  .hero-bg{background-position:center 8%;}
+}
+
+@media (max-width:1240px){
+  /* 这一段原来靠缩字号硬塞五列；现在 1399 以下已经减成三列，
+     卡片宽到 350~400，再缩字反而显小，所以字号与内边距回到基础值。 */
+  .services-grid{gap:18px;}
+  .hero .container{grid-template-columns:minmax(0,1fr);gap:40px;}
+  .hero-txt h1{font-size:30px;}
+  .elevator{max-width:640px;justify-self:center;}
+  .hero-txt .desc{max-width:760px;}
+  .qual-grid{grid-template-columns:repeat(2,1fr);}
+  .scope-grid{grid-template-columns:repeat(3,1fr);gap:16px;}
+  .scope-item{min-height:0;padding:22px 18px 20px;}
+  .scope-body{padding:24px 26px;}
+  .flow{grid-template-columns:repeat(3,1fr);gap:28px;}
+  .flow-item:not(:last-child)::after{display:none;}
+  .footer-grid{grid-template-columns:1fr 1fr;}
+}
+@media (max-width:1080px){
+  /* 移动端下拉菜单：与导航条同一块白色（滚动后的白底态），
+     面板里一律深色字，不跟随「顶部透明态」变白 */
+  .nav{
+    position:fixed;top:var(--nav-h);left:0;right:0;
+    background:#fff;
+    -webkit-backdrop-filter:blur(22px) saturate(1.2);
+            backdrop-filter:blur(22px) saturate(1.2);
+    border-bottom:1px solid rgba(27,42,135,.10);
+    flex-direction:column;align-items:stretch;padding:12px 20px 20px;gap:2px;
+    box-shadow:0 18px 38px rgba(20,30,90,.16);
+    z-index:2;
+    transform:translateY(-14px);opacity:0;visibility:hidden;transition:all .28s;
+    max-height:calc(100vh - var(--nav-h));overflow-y:auto;
+  }
+  .nav.open{transform:none;opacity:1;visibility:visible;}
+  .nav a{padding:12px 6px;border-bottom:1px solid rgba(27,42,135,.07);}
+  /* #nav 的 id 权重压过「顶部透明态」的白字规则，保证白面板里字是深的 */
+  #nav a{color:#333a52;}
+  #nav a.active{color:var(--primary);}
+  .nav a:hover{background:none;}
+  .nav a::after{display:none;}
+  .nav .tel{margin:12px 0 0;justify-content:center;}
+  .hamburger{display:block;}
+  /* 首页导航悬浮在图上后，首屏内容要让开这 74px，商标卡才不会被压住 */
+  .header--over + .hero{padding-top:calc(56px + var(--nav-h));}
+  .hero{
+    min-height:auto;padding:56px 0;
+  }
+  .hero-bg{background-size:132% auto;background-position:left top;}
+  .hero-txt{width:440px;max-width:100%;padding:34px 26px 38px;border-radius:16px;}
+  .hero .container{padding-top:20px;padding-bottom:72px;}
+  .hero-txt h1{font-size:26px;letter-spacing:.2px;}
+  .slogan strong{font-size:17px;letter-spacing:3px;}
+  .hero-badges{gap:14px;}
+  .stats-box{grid-template-columns:1fr 1fr;margin-top:-40px;}
+  .stats-box .item:nth-child(2){border-right:none;}
+  .stats-box .item:nth-child(-n+2){border-bottom:1px solid var(--border);}
+  .about-wrap,.contact-wrap{grid-template-columns:1fr;gap:34px;}
+  /* 单列后地图独占一行，父盒不再由左栏定高（绝对定位的画布没有固有高度），
+     给一个固定高度，避免塌成一条扁带；340 是信息卡（99）+ 定位针（56）
+     上下叠起来之后还需要留白的最小值 */
+  .map-box{height:340px;}
+  .case-gallery{gap:16px;}
+  .section{padding:64px 0;}
+  .sec-head h2{font-size:27px;}
+  /* 浮动按钮贴到底部：原来 bottom:60 时正好压在首屏介绍文字的右端，
+     把「负责。」这类末字盖住；下移之后与正文错开 */
+  .side-float{right:8px;bottom:10px;gap:8px;}
+  .side-float a{width:40px;height:40px;}
+  .footer-slogan strong{font-size:16px;letter-spacing:5px;}
+}
+/* 平板/窄屏：三列在这个宽度下每张只剩 220px 上下，照片又缩回去了，
+   所以 768 以下切两列，卡片回到 330px 左右，和图册放大的初衷一致。 */
+@media (max-width:768px){
+  .case-gallery{grid-template-columns:1fr 1fr;gap:14px;}
+}
+@media (max-width:560px){
+  .hero-txt{width:auto;justify-self:stretch;}
+  .hero .hero-txt .sub{font-size:13.5px;}
+}
+@media (max-width:640px){
+  .container{padding:0 16px;}
+  .topbar{font-size:12px;}
+  .topbar .tb-right{display:none;}
+  .logo-img{height:44px;padding:3px 5px;border-radius:9px;}
+  .logo-txt strong{font-size:16px;}
+  .logo-txt small{font-size:8.5px;letter-spacing:.6px;white-space:nowrap;}
+  .hero-logo{gap:11px;width:auto;max-width:100%;padding:9px 12px;border-radius:10px;}
+  .hero-logo img{height:28px;}
+  /* 手机不再另给一档白度：统一引用 --glass-hero，四端透光一致 */
+  /* 手机：纵向留出余量，把塔尖移出画面顶边，避免一根亮针从卡片上方探出 */
+  .hero-bg{background-size:auto 138%;background-position:14% 44%;}
+  .hero-logo .divi{height:30px;}
+  .hero-logo .hl-txt strong{font-size:14px;letter-spacing:.5px;white-space:nowrap;}
+  .hero-logo .hl-txt small{font-size:8px;letter-spacing:.3px;white-space:nowrap;}
+  .hero-txt h1{font-size:22px;letter-spacing:.2px;}
+  .hero .hero-txt .sub{font-size:14px;letter-spacing:0;white-space:nowrap;}
+  .slogan{padding:9px 16px;border-radius:10px;}
+  .slogan strong{font-size:15px;letter-spacing:2px;}
+  .slogan svg{width:16px;height:16px;flex:0 0 16px;}
+  .hero-txt .sub{font-size:16px;}
+  .hero-txt .desc{font-size:15px;line-height:1.85;}
+  .hero-badges div{font-size:13.5px;}
+  .elevator-head span{font-size:15px;}
+  .elevator-foot{font-size:14px;gap:6px 10px;}
+  .hero-btns .btn{flex:1;justify-content:center;padding:12px 16px;font-size:14px;}
+  .stats-box{grid-template-columns:1fr 1fr;}
+  /* 手机地图只剩 358 宽，说明胶囊与按钮一行放不下会叠成两层、盖掉半张图，
+     这一档收掉说明，只留右下角那颗导航按钮 */
+  .map-actions .map-hint{display:none;}
+  .map-actions{justify-content:flex-end;}
+  /* 手机上框只有 358 宽，信息卡收一档；框高再抬到 380，
+     让「定位针 + 上方信息卡」这一竖排在 320 高时不会顶出框沿 */
+  .map-box{height:380px;}
+  .map-box .leaflet-tooltip.map-card{padding:9px 12px 11px;gap:4px;max-width:186px;}
+  .map-box .leaflet-tooltip.map-card em{font-size:10px;padding:2px 8px;}
+  .map-box .leaflet-tooltip.map-card strong{font-size:14px;}
+  .map-box .leaflet-tooltip.map-card > span{font-size:11.5px;}
+  .map-box .leaflet-control-zoom a{width:32px;height:32px;line-height:31px;font-size:18px;}
+  .stats-box .num{font-size:30px;}
+  .services-grid,.safe-grid,.qual-grid,.scope-grid{grid-template-columns:1fr;}
+  /* 单列时卡片很宽，一行能排二十来字，末行容易只剩两三个字；
+     交给 balance 把两行拉齐，手机上不会有「半截尾巴」 */
+  .scope-item p{text-wrap:balance;}
+  /* 案例图册在手机上保持两列：四个分组共 20 张，单列会拉出十几次滑动 */
+  .case-gallery{grid-template-columns:1fr 1fr;gap:12px;}
+  .case-groups{gap:40px;}
+  .case-group__head h3{font-size:17px;letter-spacing:1px;}
+  .case-shot figcaption{font-size:13px;padding:9px 10px;}
+  .svc-card{padding:24px 22px 26px;}
+  .svc-card h3{font-size:20px;min-height:0;}
+  /* 单列时卡片更宽（约 266 内容区），正文比桌面再大一档（16→17 / 16→17.5），
+     与桌面「标题 20、正文 17」的粗细关系保持不变 */
+  .svc-card p{font-size:17px;line-height:1.8;}
+  .svc-card ul{margin-top:0;}
+  .svc-card ul li{font-size:17.5px;line-height:1.72;}  .flow{grid-template-columns:1fr 1fr;}
+  .about-list,.company-meta{grid-template-columns:1fr;}
+  .form-row{grid-template-columns:1fr;}
+  .footer-grid{grid-template-columns:1fr;gap:26px;}
+  .footer-bottom{justify-content:center;text-align:center;}
+  .section{padding:52px 0;}
+  .sec-head{margin-bottom:36px;}
+  .sec-head h2{font-size:23px;}
+  .shaft{height:260px;}
+  .safe-card{padding:22px 20px;}
+  .scope-body{padding:20px;}
+  .scope-head{padding:18px 20px;}
+  /* 窄屏收到 20px：22px 时「电梯服务经营范围」八个字在 390 宽下会挤到图标边上换行 */
+  .scope-head h3{font-size:20px;letter-spacing:.4px;}
+  .scope-head svg{width:23px;height:23px;}
+  /* 小字换到第二行后齐着卡片左边缘排，会跟被图标推开 35px（23px 图标 + 12px 间距）
+     的标题错开，看着像悬空。补同样的左缩进，两行文字左边缘对齐。 */
+  .scope-head span{margin-left:0;width:100%;padding-left:35px;}
+  .doc-list li{flex-wrap:wrap;}
+  .doc-main{flex-basis:100%;}
+  .doc-link{width:100%;justify-content:center;}
+  .footer-slogan strong{font-size:14px;letter-spacing:3px;}
+}
+
+/* ============================================================
+   关于我们 · 顶部横幅（企业介绍页：导航条正下方的一张横版背景图）
+   ------------------------------------------------------------
+   这一版只留照片本身，不叠任何渐变 / 暗角 / 径向压暗 / 底部渐隐：
+     · 素材 about-banner-gaolou.jpg —— 客户提供的《夜景仰拍高楼》
+       原图（1732×1155，1.5:1），**未做任何调色 / 光影 / 锐化处理**，
+       原样使用；只在容器层面做 cover 裁切。
+       选它的理由：四栋塔楼从四个角向中心汇聚，正中留出一条
+       竖直的深蓝夜空，标题正好落在天空上（对比度 6:1 以上），
+       不必再靠字影硬撑；右侧楼体的橙色灯带又与品牌橙呼应；
+     · 容器只负责「铺满 + 居中裁切」，不参与修图：宽度永远满幅，
+       高度用视口高度驱动，cover 只裁不拉，任何屏宽都不变形；
+       原图 1.5:1、横幅约 2.67:1，纵向只会保留中间约 56%
+       （1920 大屏约 50%），所以纵向落点必须挑准 —— 见
+       background-position 的注释；
+     · 文字可读性交给字形本身的硬投影（见 .about-banner__title），
+       不用整幅压暗去换对比度。
+   ============================================================ */
+.about-banner{
+  position:relative;
+  /* 不再用 flex 居中排标题：标题改成绝对定位（见 .about-banner__title），
+     这样「容器几何中心」和「字形墨迹中心」都能各自对齐，不被 flex 的
+     line-box 分配规则牵着走。横幅内没有别的子元素，去掉 flex 不影响版式。 */
+  width:100%;
+  /* 导航条是全站统一的白底玻璃条（正常文档流），照片从白条下沿开始铺，
+     不再上提到导航底下；横幅可见高度与原先一致。 */
+  /* 高度用视口高度驱动：宽屏用 vw 会把横幅撑到视口的八成、窄笔电又把图压扁，
+     改用 60vh 让各尺寸下横幅都稳定占到首屏的 2/3 左右。
+     具体数值不写在这里，统一取 --banner-h（见 :root），
+     这样「业务范围」页的横幅与它天生等高，改一处两页同步。 */
+  height:var(--banner-h);
+  background-color:#1b2440;                   /* 图未解码前先铺夜色底，不闪白 */
+  background-image:url("../assets/about-banner-gaolou.jpg");
+  background-size:cover;
+  /* 纵向落点定在 60%：1440 屏实测这一档标题区背景亮度最低（37/255，
+     92 分位仅 72），四栋楼的楼角正好从四个方向围住中央的深空带，
+     标题不会压到任何灯窗。往上（40%~50%）会顶到右上楼的中段、
+     往下（70%~80%）左侧楼体过满、右上楼的塔尖会被切掉。 */
+  background-position:center 60%;
+  background-repeat:no-repeat;
+  overflow:hidden;
+  isolation:isolate;
+}
+
+/* 标题：白色 + 贴边硬影，压住灯窗高光，但不给画面加任何遮罩。
+   两层都是短距离投影（1px 描边感 + 4px 落影），字形边缘保持干净。 */
+.about-banner__title{
+  /* 绝对定位居中：left/top 各 50%，再用 translate 把自身盒子的中心压到容器
+     中心 —— 与横幅宽度、字号、屏宽都无关，永远精确居中，不依赖 flex 的
+     line-box 分配。
+     纵向那 -0.05em 是光学校正：中文字形的 descent 比 ascent 短，纯几何居中
+     时整块墨迹会往下沉约 1~2px，看起来"稍低"；上提 0.05em（44px 字号时约
+     2.2px）后，四个字连同投影的重心正好落在横幅正中的水平线上。
+     实测 1920/1600/1440/1280/1080/900/768/390 八档，墨迹中心与横幅中心
+     的偏差都在 1px 上下。 */
+  position:absolute;
+  left:50%;
+  top:50%;
+  /* 横向那 +0.02em 同样是光学校正：四个字的字形本身左右留白不等（「关」的
+     左撇比「们」的右竖收得早），排版上居中后墨迹仍偏左约 1px，右推 0.02em
+     刚好抵平；纵向 -0.05em 见上。两者都随字号等比缩放，各档一致。 */
+  transform:translate(calc(-50% + .02em),calc(-50% - .05em));
+  z-index:2;
+  margin:0;
+  /* 字重放在中等（600）+ 两层投影：原 800 字重配 2px 实色描边在密集灯窗上
+     偏抢眼，现在靠「贴字 1px 晕影勾边 + 大范围扩散影压落影」，远看有轮廓、
+     近看不生硬。
+     字号：横幅这 4 个字是整页唯一的视觉锚点，1440 屏做到 44px（原 36px，
+     +22%）。上限压在 44 是实测的：再大，字的左右两端就会蹭到右侧那栋楼的
+     亮窗，标题周围那圈干净的深空就没了。下限 28 保证手机/平板上它仍是
+     一句完整的标题、而不是一行小字。vw 系数 3.05 让 1440 正好落在 44px，
+     1280 约 39px、1080 约 33px，逐档线性收窄，不会出现忽大忽小。 */
+  font-size:clamp(28px,3.05vw,44px);
+  font-weight:600;
+  color:#fff;
+  letter-spacing:.24em;
+  text-indent:.24em;                           /* 抵消末字后的字距，视觉真正居中 */
+  line-height:1.2;
+  /* 贴字 1px 晕影只负责「勾边」，不写实色描边；大范围那层负责在亮窗格上压出落影 */
+  text-shadow:
+    0 1px 2px rgba(5,9,24,.88),
+    0 2px 4px rgba(5,9,24,.62),
+    0 0 7px rgba(5,9,24,.55),
+    0 8px 22px rgba(5,9,24,.42);
+}
+
+/* 竖屏（手机/平板）：宽度窄、导航条又占了固定高度，横幅太矮的话
+   连楼体都看不全。这里按宽度给高度，让那张仰拍图能露出楼角与天空。
+   改的是共用变量，"业务范围"页的横幅同时跟着变，两页仍然等高。 */
+@media (max-width:900px){
+  :root{--banner-h:clamp(300px,96vw,440px);}
+}
+
+/* ============================================================
+   企业介绍 · 背景图（深圳留仙洞 / 西丽 夜景）
+   - 高度由 JS 算到内容最低点 +34px（CSS 变量 --about-bg-h），
+     并与下方「电梯服务经营范围」卡片之间保住一段留白，不贴、不压
+   - 宽度与取景方式固定（左右满幅 + cover + 38% 竖向取景），只改高度，
+     不会拉伸变形，也不会额外裁掉画面主体
+   - 文字统一浅色 + 加深加粗，压在夜景上依然清晰
+   ============================================================ */
+#about{position:relative;overflow:hidden;isolation:isolate;}
+#about>.container{position:relative;z-index:2;}
+
+#about::before{
+  content:"";
+  position:absolute;
+  left:0;right:0;top:0;
+  height:var(--about-bg-h,760px);           /* 兜底高度，运行时由 JS 覆盖 */
+  background-image:
+    /* ① 左侧柔光暗：让画面左右过渡自然（压在图外侧，不影响构图） */
+    linear-gradient(90deg,
+      rgba(4,10,35,.22) 0%,
+      rgba(4,10,35,.10) 20%,
+      rgba(4,10,35,0) 40%),
+    /* ② 右侧自然渐晕：像照片本身的明暗过渡，把右栏压沉、托住白字 */
+    linear-gradient(90deg,
+      rgba(4,10,35,0) 42%,
+      rgba(4,10,35,.14) 62%,
+      rgba(4,10,35,.36) 78%,
+      rgba(4,10,35,.52) 89%,
+      rgba(4,10,35,.64) 100%),
+    /* ③ 顶部轻微压暗托住标题；中下部为均匀薄罩，**不做底部深蓝收边**，
+          让夜景一直铺到模块下沿，无渐变晕染 */
+    linear-gradient(180deg,
+      rgba(5,12,42,.30) 0%,
+      rgba(5,12,42,.20) 26%,
+      rgba(5,12,42,.14) 52%,
+      rgba(5,12,42,.14) 100%),
+    url("../assets/about-bg-xili.jpg");
+  background-size:100% 100%,100% 100%,cover;
+  background-position:center,center,center 38%;
+  background-repeat:no-repeat;
+  pointer-events:none;
+  z-index:1;
+}
+
+/* 底部封边：一条深宝蓝实线，压在背景图最下沿（线底与图底齐平、满幅通长），
+   把夜景收在一根硬边上，再往下就是与「电梯服务经营范围」之间的留白。
+   厚度用变量固定 3px：任何屏宽都是同一粗细，不随缩放变化；
+   颜色取品牌主色 --primary，与卡片标题条、按钮同一支蓝，不另起色阶。
+   位置与背景图共享 --about-bg-h，图高怎么变，线都贴在图底，不会错位或悬空。 */
+#about{--about-seal:3px;}
+#about::after{
+  content:"";
+  position:absolute;left:0;right:0;
+  top:calc(var(--about-bg-h,760px) - var(--about-seal));
+  height:var(--about-seal);
+  background:var(--primary);
+  pointer-events:none;
+  z-index:1;                 /* 与背景同层、后绘制，压在图上；内容区 z-index:2 仍在最上层 */
+}
+
+/* 模块间距随屏宽递减：越窄屏幕，留白占比越大反而显得散，
+   所以从 68px 一路收到约 34px，视觉密度和大屏保持一致。
+   写在同一处、由宽到窄排列，后写的窄断点自然覆盖宽断点。
+   数值 = 图底留白（JS 里 GAP_BOTTOM=48）+ 68 / 54 / 42 / 34。
+   图底留白从 78 收到 48 后，这里同步各减 30，图与卡之间的浅底间距保持不变。 */
+@media (max-width:1080px){ #about .scope-box{margin-top:102px;} }
+@media (max-width:768px){ #about .scope-box{margin-top:90px;} }
+@media (max-width:480px){ #about .scope-box{margin-top:82px;} }
+
+/* ---------- 标题区：加大加粗，浅色 + 深色投影，压在夜景上清晰 ---------- */
+#about{padding-top:60px;}                    /* 顶部留白收紧，标题整体上移 */
+#about .sec-head{margin-bottom:32px;}         /* 标题与下方内容间距收窄 */
+/* 左栏略宽于右栏：图片框变成「高度由文案撑开」的横构图后，宽一点比例更舒展
+   （只在大屏生效，≤1080 仍走单列堆叠）。
+   1.08/.92 → 1.02/.98：右栏里 4 张资质卡要放 16px 的字，1.08 时每张卡只有 249px，
+   「电梯安装 / 维保 / 大修 全链条」正好卡在折行边缘；右栏多出 33px 后单行容得下，
+   左栏图片从 601 收到 568，横构图比例基本没变。 */
+#about .about-wrap{gap:34px;}
+@media (min-width:1081px){
+  #about .about-wrap{gap:38px;grid-template-columns:1.02fr .98fr;}
+}
+#about .sec-head .tag{
+  font-size:14px;font-weight:700;letter-spacing:3.5px;color:#ffa869;
+  text-shadow:0 1px 10px rgba(3,9,32,.6);
+}
+#about .sec-head h2{
+  font-size:42px;font-weight:800;letter-spacing:3px;color:#fff;
+  text-shadow:0 2px 20px rgba(3,9,32,.6),0 1px 2px rgba(3,9,32,.5);
+}
+#about .sec-head h2::after{
+  width:84px;height:3px;
+  background:linear-gradient(90deg,#48c6ff,#ff9350);
+  box-shadow:0 0 14px rgba(72,198,255,.5);
+}
+#about .sec-head p{
+  font-size:20px;font-weight:500;line-height:1.8;letter-spacing:.4px;
+  max-width:1100px;margin-top:20px;
+  color:#fff;
+  text-shadow:0 1px 2px rgba(1,5,18,.95),0 0 6px rgba(2,7,24,.85),0 0 26px rgba(2,7,24,.75);
+}
+
+/* ---------- 正文：字号加大、字重提高，读起来更稳 ---------- */
+#about .about-txt h3{
+  font-size:31px;font-weight:700;letter-spacing:1.5px;color:#fff;
+  text-shadow:0 1px 2px rgba(1,5,18,.9),0 2px 20px rgba(2,7,24,.8),0 0 34px rgba(2,7,24,.6);
+}
+#about .about-txt p{
+  font-size:18px;font-weight:500;line-height:1.75;letter-spacing:.2px;
+  margin-bottom:12px;
+  color:#fff;
+  text-shadow:
+    0 1px 0 rgba(0,0,0,.55),
+    1px 0 0 rgba(0,0,0,.45),
+    -1px 0 0 rgba(0,0,0,.45),
+    0 -1px 0 rgba(0,0,0,.45),
+    0 0 7px rgba(2,7,24,.85),
+    0 0 22px rgba(2,7,24,.6);
+}
+#about .about-txt p b{
+  color:#a8e0ff;font-weight:700;
+  text-shadow:0 1px 2px rgba(1,5,18,.95),0 0 7px rgba(2,7,24,.85),0 0 26px rgba(2,7,24,.7);
+}
+
+/* ---------- 信息卡 / 资质卡：白色薄纱 ----------
+   半透明白纱 + 毛玻璃，夜景仍能透出来，白纱统一提亮让深色字更清楚，
+   左侧保留一细条品牌色，作为视觉锚点。 */
+#about .company-meta{
+  grid-template-columns:1fr;gap:10px;margin:18px 0 0;
+}
+/* 七张卡（3 张工商信息 + 4 张资质）：字号整体上调一档 14.5 → 16px。
+   卡片是半透明白纱，夜景会透上来压低对比，14.5px 在这层底色上偏小偏灰；
+   16px + 500 字重后，深色字在白纱上一眼能读。行高与内边距同步微调，加大不挤行。 */
+#about .company-meta div{
+  background:rgba(255,255,255,.62);
+  -webkit-backdrop-filter:blur(14px) saturate(1.25);
+          backdrop-filter:blur(14px) saturate(1.25);
+  border-left-width:3px;
+  box-shadow:0 12px 26px rgba(3,10,38,.20),inset 0 0 0 1px rgba(255,255,255,.55);
+  color:#18213a;
+  text-shadow:none;
+  font-size:16px;font-weight:500;line-height:1.45;
+  padding:10px 15px;
+}
+#about .company-meta div b{
+  font-size:14.5px;font-weight:500;color:#4d5878;letter-spacing:.5px;margin-bottom:1px;
+  text-shadow:none;
+}
+
+#about .about-list li{
+  background:rgba(255,255,255,.62);
+  -webkit-backdrop-filter:blur(14px) saturate(1.25);
+          backdrop-filter:blur(14px) saturate(1.25);
+  color:#18213a;font-size:16px;font-weight:500;
+  text-shadow:none;align-items:center;
+  gap:8px;padding:13px 12px;
+  box-shadow:0 12px 26px rgba(3,10,38,.18),inset 0 0 0 1px rgba(255,255,255,.55);
+}
+#about .about-list li svg{stroke-width:2.4;stroke:#1f5fbf;align-self:center;margin-top:0;flex:0 0 18px;width:18px;height:18px;}
+/* 只在空格（“ / ”“ · ”）处折行，避免出现单个汉字被挤到第二行的孤字 */
+#about .about-list li span{word-break:keep-all;overflow-wrap:anywhere;}
+
+/* ---------- 工商信息条 / 资质条的悬浮高亮 ----------
+   七张白纱卡共用一套交互：鼠标移上去时——
+   1) 白纱浓度 .62 → .86：底下是夜景，纱一提亮，卡面像被一束光托起来；
+   2) 上浮 3px + 投影加深：离开底色的是卡，不是整块背景；
+   3) 内圈白边 .55 → .92，卡缘先亮，视觉焦点聚到框内；
+   4) 左侧那道 3px 品牌色条同时提亮（湖蓝卡 → 亮湖蓝，橙色卡 → 亮橙）。
+   四条一起走同一个 0.3s 的 ease 曲线，回位同速，不会出现「出去慢回来快」。
+   不加扫光、不加缩放：这一带是密密一排信息条，动得越少越好读。
+   色条只有两档，用 --edge 记录：默认亮湖蓝，.company-meta 第 2 张与
+   .about-list 四张全是橙（与上方 border-left-color 的取色规则一一对应）。 */
+#about .company-meta div,
+#about .about-list li{
+  --edge:#66c8f0;
+  transition:background-color .3s ease,box-shadow .3s ease,
+             transform .3s ease,border-left-color .3s ease;
+}
+#about .company-meta div:nth-child(2),
+#about .about-list li{--edge:#ff9450;}
+#about .company-meta div:hover,
+#about .about-list li:hover{
+  background-color:rgba(255,255,255,.86);
+  border-left-color:var(--edge);
+  transform:translateY(-3px);
+  box-shadow:0 18px 34px rgba(3,10,38,.30),inset 0 0 0 1px rgba(255,255,255,.92);
+}
+/* 触屏设备没有 hover：去掉位移，避免点一下卡就「跳」在半空 */
+@media (hover:none){
+  #about .company-meta div:hover,
+  #about .about-list li:hover{transform:none;}
+}
+
+/* 左侧图片卡内的说明文字，一并加大，与右侧字阶协调 */
+#about .about-img .cap strong{font-size:24px;font-weight:700;color:#fff;
+  /* 门头那张牌匾本身是白底白字最难的场景：细到 .6px 的深色勾边
+     只用来把字形边界钉住，肉眼看到的是「字很干净」，不是描边色 */
+  text-shadow:0 1px 2px rgba(3,8,34,.50),
+    .6px 0 0 rgba(6,14,46,.30),-.6px 0 0 rgba(6,14,46,.30),
+    0 .6px 0 rgba(6,14,46,.30),0 -.6px 0 rgba(6,14,46,.30);}
+#about .about-img .cap span{font-size:14.5px;color:rgba(226,236,255,.94);font-weight:600;letter-spacing:.2px;}
+
+/* 按钮在图片下方的白底上，补阴影与夜景拉开层次 */
+#about .about-txt>.btn{
+  font-size:15.5px;font-weight:600;
+  box-shadow:0 12px 28px rgba(3,10,38,.24);
+}
+
+/* 平板 / 单列排版：正文横跨整幅图，压暗整体加强，保证白字始终清楚 */
+/* 平板区间：业务卡降到两列（641 以下走单列） */
+@media (min-width:641px) and (max-width:900px){
+  .services-grid{grid-template-columns:1fr 1fr;}
+}
+@media (max-width:900px){
+  #about::before{
+    background-image:
+      linear-gradient(90deg,
+        rgba(4,10,35,0) 30%,
+        rgba(4,10,35,.16) 60%,
+        rgba(4,10,35,.28) 100%),
+      linear-gradient(180deg,
+        rgba(5,12,42,.52) 0%,
+        rgba(5,12,42,.44) 26%,
+        rgba(5,12,42,.40) 55%,
+        rgba(5,12,42,.40) 100%),
+      url("../assets/about-bg-xili.jpg");
+    background-size:100% 100%,100% 100%,cover;
+  }
+  #about .sec-head h2{font-size:36px;}
+  #about .sec-head p{font-size:16px;max-width:100%;}
+  #about .about-txt h3{font-size:28px;}
+  #about .about-txt p{font-size:16.5px;}
+}
+
+/* 移动端：窄屏整体降一档，避免字太大挤行 */
+@media (max-width:768px){
+  #about::before{background-position:center,center,center 34%;}
+  #about .sec-head h2{font-size:30px;letter-spacing:2px;}
+  #about .sec-head p{font-size:15.5px;line-height:1.8;font-weight:500;}
+  #about .about-txt h3{font-size:25px;}
+  #about .about-txt p{font-size:16px;line-height:1.85;font-weight:500;}
+  #about .company-meta div{font-size:15.5px;}
+  #about .company-meta div b{font-size:14px;}
+  #about .about-list li{font-size:15.5px;}
+  #about .about-img .cap strong{font-size:21px;}
+  #about .sec-head h2,
+  #about .about-txt h3{text-shadow:0 2px 14px rgba(3,9,32,.72);}
+  #about .sec-head p,
+  #about .about-txt p{text-shadow:0 1px 0 rgba(0,0,0,.55),1px 0 0 rgba(0,0,0,.45),-1px 0 0 rgba(0,0,0,.45),0 -1px 0 rgba(0,0,0,.45),0 0 8px rgba(3,9,32,.82);}
+}
+
+/* 可服务电梯类型 · 响应式 */
+@media (max-width:1080px){
+  .types-grid{grid-template-columns:repeat(3,1fr);}
+  .tb-bg{background-position:50% 50%;}
+  .types-band-txt{max-width:700px;padding:0 28px 28px;}
+  .types-band-txt strong{font-size:22px;}
+  .types-band-txt span{font-size:15px;}
+}
+@media (max-width:768px){
+  .scope-types{margin-top:24px;padding-top:24px;}
+  .types-band{aspect-ratio:auto;height:240px;}
+  .tb-bg{background-position:50% 45%;}
+  .types-band-txt{max-width:100%;padding:0 20px 22px;}
+  .types-band-txt strong{font-size:19px;letter-spacing:1.4px;margin-bottom:9px;}
+  .types-band-txt span{font-size:14px;line-height:1.7;}
+  .types-grid{grid-template-columns:repeat(2,1fr);gap:12px;margin-top:16px;}
+  .tc-body{padding:13px 10px 15px;}
+  .type-card svg{width:24px;height:24px;margin-bottom:8px;}
+  /* 两列时卡宽约 165，标题 16px 仍能单行，说明 13.5px 折两行是可读的 */
+  .type-card h5{font-size:16px;}
+  .type-card p{font-size:13.5px;}
+}
+@media (max-width:480px){
+  .types-grid{grid-template-columns:1fr;gap:12px;}
+  /* 手机单列时改成横向卡片：左图右字，避免整屏都是大图 */
+  .type-card{flex-direction:row;align-items:stretch;border-radius:9px;}
+  .tc-media{flex:0 0 42%;aspect-ratio:auto;min-height:112px;}
+  .tc-body{padding:14px 14px 14px 4px;}
+  .types-band{aspect-ratio:auto;height:200px;}
+  .tb-bg{background-position:50% 45%;}
+  .types-band-txt strong{font-size:18px;}
+  /* 这一档文字区只有 276px 宽，这句话必然三行（上一版 13px 时是三行
+     28/21/1，末行只剩一个「接」字）。字号维持 14px：三行是 28/19/3，
+     末行反而比原来完整，字号也是加大后的那一档；band 200px 高足够放下。 */
+  .types-band-txt span{font-size:14px;}
+}
+
+/* 业务范围：文字从照片上搬到浅色区之后，配色回到全站的
+   「品牌深宝蓝 + 深灰」，那套为压夜景准备的反白、亮橙与暗投影全部撤掉。
+   ── 为什么字号不缩回去 ──
+   40px 标题 / 18.5px 总述是上一轮为了「压住春笋亮面」特意放大的；
+   搬到浅底上反而更实、更清楚，没有理由退回 34px。
+   三级层次仍是 40 / 18.5 / 16，与全站其他板块（34 / 15 / 16）
+   相比这一节整体大一档 —— 它是业务总入口，压得住下面五张卡。 */
+#services .sec-head .tag{
+  /* 亮橙 #ff8a2b 是为深蓝夜景挑的「提亮版」；浅底上用商标橙本身即可，
+     字距 3.5 与 17px 保持不变，墨迹仍短于中文标题，不会出现倒挂。 */
+  color:var(--orange);font-size:17px;letter-spacing:3.5px;margin-right:-3.5px;
+}
+#services .sec-head h2{
+  font-size:40px;letter-spacing:3px;color:var(--primary);
+  /* 末尾字距 3px 让墨迹左偏 1.5px，首行缩进 3px 抵回一半。
+     只作用首行，四字标题在任一档都是单行，不影响折行。 */
+  text-indent:3px;
+}
+/* 标题下那条渐变小线 64 → 96：40px 的主标题配 64px 的线（0.37 倍），
+   放在居中的大标题下面像个句号；96px 是 2.4 个字宽，横向透气，
+   也压得住五张卡 1400 的总宽。高度与渐变（青→橙）保持原样。 */
+#services .sec-head h2::after{width:96px;}
+/* 说明文字 18.5px：卡内正文 16px 的上一档，又明显低于 40px 标题。
+   行高 1.85、max-width 780 —— 780 正好让第一行停在「…等各类场景，」
+   的逗号上、第二行从「围绕」起头，断在语义边界。
+   色值从 95% 白改为 --text-light：浅底上白字不可读，深灰才落得住。 */
+#services .sec-head p{
+  color:var(--text-light);
+  font-size:18.5px;line-height:1.85;max-width:780px;
+}
+/* 卡内文字：标题深宝蓝、正文 #202940。
+   纯白底上 --text-light 偏灰、贴着卡沿看会发飘，正文固定用更深一档的
+   #202940，与深宝蓝标题、卡面白之间正好是三级层次。 */
+#services .svc-card h3{color:var(--primary);}
+#services .svc-card p,
+#services .svc-card ul li{color:#202940;font-weight:500;}
+
+/* 上面两条给 h2 / p 写了显式字号，特异性高于全站通用的 .sec-head h2，
+   会把 ≤1080 的 27px、≤640 的 23px 一并盖掉 —— 所以这两档要在这里补回来，
+   按原比例各缩一档（40 → 32 → 27），不与全站其他板块的标题脱节。 */
+@media (max-width:1080px){
+  #services .sec-head h2{font-size:32px;letter-spacing:2px;text-indent:2px;}
+  #services .sec-head p{font-size:17.5px;line-height:1.85;}
+  /* 小标跟着主标缩一档：32px 的「业务范围」墨迹 134px，17px 的英文
+     有 163.6px，会出现「小标比主标还宽」的倒挂。14px + 2.5 字距时约 130.5px，
+     仍是短一档，同时比原来的 13px 大一档，亮橙色在这一档也照样醒目。 */
+  #services .sec-head .tag{font-size:14px;letter-spacing:2.5px;margin-right:-2.5px;}
+}
+@media (max-width:640px){
+  #services .sec-head h2{font-size:27px;letter-spacing:1.5px;text-indent:1.5px;}
+  #services .sec-head p{font-size:16.5px;line-height:1.8;}
+  /* 27px 主标墨迹只有 112.5px：12px + 2.5 字距的英文是 115.8px，本来就略超
+     3px（旧版「刚好同宽」的说法不准）。这一档字距收到 2，墨迹 110.3px，
+     才真正短于主标，手机上也维持「小标 → 主标」的层级。 */
+  #services .sec-head .tag{font-size:12px;letter-spacing:2px;margin-right:-2px;}
+}
+/* 窄屏（≤400，360 那一档最典型）：卡片内容区只剩 236，
+   第 5 张的 12 字标题在 20px 下要 240px，会折成「…改造、/大修」。
+   这一档标题收到 19px（12 × 19 = 228），正文不动，层级关系不变。 */
+@media (max-width:400px){
+  .svc-card h3{font-size:19px;}
+}
+
+/* ============================================================
+   业务范围 · 响应式与动效降级
+   ------------------------------------------------------------
+   照片搬进 .svc-banner 之后，这一节不再有「铺满 / 渐隐 / 取景补偿」
+   这类与底图绑定的规则，卡片是纯白实底，任何宽度下都不需要再为
+   "透出自己的照片" 做补丁。只保留两处：窄屏卡片内距收一档、
+   以及减弱动效时停掉全站那几个背景动画。
+   ============================================================ */
+@media (max-width:640px){
+  #services .container{padding:0 18px;}
+  .services-grid{gap:14px;}
+}
+@media (prefers-reduced-motion:reduce){
+  .tb-bg{animation:none;transform:none;}
+  .hero-bg{opacity:1;transform:scale(1);}   /* 减弱动效：背景静态呈现，不推近不呼吸 */
+}
+
+/* ============================================================
+   运行保障 · 响应式
+   ============================================================ */
+@media (max-width:1080px){
+  .monitor-wrap{grid-template-columns:1fr;gap:40px;}
+  .monitor-metrics{gap:20px;margin-bottom:30px;}
+  /* 单列时文案与演示区同宽居中，边缘对齐 */
+  .monitor-txt{width:100%;max-width:520px;margin:0 auto;}
+  .monitor-txt .btn{width:100%;justify-content:center;}
+  /* 单列时限制演示区宽度，避免井道被拉成“又宽又扁” */
+  .lift-stage{width:100%;max-width:520px;margin:0 auto;}
+  .lift-stage .shaft{height:360px;}
+}
+@media (max-width:760px){
+  .lift-stage .shaft{height:280px;}
+}
+@media (max-width:640px){
+  #monitor{--mon-edge:88px;padding-top:60px;padding-bottom:96px;}
+  #monitor .sec-head{margin-bottom:36px;}
+  .lift-stage{padding:14px 14px 10px;border-radius:14px;}
+  .lift-stage .shaft{height:240px;}
+  #monitor .shaft .milestone b{font-size:11px;padding:1px 6px;}
+  .monitor-metrics b{font-size:27px;}
+  .monitor-metrics strong{font-size:15px;}
+  .monitor-metrics p{font-size:13.5px;}
+}
+/* 窄屏（360~420）导航：商标加了白底板后宽了一点，公司名会折成两行，
+   这里收一档字号与商标尺寸，保证一行放得下、不与汉堡图标挤在一起 */
+@media (max-width:420px){
+  .logo{gap:9px;min-width:0;}
+  .logo-img{height:41px;padding:2px 4px;border-radius:8px;}
+  .logo-txt{min-width:0;}
+  .logo-txt strong{font-size:clamp(14px,4.15vw,16px);letter-spacing:0;white-space:nowrap;}
+  .logo-txt small{font-size:clamp(7.5px,2.1vw,8.5px);letter-spacing:.2px;white-space:nowrap;}
+  .hamburger{width:38px;flex:0 0 38px;}
+  .hamburger i{left:7px;width:20px;}
+}
+
+/* ============================================================
+   业务范围 · 五张卡的分列规则（放在最后，保证覆盖前面各断点的间距）
+   ── 为什么以 1440 为界 ──
+   第 5 张卡标题「特种设备安装、改造、大修」在 18px 下量出 216px（12 个 CJK 字，
+   字宽恒等于字号），卡片内容区必须 ≥217 才排得进一行。视口 1440 时卡片 258、
+   内容区 224（余 8px）；再窄一档（1400）内容区只剩 211，标题就要折成两行 ——
+   与其让那一段宽度里出现「特种设备安装、改造、/大修」的断行，不如整段走三列，
+   卡片反而更宽（约 420），标题全部单行。所以这一档的界线跟着提到 1440。
+   ── 为什么减列后用 flex ──
+   5 张卡在 3 列下必然剩 2 张（3+2）。grid 会把这两张顶在左边、右下角空一格，
+   底下是照片，空一格看着像少放了一张卡；flex + justify-content:center
+   让第二行居中，读起来是「收束」而不是「缺位」。
+   ── 间距与卡片宽度写在同一条规则里 ──
+   flex-basis 用 calc 扣掉 gap，两个值必须成对出现，拆开写很容易一方被别的
+   断点改掉（例如 gap 变成 18 而 basis 仍按 14 算，行宽多出 4px 就整行掉下来）。
+   ============================================================ */
+@media (max-width:1439px){
+  .services-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:18px;}
+  .svc-card{flex:0 1 calc((100% - 36px) / 3);}
+}
+@media (max-width:900px){
+  .services-grid{gap:14px;}
+  .svc-card{flex-basis:calc((100% - 14px) / 2);}
+}
+@media (max-width:640px){
+  .services-grid{gap:12px;}
+  .svc-card{flex-basis:100%;}
+}
+/* 经营范围五张卡在同一区间也是五改三（≤1240），同样会出现 3+2 的空位，
+   和上面业务五卡用同一套办法：flex 居中收尾，避免右下角缺一格。
+   只在 641 以上生效，640 以下仍走原来的单列 grid。 */
+@media (min-width:641px) and (max-width:1240px){
+  .scope-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:16px;}
+  .scope-item{flex:0 1 calc((100% - 32px) / 3);}
+}
+
+/* ============================================================
+   业务范围页 · 首屏晚霞图
+   ------------------------------------------------------------
+   导航条已改为全站统一的白底玻璃条（与「资质展示」等子页一致），
+   不再把晚霞图提到导航底下：照片从白条下沿开始整幅铺开，
+   首屏的取景、标题与五张卡的落点都没有变化（导航高已从
+   padding-top 里扣掉，见 pages.css 的 .page--services #services）。
+   ============================================================ */

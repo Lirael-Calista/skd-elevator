@@ -1,0 +1,1209 @@
+/* ============================================================
+   多页版 · 页面级样式（在 style.css 之后加载，只做增量）
+   ------------------------------------------------------------
+   改造原则：原来的模块样式一行不动，只补「多页」才需要的东西——
+     1) 首页的频道入口（导航窗格）：点卡片直接进入对应独立页；
+     2) 横屏 / 宽而矮的视口：首屏与区块的上留白收紧，一屏内看到主体；
+     3) 每页顶部的衔接留白与焦点可见性。
+   所以本文件里的规则都是「加法」，不与 style.css 里调过的数值争权重。
+   ============================================================ */
+
+/* ============================================================
+   首页 · 频道入口（横屏导航窗格）
+   卡片语言沿用全站：纯白薄底 + 1px 冷蓝描边 + 12px 圆角 + 轻投影，
+   悬浮时上浮、顶部拉出一道蓝青渐变线，和 .qual-card / .case-shot 同族。
+   ============================================================ */
+.entry{position:relative;}
+.entry-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+
+.entry-card{
+  position:relative;display:flex;flex-direction:column;
+  min-height:200px;padding:28px 26px 22px;
+  background:rgba(255,255,255,var(--glass-flat));
+  border:1px solid var(--border);border-radius:12px;
+  box-shadow:0 3px 12px rgba(27,42,135,.055);
+  overflow:hidden;
+  transition:transform .35s ease,box-shadow .35s ease,
+             border-color .35s ease,background .35s ease;
+}
+/* 顶线：只在悬浮时从左往右拉开，和业务五卡同一套交互语言 */
+.entry-card::before{
+  content:"";position:absolute;left:0;top:0;width:100%;height:3px;
+  background:linear-gradient(90deg,var(--primary),var(--cyan));
+  transform:scaleX(0);transform-origin:left;
+  transition:transform .4s ease;
+}
+.entry-card:hover{
+  transform:translateY(-6px);
+  background:#fff;
+  border-color:#c9d2ef;
+  box-shadow:var(--shadow-lg);
+}
+.entry-card:hover::before{transform:scaleX(1);}
+.entry-card:focus-visible{
+  outline:2px solid var(--primary-3);outline-offset:3px;
+}
+
+.entry-no{
+  font-size:12px;font-weight:700;letter-spacing:2px;color:var(--primary-3);
+  font-variant-numeric:tabular-nums;
+}
+.entry-card h3{
+  font-size:21px;font-weight:700;color:var(--primary);
+  letter-spacing:1.2px;margin:10px 0 8px;
+}
+.entry-card p{
+  font-size:14px;line-height:1.85;color:var(--text-light);
+  text-wrap:pretty;
+}
+.entry-go{
+  margin-top:auto;padding-top:16px;
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:13.5px;font-weight:600;letter-spacing:.6px;color:var(--primary-3);
+  transition:color .3s ease,gap .3s ease;
+}
+.entry-go svg{
+  width:15px;height:15px;flex:0 0 15px;
+  stroke:currentColor;fill:none;stroke-width:2;
+}
+.entry-card:hover .entry-go{color:var(--orange);gap:10px;}
+
+@media (max-width:1080px){
+  .entry-grid{grid-template-columns:1fr 1fr;gap:18px;}
+  .entry-card{min-height:184px;}
+}
+@media (max-width:640px){
+  .entry-grid{grid-template-columns:1fr;gap:14px;}
+  .entry-card{min-height:0;padding:22px 20px 18px;border-radius:10px;}
+  .entry-card h3{font-size:19px;margin:8px 0 6px;}
+  .entry-card p{font-size:13.5px;}
+  .entry-card:hover{transform:none;}   /* 触屏没有悬浮态，别让卡片跳一下 */
+}
+
+/* ============================================================
+   横屏 · 宽而矮的视口（如 1366×768、1920×1080 的笔记本外接屏）
+   ------------------------------------------------------------
+   原页面是「竖屏滚动」的节奏，区块上下留白按 900+ 的高度调的；
+   横屏时垂直空间变紧，首屏 700 的最小高度会把数据条推出视口。
+   这里只收紧纵向留白与首屏最小高度，横向版式、字号、取景一概不动。
+   ============================================================ */
+@media (min-width:901px) and (max-height:800px){
+  .hero{min-height:560px;}                 /* 700 → 560，首屏 + 数据条一屏装下 */
+  .hero .container{padding-top:36px;padding-bottom:70px;}
+  .section{padding:70px 0;}
+  .sec-head{margin-bottom:40px;}
+  .entry-card{min-height:180px;padding:24px 24px 20px;}
+}
+
+/* 横屏但更矮（部分超极本 1280×600 缩放后）：再收一档，仍保证文字不挤 */
+@media (min-width:901px) and (max-height:660px){
+  .hero{min-height:500px;}
+  .hero .container{padding-top:26px;padding-bottom:56px;}
+  .hero-txt{padding:34px 32px 36px;}
+  .hero-txt h1{font-size:30px;}
+  .slogan{margin-bottom:16px;}
+}
+
+/* 手机 / 平板的横屏（如 844×390、740×360）：这是「横屏浏览」最直接的一种场景。
+   此时宽度落在移动端版式（≤1080），但可用高度只有 300~400px，
+   首屏文字卡按竖屏的间距会被压出屏幕。这里只压缩纵向间距与首屏字号，
+   横向版式、卡片尺寸、图片取景都不动。 */
+@media (max-height:480px) and (min-width:480px){
+  .hero{padding:18px 0 26px;}
+  .hero .container{padding-top:6px;padding-bottom:20px;}
+  .hero-logo{gap:10px;margin-bottom:12px;padding:8px 11px;border-radius:10px;}
+  .hero-logo img{height:26px;}
+  .hero-logo .divi{height:28px;}
+  .hero-logo .hl-txt strong{font-size:13.5px;}
+  .hero-logo .hl-txt small{font-size:8px;}
+  .hero-txt{padding:24px 24px 26px;border-radius:14px;}
+  .hero-txt h1{font-size:21px;line-height:1.4;margin-bottom:12px;}
+  .slogan{margin-bottom:12px;padding:8px 16px;}
+  .slogan strong{font-size:15px;letter-spacing:2.5px;}
+  .slogan svg{width:15px;height:15px;flex-basis:15px;}
+  .hero-txt .sub{font-size:13px;}
+  .stats-box{margin-top:-26px;}
+  .stats-box .item{padding:18px 14px;}
+  .stats-box .num{font-size:26px;}
+  .stats-box .label{font-size:12.5px;}
+}
+
+/* ============================================================
+   页脚衔接
+   ------------------------------------------------------------
+   多页之后，每个页面末尾都直接接页脚。原来最后一个区块后面
+   还跟着别的模块，视觉上不需要额外留白；现在按钮、卡片离页脚
+   只有区块自身的下内边距（88 / 64 / 52px），实测与站内其它
+   间距一致，故不再额外加壳。此段仅作说明，不产生规则。
+   ============================================================ */
+
+/* ============================================================
+   企业介绍页 · 导航条（与其余子页统一的白底玻璃条）
+   ------------------------------------------------------------
+   这一页的导航原本压在晚霞横幅上、整条透明 + 白字，与「资质展示」
+   等子页的白底导航不是一套观感。现按站内统一规范处理：
+   顶部即白底玻璃条（深色标签 + 橙色按钮），滚动后加深投影，
+   与其它子页完全一致；这里不再保留任何透明态与压图白字规则。
+   横幅的照片仍按原样上提一个导航高（见 style.css 的 .about-banner），
+   只是改由白条遮住最上面一条天空，页面其它落点没有任何位移。
+   ============================================================ */
+
+
+/* ============================================================
+   企业介绍页 · 公司简介（纯文字）
+   ------------------------------------------------------------
+   首页已有「企业介绍」视觉模块（轮播图 + 工商信息 + 资质清单），
+   这页不再重复，改成一段正式的公司简介正文：
+   不铺夜景背景、不做卡片，只用字号、行距与左侧一道细线把字读清楚。
+   纯白以外的底色一律不铺，页面底那层固定渐变直接透上来。
+   ============================================================ */
+.about-profile{padding-top:76px;padding-bottom:84px;}
+
+/* 标题区：与正文同宽、同起点；橙色英文小标 + 深蓝中文主标。
+   下沿不加横线——正文左侧已有一道竖线，两处装饰会互相抢眼。 */
+.about-profile__head{
+  max-width:860px;
+  margin:0 auto 34px;
+  padding-left:24px;
+}
+.about-profile__head .tag{
+  display:block;
+  font-size:13px;font-weight:600;letter-spacing:.22em;
+  color:var(--orange);text-transform:uppercase;
+  margin-bottom:9px;
+}
+.about-profile__head h2{
+  margin:0;
+  font-size:31px;font-weight:700;line-height:1.3;
+  color:var(--primary);letter-spacing:.06em;
+}
+
+/* 正文：三段同一字号、同一字距、同一行距，不再分「导语段」。
+   字距取 -0.25px 而非 0.175px：两端对齐会把每行剩余空隙摊到字间，
+   第二段首行原本装不进「TSG 07-2019」（差 10px），只能只排 42 字再被拉开 2.3px/字；
+   字距微收 0.425px 后标准号能留在首行，各行摊到的空隙都降到 0.1px 级，字距才真正一致。 */
+.about-profile__body{
+  position:relative;
+  max-width:860px;
+  margin:0 auto;
+  padding-left:24px;
+  color:#232a44;
+  font-size:17.5px;
+  font-weight:500;
+  line-height:1.9;
+  letter-spacing:-0.25px;
+}
+/* 首段单独处理（二、三段不动）：
+   ① 字号比正文大半档（18.5 对 17.5），作为开篇导语起势；
+   ② 只有三行，balance 把三行字数摊匀，避免末行只剩两三个字（Chrome 对超过 6 行的段落自动忽略）；
+   ③ 桌面端给末行也加两端对齐 —— 默认末行不参与拉伸，字距会比前两行紧 2px 左右，
+      加了 text-align-last:justify 后三行字距才一致；窄屏末行较短，拉伸会失真，所以限定 ≥901。 */
+.about-profile__body > p:first-child{
+  font-size:18.5px;
+  text-wrap:balance;
+}
+@media (min-width:901px){
+  .about-profile__body > p:first-child{text-align-last:justify;}
+}
+.about-profile__body::before{
+  content:"";position:absolute;left:0;top:.45em;bottom:.45em;width:3px;
+  border-radius:2px;
+  background:linear-gradient(180deg,var(--cyan),var(--primary-3));
+}
+
+/* 正文段落：两端对齐（左右都齐），靠段间距分段；首行不缩进。
+   text-wrap:pretty 防止末行只剩一两个字。 */
+.about-profile__body p{
+  margin-bottom:1.55em;
+  text-align:justify;
+  text-justify:inter-ideograph;
+  text-wrap:pretty;
+  overflow-wrap:break-word;
+}
+.about-profile__body p:last-child{margin-bottom:0;}
+
+/* 标准号、型号这类不该断开的片段（如 TSG 07-2019），整段留在同一行 */
+.about-profile__body .nb{white-space:nowrap;}
+
+@media (max-width:900px){
+  .about-profile{padding-top:62px;padding-bottom:72px;}
+  .about-profile__head{margin-bottom:26px;padding-left:20px;padding-right:30px;}
+  .about-profile__head h2{font-size:27px;}
+  /* 右侧 30px 是给固定悬浮按钮（电话/顶部，40px 宽、距右 8px）让位的地方，
+     否则每行末尾一两个字会被按钮压住 —— 实测两者侧边相距 24px */
+  .about-profile__body{font-size:16.5px;line-height:1.9;padding-left:20px;padding-right:30px;}
+  .about-profile__body > p:first-child{font-size:17.5px;}
+}
+@media (max-width:640px){
+  .about-profile{padding-top:50px;padding-bottom:58px;}
+  .about-profile__head{margin-bottom:22px;padding-left:16px;padding-right:38px;}
+  .about-profile__head .tag{font-size:12px;letter-spacing:.18em;margin-bottom:7px;}
+  .about-profile__head h2{font-size:24px;}
+  .about-profile__body{font-size:16px;line-height:1.9;padding-left:16px;padding-right:38px;}
+  .about-profile__body > p:first-child{font-size:17px;}
+}
+
+/* ============================================================
+   企业介绍页 · 组织架构 / 服务网络（两个追加板块）
+   ------------------------------------------------------------
+   公司简介下方接两块「信任证据」：
+     · 组织架构 —— 回答「谁在管我的电梯」，按公司实际层级 1:1 还原；
+     · 服务网络 —— 回答「出事了多久能到」，10 个驻点 + 30 分钟承诺。
+   两段与正文共用 860px 栏宽和 24px 左内距，标题沿用 COMPANY PROFILE 那套
+   「橙色小标 + 深蓝主标」，页面读起来是一条连续的说明，而不是拼接。
+   ============================================================ */
+.about-block{
+  position:relative;
+  margin-top:70px;
+  padding-top:64px;
+}
+/* 分隔线与正文同宽（860），不跟着容器铺到 1152，免得两侧各多出一截 */
+.about-block::before{
+  content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:min(860px,100%);height:1px;background:var(--border);
+}
+
+/* 段内锚点：从「10 个驻点（见下）」跳过来时，别被吸顶导航盖住标题。
+   让位交给 style.css 里全局的 html{scroll-padding-top:nav+10}，
+   这里不能再叠 scroll-margin —— 两者相加，落点会被顶低一个导航的高度。 */
+.about-block .nb{white-space:nowrap;}
+
+/* ---------- 质量保证体系 · 三条要点 ---------- */
+/* 三条要点改成「左标题 / 右说明」两列，读起来像一张规格表，而不是又三段散文：
+   标题列定宽 64px，三条说明的左缘落在同一条竖线上，视线不用来回找起点。
+   选择器一律带 .about-profile__body 前缀 —— 基础规则 .about-profile__body p
+   的优先级比单个类名高，不加重的话那段 1.55em 段距与两端对齐会一起套到说明行上。 */
+/* 导语段继承上方 p:first-child 的 18.5px 起势字号，但必须关掉两端对齐：
+   这句只有 50 余字，在 836px 栏内排两行，justify + text-align-last 会把
+   每行剩余空隙全摊到字间（实测字距被拉开近 10px），读起来发飘。
+   选择器必须带 :first-child 同级的权重（那条规则含伪类，实际是 0,2,1），
+   只写 .about-profile__body .about-profile__lead 会被它压回去。 */
+.about-profile__body > p.about-profile__lead{
+  margin-bottom:12px;
+  text-align:left;
+  text-align-last:auto;
+  letter-spacing:-0.1px;
+}
+/* 导语第一句 25 字、第二句 22 字，桌面自动换行会把「维修保养」拆成「维修保 / 养」；
+   改由这里的一句 <br> 把断点钉在句号后，两行宽度只差 55px，读起来仍是整块。
+   手机档宽度不够、需要按字数自然回流，反过来把这个 <br> 关掉。 */
+.about-profile__lead .lead-br{display:none;}
+@media (min-width:901px){
+  .about-profile__lead .lead-br{display:inline;}
+}
+
+.about-profile__body .qpoint{
+  display:grid;
+  grid-template-columns:64px minmax(0,1fr);
+  column-gap:18px;
+  align-items:start;
+  padding:17px 0;
+  border-top:1px solid var(--border);
+}
+/* 标题行高与说明行高取同一值（1.85），两列首行才真正齐平；
+   橙色短竖条代替项目符号，与正文左侧那道渐变竖线同一套语言。 */
+.about-profile__body .qpoint__title{
+  margin:0;
+  font-size:16.5px;font-weight:700;line-height:1.85;
+  color:var(--primary);letter-spacing:.1em;white-space:nowrap;
+}
+.about-profile__body .qpoint__title::before{
+  content:"";display:inline-block;width:3px;height:12px;border-radius:2px;
+  background:var(--orange);margin-right:9px;vertical-align:1px;
+}
+.about-profile__body .qpoint__desc{
+  margin:0;
+  font-size:16.5px;line-height:1.85;color:#2f3752;
+  text-align:justify;text-justify:inter-ideograph;text-wrap:pretty;
+}
+/* 收尾一句：单句成行，靠颜色与字重收住，不加装饰线 */
+.about-profile__body .about-profile__end{
+  margin:24px 0 0;
+  color:var(--primary);font-weight:600;
+  text-align:left;
+}
+
+/* ---------- 实力在岗（四个能力方框） ---------- */
+/* 这一块按原文的两级结构排：组名一行、组内两框。
+   组名用「橙色类别 + 深蓝主张」，方框标题直接采用原文的概括短句，
+   18px/700 与 15px 的正文拉开三档 —— 读者的视线先落在四句短句上，
+   再往下读细节；正文只做书面化的压缩陈述，不再放口语短句。 */
+.strength__lead{
+  max-width:860px;margin:0 auto 30px;padding-left:24px;
+  font-size:16px;line-height:1.75;color:#5c6479;text-wrap:pretty;
+}
+/* 组名与方框左缘同一起点；不加竖条 —— 方框本身已有橙条，再添一道会互相抢 */
+.strength__group{
+  max-width:860px;margin:0 auto 14px;padding-left:24px;
+  font-size:17px;font-weight:700;line-height:1.5;
+  color:var(--primary);letter-spacing:.02em;text-wrap:pretty;
+}
+.strength__group span{color:var(--orange);}
+/* 第二组之前留出组间距，两组才分得开 */
+.strength + .strength__group{margin-top:34px;}
+
+.strength{
+  max-width:860px;margin:0 auto;padding-left:24px;
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;
+}
+.strength__card{
+  position:relative;display:flex;flex-direction:column;
+  padding:22px 24px 22px 26px;border-radius:12px;
+  background:#fff;border:1px solid var(--border);
+  box-shadow:0 8px 22px rgba(27,42,135,.05);
+  cursor:pointer;
+  /* 三态共用一条过渡：悬浮上浮、选中落下，都走同一组时长与缓动，
+     鼠标划过与点下之间不会出现忽快忽慢的跳变 */
+  transition:
+    transform .26s cubic-bezier(.22,.61,.36,1),
+    border-color .24s ease,
+    box-shadow .26s ease,
+    background-color .24s ease;
+}
+/* 左侧橙条上下各留 18px，比整圈描边克制：四张卡并排时不会连成一片橙色。
+   宽度 4→6 只改绝对定位元素的自身宽度，不影响卡内文字位置。 */
+.strength__card::before{
+  content:"";position:absolute;left:0;top:18px;bottom:18px;width:4px;border-radius:0 3px 3px 0;
+  background:linear-gradient(180deg,var(--orange),var(--orange-light));
+  transition:width .24s ease,top .24s ease,bottom .24s ease;
+}
+/* 右上角勾选标：只在选中态出现，不占文档流。
+   .strength__hd 常驻 22px 右内距，标题永远让得开它，选中与否都不会跳字：
+   卡片右内距 24（手机 16）+ 22 = 46/38，都在勾选标左缘（距卡右 34）之外。 */
+.strength__card::after{
+  content:"";position:absolute;top:15px;right:14px;width:20px;height:20px;border-radius:50%;
+  background:var(--orange) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5.5 12.5l4.2 4.2L18.5 7.6'/%3E%3C/svg%3E") center/12px 12px no-repeat;
+  box-shadow:0 3px 8px rgba(242,106,33,.35);
+  opacity:0;transform:scale(.55);
+  transition:opacity .2s ease,transform .28s cubic-bezier(.34,1.42,.64,1);
+}
+.strength__hd{display:flex;align-items:center;gap:11px;margin-bottom:12px;padding-right:22px;}
+.strength__no{
+  flex:none;width:32px;height:32px;border-radius:50%;
+  display:inline-flex;align-items:center;justify-content:center;
+  background:#fdf0e7;border:1px solid rgba(242,106,33,.30);
+  font-size:11.5px;font-weight:700;letter-spacing:.02em;color:#a8490a;
+  font-variant-numeric:tabular-nums;
+  transition:background-color .24s ease,border-color .24s ease,color .24s ease;
+}
+/* 方框标题 = 原文概括短句。字号 18、字重 700、取最深的宝蓝，
+   让四句短句在整页里能独立被读到，而不是混进正文。 */
+.strength__title{
+  margin:0;font-size:18px;font-weight:700;line-height:1.4;
+  color:#16245c;letter-spacing:.02em;
+}
+/* 正文两端对齐：卡片内的文字块左右都是齐的，四张卡并排时才不出现参差的右边缘 */
+.strength__desc{
+  margin:0;font-size:15px;line-height:1.9;color:#3b4360;
+  text-align:justify;text-justify:inter-ideograph;text-wrap:pretty;
+}
+/* ---------- 四卡的三种状态 ----------
+   常态  ：白底 + 1px 浅边 + 4px 橙条。
+   悬浮  ：上浮 3px、后撤阴影加深、描边转橙（半透明，含蓄但一眼可见）、
+           橙条加粗到 6px、编号圈填浅橙。整组变化只在「颜色 + 位移 + 阴影」上做文章，
+           不动内距，卡内文字一个像素都不动。
+   选中  ：实橙描边（用 0 0 0 1px 的 ring 而不是加 border 宽度，避免整卡重排）、
+           底色铺一层自顶部渐隐的暖白、橙条满高实色、编号圈反白、右上角出勾。
+   三态之间刻意拉开「量级」：悬浮是浮起来，选中是压回去并转为实色底 ——
+   同时存在时（悬浮在已选中的卡上）仍是选中态的样子，不会两个效果互相打架。 */
+.strength__card .strength__title,
+.strength__card .strength__desc{transition:color .24s ease;}
+
+@media (hover:hover){
+  .strength__card:hover{
+    transform:translateY(-4px);
+    background-color:#fffaf5;
+    border-color:rgba(242,106,33,.72);
+    box-shadow:0 16px 34px rgba(27,42,135,.13),0 4px 12px rgba(242,106,33,.16);
+  }
+  .strength__card:hover::before{width:6px;}
+  .strength__card:hover .strength__no{
+    background:#fbdcc4;border-color:rgba(242,106,33,.7);color:#8f3c06;
+  }
+}
+
+.strength__card.is-active{
+  transform:none;
+  background:linear-gradient(180deg,#fff7f1 0%,#fffaf7 44%,#fff 100%);
+  border-color:var(--orange);
+  box-shadow:0 0 0 1px var(--orange),0 12px 28px rgba(242,106,33,.18);
+}
+.strength__card.is-active::before{
+  width:6px;top:0;bottom:0;border-radius:0 3px 3px 0;
+  background:var(--orange);
+}
+.strength__card.is-active .strength__no{
+  background:var(--orange);border-color:var(--orange);color:#fff;
+}
+.strength__card.is-active .strength__title{color:#9c4308;}
+.strength__card.is-active::after{opacity:1;transform:scale(1);}
+/* 指针停在已选中的卡上：保持选中态，只把阴影再抬一档，作为「还按着」的反馈 */
+@media (hover:hover){
+  .strength__card.is-active:hover{
+    transform:none;
+    box-shadow:0 0 0 1px var(--orange),0 16px 32px rgba(242,106,33,.24);
+  }
+}
+/* 键盘 Tab 到卡上时给一圈虚描边，与鼠标悬浮区分开 */
+.strength__card:focus-visible{
+  outline:2px solid rgba(242,106,33,.72);
+  outline-offset:3px;
+}
+@media (prefers-reduced-motion:reduce){
+  .strength__card,
+  .strength__card::before,
+  .strength__card::after,
+  .strength__card .strength__no{transition-duration:.01ms;}
+  .strength__card:hover{transform:none;}
+}
+
+/* 窄屏：要点两列变上下（标题在上、说明在下）。
+   四张卡在平板上仍保持 2×2 —— ≤900 若折成单列，卡宽会到 800px，
+   而一行字只有 300px 宽，右侧整片空着，卡片像被拉长的白条；
+   一直排到 641px 才开始挤，才在手机档折成单列。
+   这两组查询写在基础规则之后，同特异性后写者生效，不与下方 .about-block 的媒体查询互相覆盖。 */
+@media (max-width:900px){
+  .about-profile__body .qpoint{grid-template-columns:1fr;row-gap:5px;padding:15px 0;}
+  .about-profile__body .qpoint__title{font-size:16px;line-height:1.5;}
+  .about-profile__body .qpoint__desc{font-size:16px;}
+  .strength__lead{padding-left:20px;padding-right:30px;margin-bottom:24px;}
+  .strength__group{padding-left:20px;padding-right:30px;}
+  /* 右内距单独加到 48：这一档是双列，右侧那列卡片会一直铺到栏边，
+     实测 720px 时卡右缘（696）会压住固定悬浮按钮（左缘 672）—— 文字有 30 的
+     内距挡着不要紧，白底卡片是实心块，压上去一眼就看得出。 */
+  .strength{padding-left:20px;padding-right:48px;gap:14px;}
+}
+/* 700 是实测临界点：再窄，两列卡内每行只剩十五六个字，
+   四张卡会长到 380px 高，一眼看去像四条竖幅，所以这里折成单列。 */
+@media (max-width:700px){
+  .strength{grid-template-columns:1fr;}
+}
+/* 901~1004 是「桌面上但容器还没铺满」的一段：栏宽 860 居中，
+   右缘离视口只有 24px，会压住固定悬浮按钮（左缘在视口右 48px 处）。
+   这一档同样把卡片右侧内缩 48，让白卡不贴按钮；
+   1004 以上栏外留白本来就够（实测 1024 时还有 82px 余量），不内缩，右缘与正文齐。 */
+@media (min-width:901px) and (max-width:1004px){
+  .strength{padding-right:48px;}
+}
+
+@media (max-width:640px){
+  .about-profile__body .qpoint__title{font-size:15.5px;}
+  .about-profile__body .qpoint__desc{font-size:15.5px;}
+  .strength__lead{padding-left:16px;padding-right:38px;font-size:15px;}
+  .strength__group{padding-left:16px;padding-right:38px;font-size:16.5px;}
+  .strength{padding-left:16px;padding-right:38px;grid-template-columns:1fr;}
+  .strength__card{padding:18px 16px 18px 21px;}
+  .strength__card::before{top:14px;bottom:14px;}
+  .strength__hd{gap:10px;margin-bottom:9px;}
+  .strength__no{width:30px;height:30px;font-size:11px;}
+  .strength__title{font-size:17px;}
+  .strength__desc{font-size:14.5px;line-height:1.85;}
+}
+
+/* ---------- 组织架构（分支树） ---------- */
+.org{
+  --org-line:rgba(27,42,135,.22);
+  max-width:860px;margin:0 auto;padding-left:24px;
+}
+.tree{display:flex;flex-direction:column;align-items:center;}
+
+/* 节点：白底细边方框；只有总经理填色，一眼看出唯一决策点 */
+.tree__node{
+  position:relative;z-index:1;
+  display:inline-flex;flex-direction:column;align-items:center;gap:3px;
+  padding:12px 18px;border-radius:9px;text-align:center;
+  background:#fff;border:1px solid var(--border);
+  box-shadow:0 4px 14px rgba(27,42,135,.05);
+}
+.tree__node strong{font-size:17px;font-weight:600;color:var(--primary);letter-spacing:.02em;line-height:1.3;}
+.tree__node span{font-size:13px;line-height:1.4;color:var(--text-light);white-space:nowrap;}
+.tree__node--root{
+  padding:13px 26px;background:#2b3c9c;border-color:#2b3c9c;
+  box-shadow:0 10px 24px rgba(43,60,156,.20);
+}
+.tree__node--root strong{font-size:18px;color:#fff;letter-spacing:.06em;}
+.tree__node--root span{font-size:13px;color:rgba(255,255,255,.74);}
+.tree__node--dept strong{font-size:16px;color:var(--text);}
+.tree__node--leaf{
+  padding:10px 17px;font-size:14px;font-weight:500;line-height:1.5;color:var(--text);
+}
+/* 「10 个驻点」是通往下一段的入口，用浅绿框区分，可点 */
+.tree__node--link{
+  padding:10px 17px;font-size:14px;font-weight:600;line-height:1.5;
+  text-decoration:none;background:#f1f9f3;border-color:#c4e2cb;color:#1f7a45;
+  transition:background-color .2s ease,border-color .2s ease,box-shadow .2s ease;
+}
+.tree__node--link:hover{background:#e7f5eb;border-color:#9fd0ab;box-shadow:0 6px 16px rgba(47,165,98,.14);}
+
+/* 连线：父节点垂下的竖线 + 子级之间的横线，两半用相邻兄弟拼成 */
+.tree__kids{position:relative;display:flex;justify-content:center;padding-top:24px;}
+.tree__kids::before{
+  content:"";position:absolute;left:50%;top:0;width:1px;height:24px;
+  background:var(--org-line);transform:translateX(-.5px);
+}
+.tree__branch{
+  position:relative;display:flex;flex-direction:column;align-items:center;
+  padding:24px 12px 0;
+}
+.tree__branch::before,
+.tree__branch::after{
+  content:"";position:absolute;top:0;width:50%;height:24px;
+  border-top:1px solid var(--org-line);
+}
+.tree__branch::before{right:50%;}
+.tree__branch::after{left:50%;border-left:1px solid var(--org-line);}
+/* 首个孩子外侧没有横线；末个孩子的落线改由 ::before 的右竖边承担，
+   这样横线两端正好停在首末孩子的中心，不会多出一截 */
+.tree__branch:first-child::before{border-top-color:transparent;border-radius:5px 0 0 0;}
+.tree__branch:first-child::after{border-radius:5px 0 0 0;}
+.tree__branch:last-child::after{border-top-color:transparent;border-left-color:transparent;}
+.tree__branch:last-child::before{border-right:1px solid var(--org-line);border-radius:0 5px 0 0;}
+
+.tree__row{position:relative;}
+/* 一句话说明原本 13px，压在整张组织图下面太轻，读完几乎记不住。
+   加到 15px、颜色由 #747c92 提到更实的 #5c6479，行高 1.85 ——
+   它现在是这一段的「结论句」，应当读得清，但仍弱于树节点里的深色标题。 */
+.org__note{
+  max-width:660px;margin:30px auto 0;text-align:center;
+  font-size:15px;line-height:1.85;color:#5c6479;text-wrap:pretty;
+}
+
+/* ---------- 服务网络 ---------- */
+/* 列间距 40px（原 20）：调度框右缘到驻点卡片左缘之间要跑两条支线，
+   20px 放不下「横线 + 竖干 + 横线」的折线，会挤成一小团；
+   40px 时走线为 16 + 24，主干与两个接到卡片的横线各有气口。
+   860px 总宽不变，右边界仍与上方标题、下方说明对齐。 */
+.net{
+  /* 支线颜色：比卡片描边（#e9edf6）深一档、比正文浅得多，
+     在浅蓝底上看得见但不抢卡片；两处支线共用这一个值 */
+  --net-wire:#bfcbe8;
+  max-width:860px;margin:0 auto;padding-left:24px;
+  display:grid;grid-template-columns:236px minmax(0,1fr);gap:40px;align-items:start;
+}
+.net__hub{
+  display:flex;flex-direction:column;gap:9px;
+  padding:18px;border-radius:12px;
+  background:#fff;border:1px solid var(--border);
+  box-shadow:0 10px 26px rgba(27,42,135,.05);
+}
+/* 标签原来是 12.5px 的小眉标，压在「接单派工 · 24 小时值守」上面太轻，
+   整块读起来像没标题。加到 15px / 700 后它才是这块的「名字」，
+   但仍比下方 16px 的正文小一档，层级不倒挂；
+   字大了就不必再靠 .14em 的字距撑开，收到 .06em 才不散。 */
+.net__hub-label{font-size:15px;font-weight:700;color:var(--primary-2);letter-spacing:.06em;}
+.net__hub strong{font-size:16px;font-weight:600;color:var(--text);line-height:1.5;}
+.net__badge{
+  display:inline-flex;align-items:center;gap:7px;align-self:flex-start;
+  margin-top:2px;padding:7px 12px;border-radius:999px;
+  background:rgba(242,106,33,.10);border:1px solid rgba(242,106,33,.28);
+  font-size:13.5px;font-weight:600;color:#c2550f;white-space:nowrap;
+}
+.net__badge::before{
+  content:"";width:7px;height:7px;border-radius:50%;background:var(--orange);
+}
+.net__grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;}
+.net__item{
+  padding:16px 4px;border-radius:9px;text-align:center;
+  background:#fff;border:1px solid var(--border);
+  font-size:15px;font-weight:500;color:var(--text);
+  transition:border-color .22s ease,background-color .22s ease,
+             box-shadow .22s ease,transform .22s ease,color .22s ease;
+}
+/* 悬停：描边转绿、底色极淡、抬起 2px —— 只做这一处，不叠加其它动画 */
+@media (hover:hover){
+  .net__item:hover{
+    border-color:#35a866;
+    background:#f2faf4;
+    color:#1c7a45;
+    transform:translateY(-2px);
+    box-shadow:0 8px 18px rgba(53,168,102,.16);
+  }
+}
+.net__item:active{transform:translateY(0);box-shadow:0 2px 6px rgba(53,168,102,.14);}
+
+/* 支线：调度框 →「布吉驻点」（首行）/「龙岗驻点」（次行）。
+   两个驻点都在驻点网格的第一列，左缘同一条竖线，所以走线可以共用一段竖干：
+     调度框右缘 ——16px 横线—— 竖干 ——24px 横线—— 卡片左缘（两行各一条）
+   竖干用一块 16px 宽的伪元素承载，右侧画竖线、中部画横线，一次成形；
+   高度取「本行行高 + 行距」，端点自然落在第二行卡片的中心，
+   不写死行高 —— 以后改字号、内边距都不用跟着改数值。
+   只在 ≥901px 出现：≤900 调度框移到驻点上方、驻点改 4 列，
+   「龙岗」不再与「布吉」同列，横向支线会连错对象。 */
+@media (min-width:901px){
+  .net__item--a,.net__item--b{position:relative;}
+  .net__item--a::before{
+    content:"";position:absolute;right:calc(100% + 24px);width:16px;
+    /* +14px = 行距 12 + 上下各 1px 边框（百分比高度算的是 padding box） */
+    top:50%;height:calc(100% + 14px);
+    background:
+      linear-gradient(var(--net-wire),var(--net-wire)) right center / 1.5px 100% no-repeat,
+      linear-gradient(var(--net-wire),var(--net-wire)) left center / 100% 1.5px no-repeat;
+    pointer-events:none;
+  }
+  .net__item--a::after,
+  .net__item--b::before{
+    content:"";position:absolute;right:100%;width:24px;height:1.5px;
+    top:calc(50% - .75px);border-radius:1px;background:var(--net-wire);
+    pointer-events:none;
+  }
+}
+.net__note{
+  margin-top:16px;font-size:13.5px;line-height:1.8;color:var(--text-light);
+  text-wrap:pretty;
+}
+/* 窄屏两行更整齐：避免末尾只剩「顺延。」两个字 */
+@media (max-width:640px){
+  .net__note{text-wrap:balance;}
+}
+
+@media (max-width:900px){
+  .about-block{margin-top:56px;padding-top:52px;}
+  .org,.net{padding-left:20px;padding-right:30px;}
+
+  /* 竖向树：层级靠左缩进来表达，连线改为左侧引导线 + 折线，不再横向铺开 */
+  .tree{display:block;}
+  .tree__kids{display:block;padding:0 0 0 26px;}
+  .tree__kids::before{display:none;}
+  .tree__branch{display:block;padding:0;}
+  .tree__branch::before,.tree__branch::after{display:none;}
+  .tree__row{position:relative;padding-top:12px;text-align:left;--half:33px;}
+  /* 叶子节点只有一行字，框更矮，落线点随之上移 */
+  .tree__branch:has(> .tree__row > .tree__node--leaf) > .tree__row{--half:20px;}
+  /* 非末位兄弟：引导线贯穿自己与整棵子树，正好接到下一个兄弟的框顶 */
+  .tree__kids > .tree__branch:not(:last-child)::before{
+    content:"";display:block;position:absolute;left:-34px;top:0;bottom:0;
+    width:1px;height:auto;border:0;background:var(--org-line);
+  }
+  /* 末位兄弟：引导线只到自己的节点中心 */
+  .tree__kids > .tree__branch:last-child > .tree__row::before{
+    content:"";position:absolute;left:-34px;top:0;width:1px;
+    height:calc(100% - var(--half));background:var(--org-line);
+  }
+  /* 折向节点的横线，落在节点垂直中心 */
+  .tree__row::after{
+    content:"";display:block;position:absolute;left:-34px;top:calc(100% - var(--half));
+    width:34px;height:1px;border:0;background:var(--org-line);
+  }
+  .tree__node{align-items:flex-start;text-align:left;}
+  .tree__node--root{align-items:center;text-align:center;}
+  .org__note{text-align:left;}
+
+  .net{grid-template-columns:1fr;gap:14px;}
+  .net__hub{flex-direction:row;flex-wrap:wrap;align-items:center;gap:10px 14px;}
+  .net__hub-label{width:100%;}
+  .net__badge{margin-top:0;}
+  .net__grid{grid-template-columns:repeat(4,minmax(0,1fr));}
+}
+@media (max-width:640px){
+  .about-block{margin-top:46px;padding-top:44px;}
+  .org,.net{padding-left:16px;padding-right:38px;}
+  .tree__node{padding:10px 14px;}
+  .tree__node strong{font-size:16px;}
+  .tree__node--root strong{font-size:17px;}
+  .tree__node span{font-size:12px;}
+  .tree__node--leaf,.tree__node--link{font-size:13.5px;}
+  .net__grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}
+  .net__item{font-size:14px;padding:13px 4px;}
+  .net__note{font-size:12.5px;}
+}
+
+/* ============================================================
+   业务范围页 · 锚点定位与「维保周期」模块
+   ============================================================ */
+/* 长页四个章节的锚点让位同样交给全局 scroll-padding-top（见 style.css），
+   不在这里叠 scroll-margin，否则落点会比其它页低一个导航的高度。 */
+
+/* 流程段底部留白加大：六步是这一页的收尾，下面紧接橙色口号条 + 深色页脚，
+   两块都是「重色块」；段落底边若只按通用的 88px 收，最后一行说明句几乎
+   叠在橙色条上，读起来像被截断。底部放到 132px（窄屏按比例递减），
+   让六步流程有一个完整的落点，再交给口号条起势。 */
+.page--services #process{padding-bottom:132px;}
+@media (max-width:900px){.page--services #process{padding-bottom:104px;}}
+@media (max-width:520px){.page--services #process{padding-bottom:84px;}}
+
+/* 首屏文字留白：照片已从本区块搬到上方的 .svc-banner，
+   这里不再是「照片上的第一屏」，而是横幅下方的第一段正文 ——
+   留白从 56 放回 72，让标题与横幅之间有一段干净的呼吸，
+   也不至于像贴在照片下沿。窄屏按比例各收一档。 */
+.page--services #services{padding-top:72px;}
+@media (max-width:900px){.page--services #services{padding-top:58px;}}
+@media (max-width:640px){.page--services #services{padding-top:46px;}}
+
+/* ---- 维保周期：四轨时间轴（纯 HTML/CSS，不用图片） ----
+   结构对应 TSG T5002-2017 附件 A 的逐层包含关系：
+   半月是强制底盘（每 15 天，滚动实施），季度 / 半年 / 年度逐层包含下级项目。
+   四档四色 + 四档四种点径，3 / 6 / 9 / 12 月的竖向参考线在点位处换色，
+   一条线穿几层颜色，就是当月叠加到第几档。
+   竖线放在 .maint-guides 里（left = 标签列宽），点放在 .maint-lane 里，
+   两者共用同一段轨道宽度，所以竖线与点必然同轴、落在交点正中。
+   图示按自然月序排法，实际日期以维保作业计划为准。 */
+.maint{
+  --lbl:132px;
+  /* --row = 轨道间距 = 行高。分隔线压在每行顶边，线下挂「档名 + 周期」两行字
+     （行高收紧后合计约 42px）：58px 一行，线上不留白、字下还有 16px 余量，
+     四档节奏比原来的 64px 紧一档，仍不至于挤。
+     间距只在这一个变量上改 —— 竖线的换色停靠点、月份轴的位置都按 var(--row)
+     推算，改行高时不用再去三个断点里逐个抄像素值。 */
+  --row:58px;
+  max-width:1120px;margin:0 auto;
+  background:#fff;border:1px solid #E6EAF2;border-radius:18px;
+  padding:34px 40px 28px;box-shadow:0 20px 48px rgba(15,23,58,.08);
+}
+/* 图最上方：依据出处（只此一行，不再拆 ①② 分项标注）
+   16px / #24304A / 600：这行是整张图的法律出处，读图的人先看到它才决定信不信，
+   所以比正文重一档；字重与下方「点次注释」对齐（同为 600），两处小节标记同一粗细。
+   下划线用 text-decoration 而不是 border-bottom：后者会横贯整张卡片，
+   前者只落在文字下方，且窄屏折行时每一行都自带一条，不会只在末行拖一根线。 */
+.maint-src{
+  /* 底距收到 22px：下面插了「结论条」，依据句与结论条先成一组，
+     再与轨道图拉开 34px —— 原来的 32px 直接给轨道，现在分给两层 */
+  display:flex;align-items:flex-start;gap:10px;margin:0 0 22px;
+  font-size:16px;font-weight:600;line-height:1.65;color:#24304A;
+  letter-spacing:.2px;
+}
+.maint-src .u{
+  text-decoration:underline;
+  text-decoration-color:rgba(27,42,135,.17);
+  text-decoration-thickness:1px;
+  text-underline-offset:6px;
+}
+/* 竖线钉在首行文字上：窄屏这句要折三行，若居中会浮在中间成一条孤线 */
+.maint-src::before{
+  content:"";width:3px;height:17px;border-radius:2px;flex:none;
+  margin-top:6px;background:var(--orange);
+}
+/* 结论条：图之上先给三个数字（全年到场 24 次 / 4 个叠加月 / 1 次年度）。
+   做成一条浅底横排而不是三张卡：它是「读图的前情提要」，不该和图里的
+   四档卡一样重，所以只有一条细边框、不加投影，数字用墨蓝大字拉开层级。 */
+.maint-kpi{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  margin:0 0 34px;border:1px solid #E6EAF2;border-radius:12px;
+  background:#FAFBFE;overflow:hidden;
+}
+.maint-kpi > div{
+  display:flex;align-items:baseline;gap:11px;
+  padding:14px 18px 13px;
+}
+.maint-kpi > div + div{border-left:1px solid #E9EDF6;}
+/* 三个数字用品牌深宝蓝（--primary #1b2a87）。
+   曾用过商标橙，橙在近白底（#FAFBFE）上只有 2.98:1，27px 大字勉强够看，
+   但三个等高饱和橙并排就成了三块「警示标签」，而橙色在本页只应出现一次
+   （依据句竖条、小节竖条、悬停边框都在用它），用三次反而取消了强调；
+   正下方轨道图里又有橙色点代表半年维保，颜色还会互相干扰。
+   深宝蓝 11.8:1，与导航、栏目标题的蓝色同族：三个数字仍是这一块的视觉重心，
+   但靠字号与字重撑，不靠色相去抢。 */
+.maint-kpi b{
+  font-size:27px;line-height:1;font-weight:700;color:var(--primary);
+  letter-spacing:.5px;font-variant-numeric:tabular-nums;flex:none;
+}
+/* 结论条的字：说明句 12.8→14→15.5px、行名 13.5→15→16px。
+   这一条是「读图前情提要」，之前为压高度把字收到 12.8，结果三个数字很醒目、
+   下面的解释句反而像图注；两次抬高之后数字与说明的重量重新平衡。
+   颜色一并压深（#5A6274 → #3D4559）：灰蓝的字压在 #FAFBFE 上原本只有
+   7.2:1，看着「够」但发虚；深一档后与 27px 的宝蓝数字同属一个墨色系，
+   小字也不再像注脚。行高 1.52 不动，两行之间仍是松的。 */
+.maint-kpi p{margin:0;font-size:15.5px;line-height:1.52;color:#3D4559;text-wrap:pretty;}
+.maint-kpi p strong{display:block;font-size:16px;font-weight:600;color:#1F2430;letter-spacing:.2px;}
+.maint-lanes{position:relative;}
+/* 竖线层：left 跟随标签列宽，宽度 = 轨道宽度，与 .maint-lane 逐像素相同。
+   行顶就是分隔线，首条线在 .maint-lanes 的顶边；月份轴又正好落在末行底边，
+   所以 top / bottom 都取 0：一条线从首条分隔线贯穿四档、收在月份轴上。 */
+.maint-guides{
+  position:absolute;left:var(--lbl);right:0;top:0;bottom:0;
+  pointer-events:none;
+}
+.maint-guide{
+  position:absolute;top:0;bottom:0;width:2px;transform:translateX(-50%);
+}
+/* 实段 = 有维保项目的轨道区间，淡段 = 指向月份轴的引线。
+   停靠点全部由 --row 推出：季度线在第 1 行顶、半年线在第 2 行顶、
+   年度线在第 3 行顶，引线一路淡到第 4 行底的月份轴。 */
+.maint-guide.g-q{background:linear-gradient(180deg,#0F6E56 0 var(--row),rgba(15,110,86,.22) var(--row) 100%);}
+.maint-guide.g-qh{background:linear-gradient(180deg,#0F6E56 0 var(--row),#EF9F27 var(--row) calc(var(--row) * 2),rgba(239,159,39,.22) calc(var(--row) * 2) 100%);}
+.maint-guide.g-full{background:linear-gradient(180deg,#0F6E56 0 var(--row),#EF9F27 var(--row) calc(var(--row) * 2),#A32D2D calc(var(--row) * 2) calc(var(--row) * 3),rgba(163,45,45,.22) calc(var(--row) * 3) 100%);}
+/* 叠加月的圈：把同一列上的几个点框在一起，解决「看起来像一年 31 次」的误读。
+   用橙色虚线原因：橙色在这一块一直是「注释色」（依据句、小节标题的竖条都是橙），
+   四档的蓝绿黄红是「数据色」，两者不混。
+   --pad 控制圈顶/圈底比首末点各多留多少；高度 = 行高 ×（档数 - 1）+ 两倍 pad，
+   所以 3 / 6 / 9 / 12 月分别是 2 / 3 / 2 / 4 档高，改 --row 时自动跟着走。 */
+.maint-merges{
+  position:absolute;left:var(--lbl);right:0;top:0;bottom:0;
+  pointer-events:none;
+}
+.maint-merges i{
+  --pad:9px;
+  position:absolute;transform:translateX(-50%);width:34px;
+  /* 高度按「点」的实际位置算，不按行边界算：每行的点垂直居中于本行，
+     上一版取 (rows-1)*行高 + 2*pad，只到末行的中线 —— 12 月那圈（4 档）
+     底边离红点下沿只剩 1px，虚线圈看起来像把红点切了一半。
+     现在改到「末行点下沿 + 一点空隙」：(rows-1)*行高 + 2*pad + 13px，
+     顶边同步上提 5px 补足上半行的半高，上下各留 9px 左右，
+     红点整个落在圈内。12 月：-14 起、205 高、底边到 191，红点下沿 182。 */
+  top:calc(var(--pad) * -1 - 5px);
+  height:calc(var(--row) * (var(--rows) - 1) + var(--pad) * 2 + 13px);
+  border:1px dashed rgba(242,106,33,.58);border-radius:11px;
+  background:rgba(242,106,33,.05);
+  pointer-events:auto;cursor:default;
+  transition:border-color .22s ease,background .22s ease;
+}
+/* 悬浮提示：圈只有 34px 宽，文字挂在圈底下方挂出来 —— 放上方会顶出卡片、
+   盖到结论条上；放下方正好落在该列的空档里（3/6/9 月下方无点，12 月下方是
+   轴前的空白），不会压到别列的点。12 月那圈贴着右边界（95.8%），
+   居中会溢出卡片，所以 .is-end 改为右对齐。
+
+   配色：原先是墨蓝实底白字，在这张近白卡上像贴了一块深色补丁，与整块的
+   浅底细线（结论条 #FAFBFE、分隔线 #E6EAF2）不是一套语言。改为浅暖底 —
+   #FFF6EF 取橙色 5% 左右的暖调，与虚框、依据句竖条同族；描边用橙色 30%
+   透明度勾出边界，字取深赭 #8C3D10（对比度约 7:1，12.5px 也读得清），
+   投影也换成极淡的橙调，不再往下压一块深影。 */
+.maint-merges i::after{
+  content:attr(data-tip);
+  position:absolute;left:50%;top:calc(100% + 10px);
+  transform:translate(-50%,-4px);
+  white-space:nowrap;font-size:12.5px;line-height:1.35;color:#8C3D10;
+  background:#FFF6EF;border:1px solid rgba(242,106,33,.30);
+  padding:6px 10px;border-radius:7px;
+  box-shadow:0 8px 18px rgba(242,106,33,.13),0 1px 2px rgba(15,23,58,.05);
+  opacity:0;pointer-events:none;z-index:5;
+  transition:opacity .2s ease,transform .2s ease;
+}
+.maint-merges i.is-end::after{left:auto;right:-14px;transform:translateY(-4px);}
+.maint-merges i:hover,
+.maint-merges i:focus-visible{
+  border-color:rgba(242,106,33,.9);background:rgba(242,106,33,.09);outline:none;
+}
+.maint-merges i:hover::after,
+.maint-merges i:focus-visible::after{opacity:1;transform:translate(-50%,0);}
+.maint-merges i.is-end:hover::after,
+.maint-merges i.is-end:focus-visible::after{transform:translateY(0);}
+/* 每行：分隔线压在行顶（lane 的 ::before 走 top:0），左侧标签也从行顶起排，
+   于是「标签顶部」与「分隔线」落在同一个 y 上 —— 线不会再从档名中间穿过去。
+   圆点跟档名垂直居中（不单独上提）：一是整块标签的顶边就是线的顶边，
+   二是点径 9.5～16px 各不相同，钉在线上反而会让四档的点看起来高低不一。
+   grid 第一列写死 16px（最大那颗年度点的直径）、点居中：四档点径不同，
+   若用 auto 列宽，越大的点会把档名推得越右，四个档名左边缘就差出 6px。 */
+.maint-row{
+  display:grid;grid-template-columns:var(--lbl) 1fr;height:var(--row);
+  position:relative;
+}
+.maint-label{
+  display:grid;grid-template-columns:16px 1fr;align-items:center;
+  column-gap:10px;row-gap:4px;align-self:start;
+}
+.maint-label .dlg{
+  grid-column:1;grid-row:1;flex:none;border-radius:50%;
+  justify-self:center;
+}
+.maint-label b{grid-column:2;grid-row:1;display:block;font-size:15px;line-height:1.28;font-weight:600;color:#1F2430;letter-spacing:.3px;}
+.maint-label span{grid-column:2;grid-row:2;display:block;font-size:13.5px;line-height:1.35;color:#5A6274;}
+.maint-lane{position:relative;align-self:stretch;}
+.maint-lane::before{
+  content:"";position:absolute;left:0;right:0;top:0;height:1.5px;background:#E8EEFA;
+}
+.maint-lane .d{
+  position:absolute;top:0;transform:translate(-50%,-50%);
+  border-radius:50%;
+}
+/* 四档四色 + 尺寸分级：黑白打印也能分出主次 */
+.d-b{width:9.5px;height:9.5px;background:#185FA5;}
+.d-q{width:13px;height:13px;background:#0F6E56;}
+.d-h{width:13px;height:13px;background:#EF9F27;}
+.d-y{width:16px;height:16px;background:#A32D2D;box-shadow:0 0 0 6px rgba(163,45,45,.13);}
+/* 每个点悬浮时给出「这个点属于哪一档」：图上有 31 个点，读者靠颜色回左侧图例对照
+   太费劲，直接把答案挂在点上。文案按档位写在 CSS 里，不在 HTML 里重复 31 次；
+   作用域必须限定 .maint-lane —— 左侧档名前的圆点同样带 .d-b/.d-q 类
+   （<i class="dlg d-b">），不限定会把气泡一起挂到档名旁边。
+   气泡挂点上方：第一行的气泡正好落进结论条与图之间那道 34px 的空档，
+   第二到四行则浮在上一行轨道上，因为 z-index 高于点本身，不会互相糊住。 */
+.maint-lane .d::after{
+  content:"";position:absolute;left:50%;bottom:calc(100% + 9px);
+  transform:translate(-50%,4px);
+  white-space:nowrap;font-size:12.5px;line-height:1.3;font-weight:600;letter-spacing:.2px;
+  background:none;padding:0;box-shadow:none;
+  /* 不要底色块：只留档位色的字，再用一圈白描把它从底上「抠」出来 ——
+     压在淡蓝分隔线、相邻点或者虚线圈上时，字仍有干净的边。
+     白描在这张白卡上本身就是「无痕」的，看起来就是一行纯文字。 */
+  text-shadow:0 0 3px #fff,0 0 7px #fff,1px 0 0 #fff,-1px 0 0 #fff,0 1px 0 #fff,0 -1px 0 #fff;
+  opacity:0;pointer-events:none;
+  transition:opacity .18s ease,transform .18s ease;
+}
+.maint-lane .d-b::after{content:"半月维保 · 每 15 天";color:#185FA5;}
+.maint-lane .d-q::after{content:"季度维保 · 每 3 个月";color:#0F6E56;}
+.maint-lane .d-h::after{content:"半年维保 · 每 6 个月";color:#BA7517;}
+.maint-lane .d-y::after{content:"年度维保 · 每 1 年";color:#A32D2D;}
+.maint-lane .d:hover::after{opacity:1;transform:translate(-50%,0);}
+/* 季度 / 半年 / 年度这三行点很稀（最近两颗也隔着四分之一到半张图），
+   标签就放到点的右侧、与点同高 —— 挂在上方会压到上一行的点，
+   白描一抠，那颗点看着像缺了个口。整行最后一颗右边没有余量，
+   改用左侧（.is-last 那组）。 */
+.maint-lane .d-q::after,
+.maint-lane .d-h::after,
+.maint-lane .d-y::after{
+  left:calc(100% + 9px);right:auto;top:50%;bottom:auto;
+  transform:translate(0,-50%);
+}
+.maint-lane .d-q:hover::after,
+.maint-lane .d-h:hover::after,
+.maint-lane .d-y:hover::after{transform:translate(0,-50%);}
+/* 首末两个半月点贴着轨道两端（2.08% / 97.9%），居中标签会顶出图框：
+   首个点改成左对齐、末个点改成右对齐，整体往内侧收。 */
+.maint-lane .d-b:first-child::after{left:0;transform:translate(0,4px);}
+.maint-lane .d-b:first-child:hover::after{transform:translate(0,0);}
+.maint-lane .d-b:last-child::after{left:auto;right:0;transform:translate(0,4px);}
+.maint-lane .d-b:last-child:hover::after{transform:translate(0,0);}
+.maint-lane .d-q:last-child::after,
+.maint-lane .d-h:last-child::after,
+.maint-lane .d-y:last-child::after{left:auto;right:calc(100% + 9px);}
+/* 月份轴就压在末行底边上：分隔线在每行行顶，末行是 [3×row, 4×row)，
+   轴正好落在 4×row，年度线到轴也是一整行 —— 不用再补半行，
+   四档间距从头到尾都是同一个 --row。 */
+.maint-axis{
+  display:grid;grid-template-columns:var(--lbl) 1fr;
+}
+.maint-line{height:1px;background:#CBD5E8;}
+/* 月份轴上的数字：13 → 15px、色 #9AA1B4 → #3F4657。
+   轴上的数字要跟轨道上的点一起被读到，浅灰小字在这个尺度上几乎糊成装饰；
+   八个「半月」月份统一用深灰黑 500，四档所在月份保留档位色并加重到 700 ——
+   颜色之外再给一档字重，黑白打印时主次也分得开。 */
+.maint-months{
+  display:grid;grid-template-columns:repeat(12,1fr);margin-top:9px;
+  font-size:15px;font-weight:500;color:#3F4657;text-align:center;letter-spacing:.2px;
+}
+.maint-months .m-q{color:#0F6E56;font-weight:700;}
+.maint-months .m-h{color:#BA7517;font-weight:700;}
+.maint-months .m-y{color:#A32D2D;font-weight:700;}
+/* 轴下四条读图口径：12.5→13.5→14px、色 #8A90A6 → #3F4658（与底部细则同一个灰黑），
+   再加 500 的字重 —— 这四条是「怎么看这张图」的说明书，浅灰小字在这个尺度上
+   容易被当成装饰跳过；加深加粗后又不能压过图本身，所以只到 #3F4658，不用纯黑。
+   句前圆点改主色深宝蓝：原来那点浅灰蓝和字是一个明度层，等于没有「条目」感；
+   深蓝点让四条一眼看出是四条并列口径，也和本节的主色呼应。
+   左缘与上方月份「1」的中心对齐：月份是 12 等分栅格，第 1 格的圆心在
+   轨道宽度的 1/24 处，所以缩进 = 标签列宽 + (栅格宽 / 24) - 半个圆点宽。 */
+.maint-ticks{
+  display:flex;flex-wrap:wrap;gap:6px 16px;
+  margin:13px 0 0 calc(var(--lbl) + (100% - var(--lbl)) / 24 - 2.5px);
+  /* 14 → 15px、#3F4658 → #2A3145：四条读图口径原来和月份轴一样灰，
+     扫一眼容易直接跳过；字号抬一档、颜色压到接近正文墨色，
+     它们才像「读图前请先看这四条」而不是图下的装饰注脚。
+     四条在 1440 下合计约 846px，容器可用 870，仍是一行；
+     行距由 18 收到 16 补足加宽后的余量，≤1080 改两列栅格不受影响。 */
+  font-size:15px;line-height:1.55;font-weight:500;color:#2A3145;
+}
+.maint-ticks span{display:inline-flex;align-items:center;gap:6px;}
+.maint-ticks span::before{
+  content:"";width:5px;height:5px;border-radius:50%;
+  background:var(--primary);flex:none;
+}
+/* 四档说明：图下方的小标题，与上方依据句同一套左竖线语言
+   字号 16.5、字重 600、色取深宝蓝 —— 与依据句同为「小节标题」，
+   颜色上给两处不同的锚：依据句是墨蓝的说明文字，这处是主色的小节标题 */
+.maint-sub{
+  display:flex;align-items:center;gap:10px;
+  margin:34px 0 16px;padding-top:24px;border-top:1px dashed #E6EAF2;
+  font-size:16.5px;font-weight:600;color:var(--primary);letter-spacing:.5px;
+}
+.maint-sub::before{
+  content:"";width:3px;height:18px;border-radius:2px;flex:none;
+  background:var(--orange);
+}
+/* 四档卡：原来是一行文字注释，只说「几月做哪档」，看不出年度凭什么最重。
+   现在每张卡四层信息 —— 档名 / 频次 / 全年次数 / 该档新增项目，
+   按逐层包含排序（半月 → 季度 → 半年 → 年度），后三档项目前带「＋」。
+   颜色统一走 --c / --c-soft / --c-line，四档只差变量值；
+   悬浮时整张卡换成该档淡色，和上方轨道上的点建立联系。 */
+.maint-legend{
+  list-style:none;margin:0;padding:0;
+  display:grid;grid-template-columns:1fr 1fr;gap:12px 18px;
+}
+.maint-legend li{
+  --c:#185FA5;
+  --c-soft:rgba(24,95,165,.08);
+  --c-line:rgba(24,95,165,.30);
+  display:flex;align-items:flex-start;gap:11px;
+  padding:11px 16px 12px;border-radius:12px;
+  background:rgba(240,243,250,.62);
+  border:1px solid rgba(31,36,48,.055);
+  cursor:default;
+  transition:background .22s ease,border-color .22s ease,
+             box-shadow .22s ease;
+}
+.maint-legend i{
+  width:11px;height:11px;border-radius:50%;flex:none;background:var(--c);
+  margin-top:6px;
+  transition:box-shadow .22s ease,transform .22s ease;
+}
+.lg-t{min-width:0;flex:1;}
+/* 卡头一行：档名（17/600 墨黑）· 频次（14 深灰）· 全年次数（右侧同色胶囊）。
+   次数胶囊是这一轮新增的信息，靠右对齐成一条竖线，四张卡可以竖着扫。
+   全组字号本轮各抬一档：15.5 → 17 / 12.5 → 14 / 12 → 13，
+   卡头原来只比正文大一档，抬完才真正是「这张卡叫什么」。 */
+.lg-top{display:flex;align-items:baseline;gap:8px;}
+.lg-top b{font-size:17px;line-height:1.3;font-weight:600;color:#1F2430;letter-spacing:.2px;}
+.lg-top span{font-size:14px;color:#454E66;white-space:nowrap;}
+.lg-top em{
+  margin-left:auto;flex:none;font-style:normal;
+  font-size:13px;font-weight:600;line-height:1.4;letter-spacing:.2px;
+  color:var(--c);background:var(--c-soft);
+  padding:2px 9px;border-radius:999px;
+  border:1px solid var(--c-line);
+}
+/* 卡头下面这两行是客户真正要读的内容（做什么、哪几个月），原来 13 / 12px
+   比卡头的档名小两级，视线到这就断了；先抬到 14 / 13，本轮再抬到 15.5 / 14.5。
+   最后一行（月份）是四张卡里最容易读丢的一行 —— 13px 的浅灰 #7C8398
+   压在这层灰底上只有 3.4:1，扫读时几乎跳过去；r59 抬到 14.5px / #4A5266（6.9:1），
+   r60 再把颜色压到 #333B4F（9.9:1）—— 与上一行 #2B3245 只差半档，
+   读得清，又不会把「做什么」那一行抢掉。
+   r60 同时收高度：行间距 7 → 6、5 → 4，卡片内边距上下各收 2px，
+   单卡 113 → 106，四张两行整组少约 14px，比例更紧凑。 */
+.lg-t p{margin:6px 0 0;font-size:15.5px;line-height:1.6;color:#2B3245;text-wrap:pretty;}
+.lg-t small{display:block;margin-top:4px;font-size:14.5px;line-height:1.5;color:#333B4F;}
+/* 四档色值挂在 li.lg-* 上：必须带上 .maint-legend 前缀，
+   否则特异性低于 .maint-legend li，四档会一起退回默认蓝 */
+.maint-legend li.lg-q{--c:#0F6E56;--c-soft:rgba(15,110,86,.09);--c-line:rgba(15,110,86,.32);}
+.maint-legend li.lg-h{--c:#BA7517;--c-soft:rgba(239,159,39,.13);--c-line:rgba(239,159,39,.45);}
+.maint-legend li.lg-y{--c:#A32D2D;--c-soft:rgba(163,45,45,.08);--c-line:rgba(163,45,45,.30);}
+.maint-legend li.lg-b{--c:#185FA5;--c-soft:rgba(24,95,165,.08);--c-line:rgba(24,95,165,.30);}
+.maint-legend li:hover,
+.maint-legend li:focus-visible{
+  background:var(--c-soft);
+  border-color:var(--c-line);
+  box-shadow:0 8px 18px -10px var(--c-line);
+  outline:none;
+}
+/* 悬浮时光环用「白圈 + 同色实圈」两层：单靠淡色光圈几乎看不出，
+   两圈叠在浅底上边界清楚，圆点也不会被背景色吃掉 */
+.maint-legend li:hover i,
+.maint-legend li:focus-visible i{
+  box-shadow:0 0 0 3px #fff,0 0 0 5px var(--c);
+  transform:scale(1.1);
+}
+/* 按下时比悬浮再实一档：描边走到档位实色、底色不变。
+   四张卡与下方「法定定期检验」条走同一套三态（默认 / 悬浮 / 按下），
+   碰哪一块的反馈都一样。 */
+.maint-legend li:active{background:var(--c-soft);border-color:var(--c);}
+/* 边界澄清条：法定定期检验单独一条，虚线描边 + 空心点，明确「不是维保的一次」。
+   放在四档卡与底部细则之间：先看完「做什么」，再看「什么不算」，最后才是口径细则。
+   字号 13.5→14.5：这条是要「划清界限」的话，太小就只是一行灰色附注，
+   与上面四张卡不在一个重量级上，容易被跳过。
+   交互与上面四张卡同一套：悬浮 / 按下时底色、描边、投影跟着这档的蓝走，
+   连空心点也补一圈同色光环，让「这也是一张可以碰的卡」这件事一致。 */
+.maint-exam{
+  --c:#185FA5;
+  --c-soft:rgba(24,95,165,.08);
+  --c-line:rgba(24,95,165,.28);
+  display:flex;align-items:flex-start;gap:10px;
+  margin:14px 0 0;padding:13px 18px;
+  border:1px dashed var(--c-line);border-radius:10px;
+  background:rgba(24,95,165,.035);
+  font-size:15.5px;line-height:1.7;color:#333C52;text-wrap:pretty;
+  cursor:default;
+  transition:background .22s ease,border-color .22s ease,box-shadow .22s ease;
+}
+.maint-exam i{
+  width:10px;height:10px;border-radius:50%;flex:none;margin-top:7px;
+  border:1.5px dashed rgba(24,95,165,.75);
+  transition:box-shadow .22s ease;
+}
+.maint-exam b{font-weight:600;color:#1F2430;}
+/* 「不计入上述维保次数」用蓝色（#185FA5，也就是这条框自己的虚线、空心圆那一支蓝）：
+   曾用过浅红当「注意」标记，但在这一整块里红已经被「年度维保」占了（点、
+   月份 12、档名都是暗红），再来一处红会和年度档混成同一层意思；
+   而改成蓝之后，重点靠重量（600）与色彩归属（= 这条框的蓝）体现，
+   不断言「警告」，只把否定结论拎出来。对比 5.9:1，14.5px 稳。
+   不用 --primary #1b2a87：那一档偏近黑蓝，和同句里的 b(#1F2430) 会糊成一块。 */
+.maint-exam em{font-style:normal;font-weight:600;color:#185FA5;}
+.maint-exam:hover,
+.maint-exam:focus-visible{
+  /* 这条默认就带一层淡蓝底，只把底色从 .035 提到 .08 几乎看不出来；
+     提到 .12、描边到 .55，才和上面四张卡「从灰底变成本档淡色」的落差相当 */
+  background:rgba(24,95,165,.12);
+  border-color:rgba(24,95,165,.55);
+  box-shadow:0 8px 18px -10px var(--c-line);
+  outline:none;
+}
+.maint-exam:hover i,
+.maint-exam:focus-visible i{box-shadow:0 0 0 3px #fff,0 0 0 5px rgba(24,95,165,.45);}
+.maint-exam:active{background:rgba(24,95,165,.17);border-color:rgba(24,95,165,.62);}
+/* 底部说明：15px / 行高 1.9，首句「本表按自然年度编排示意」用品牌蓝着重，
+   其余灰黑 —— 先给排法，再给执行口径，最后兜底日期，三层读下来不糊成一片 */
+.maint-note{
+  margin:12px 0 0;font-size:15px;line-height:1.9;color:#3F4658;
+  background:#F7F8FC;border:1px solid #E6EAF2;border-radius:10px;
+  padding:15px 20px;text-wrap:pretty;
+}
+.maint-note .hl{color:var(--primary);font-weight:600;}
+/* 结论条在 1080 以下改成三行：三列并排时每列可用宽度只剩约 208px，
+   加大后的说明句（19 字）会被切成「…不额外加 / 次数」这种只剩两字的孤行。
+   与其为迁就版面把字收回去，不如让三条结论各占一行 —— 数字与说明本来就是
+   一条一条读的，竖排反而更像三个并列的结论。 */
+@media (max-width:1080px){
+  .maint-kpi{grid-template-columns:1fr;margin-bottom:26px;}
+  .maint-kpi > div{padding:11px 16px;gap:12px;}
+  .maint-kpi > div + div{border-left:0;border-top:1px solid #E9EDF6;}
+  .maint-kpi b{font-size:23px;}
+  /* 窄屏这段说明只有 2–3 行，默认断行常把末字留成孤字（如「…不额外加次 / 数」），
+     交给 balance 均分两行 */
+  .maint-kpi p{text-wrap:balance;}
+  /* 读图口径改两列栅格：14px 下四条并排在 1080～900 会差十几像素装不下，
+     换成 2×2 反而比「3 条一行 + 1 条落单」整齐，每列还都有富余 */
+  .maint-ticks{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;}
+}
+@media (max-width:900px){
+  .maint{--lbl:104px;--row:52px;padding:24px 22px 20px;}
+  .maint-src{font-size:14.5px;}
+  /* 字号降一档，块高随之变矮，行高同步收到 52（竖线停靠点跟 --row 走，自动对齐） */
+  .maint-label b{font-size:14px;}
+  .maint-label span{font-size:12.5px;}
+  .maint-sub{font-size:15.5px;margin:28px 0 14px;padding-top:20px;}
+  .maint-legend{grid-template-columns:1fr;gap:10px;}
+  .maint-legend li{padding:10px 14px 11px;}
+  .maint-note{font-size:14px;padding:13px 16px;}
+  .maint-months{font-size:13.5px;}
+  .maint-ticks{margin-top:10px;font-size:14.5px;gap:5px 16px;}
+  .maint-exam{font-size:14.5px;padding:12px 15px;}
+}
+@media (max-width:640px){
+  /* 窄屏右侧 40px 是侧边悬浮按钮（电话/顶部）的位置，
+     卡片留出这段空当，图例与说明文字不会被按钮压住 */
+  .maint{padding-right:52px;}
+  /* 触屏没有 hover：圈的悬停提示不必存在，避免长按误触出浮层；
+     轨道上的点同理（点太小，长按反而挡住相邻月份） */
+  .maint-merges i::after{display:none;}
+  /* 圈宽 22 时，年度点（16px）加外面那圈 6px 柔光一共 28px，
+     红点会从框的左右鼓出来 —— 收到 30px 才连带光环一起包住；
+     这一档每格还有 33～41px，30px 的框不会碰到相邻月份的点。 */
+  .maint-merges i{width:30px;--pad:7px;border-radius:14px;}
+  .maint-lane .d::after{display:none;}
+  /* 手机端两列放不下一整句口径，收成单列，每条各占一行 */
+  .maint-ticks{grid-template-columns:1fr;}
+}
+@media (max-width:520px){
+  .maint{--lbl:88px;--row:50px;padding:20px 52px 16px 14px;}
+  /* 点径收到 7 / 10 / 12，第一列跟着收窄，档名与圆点仍居中对齐 */
+  .maint-label{grid-template-columns:12px 1fr;column-gap:8px;}
+  .maint-label b{font-size:13px;}
+  .maint-label span{font-size:12px;}
+  .d-b{width:7px;height:7px;}
+  .d-q,.d-h{width:10px;height:10px;}
+  .d-y{width:12px;height:12px;box-shadow:0 0 0 4px rgba(163,45,45,.13);}
+  .maint-guide{width:1.5px;}
+  /* 窄屏每格只有约 20px，两位数月份（10 / 11 / 12）会挤在一起：
+     收到 11.5px 并去掉字距 —— 比原来的 10.5 大一档，仍逐个月份可读 */
+  .maint-months{font-size:11.5px;margin-top:7px;letter-spacing:0;}
+  .maint-legend li{font-size:13.5px;padding:8px 12px 9px;gap:9px;}
+  /* 390 下每格只有约 20px，30px 的圈会盖住相邻月份：收到 16px。
+     不能更窄 —— 年度点在这里是 12px、外面还有一圈 4px 柔光环，合计 20px，
+     圈宽 13 时红点连本体都会从左右鼓出来，看着就是「框没包住点」；
+     20px 把红点连同光环一起兜住，与相邻月份的点之间仍有约 6px 空隙。 */
+  .maint-merges i{width:20px;--pad:5px;border-radius:10px;}
+  .lg-top{gap:6px;flex-wrap:wrap;}
+  /* 手机档同步抬一档（14.5 → 16 / 11.5 → 13 / 11 → 12 / 13 → 14.5 / 12.3 → 13.5）：
+     桌面上加大的层级如果这里不退让，手机上四张卡会和上方轨道图一样重 */
+  .lg-top b{font-size:16px;}
+  .lg-top span{font-size:13px;}
+  .lg-top em{font-size:12px;padding:2px 7px;}
+  .lg-t p{font-size:14.5px;}
+  .lg-t small{font-size:13.5px;}
+  .maint-sub{font-size:14.5px;}
+  .maint-note{font-size:13.5px;padding:12px 14px;line-height:1.85;}
+}

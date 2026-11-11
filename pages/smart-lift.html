@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>智能梯控运行演示 - 顺凯达电梯官网</title>
+<meta name="description" content="深圳市顺凯达电梯有限公司智能梯控运行演示：1F–30F 全程运行示意，7×24 小时值守、市区 30 分钟到场、全周期运行台账。">
+<link rel="icon" href="../assets/logo.jpg">
+<link rel="stylesheet" href="../css/style.css?v=20261111k">
+<link rel="stylesheet" href="../css/smart-lift.css?v=20261111k">
+<link rel="stylesheet" href="../css/nav-sub.css?v=20261111k">
+</head>
+<body>
+
+<!-- ===================== 导航（与主站一致） ===================== -->
+<header class="header" id="header">
+  <div class="container">
+    <a href="../index.html" class="logo">
+      <img class="logo-img" src="../assets/logo.jpg" alt="顺凯达电梯 SKD 商标">
+      <div class="logo-txt">
+        <strong>深圳市顺凯达电梯有限公司</strong>
+        <small>SHUNKAIDA ELEVATOR · SINCE 2020</small>
+      </div>
+    </a>
+    <nav class="nav" id="nav">
+      <a href="../index.html">首页</a>
+      <a href="about.html">企业介绍</a>
+      <a href="services.html" class="active">业务范围</a>
+      <a href="cases.html">项目案例</a>
+      <a href="qualification.html">资质展示</a>
+      <a href="safety.html">安全科普</a>
+      <a href="contact.html" class="tel">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014.1 2h3a2 2 0 012 1.7c.1 1 .4 1.9.7 2.8a2 2 0 01-.5 2.1L8.1 9.9a16 16 0 006 6l1.3-1.3a2 2 0 012.1-.4c.9.3 1.8.6 2.8.7a2 2 0 011.7 2z"/></svg>
+        联系我们
+      </a>
+    </nav>
+    <button class="hamburger" id="hamburger" aria-label="菜单"><i></i><i></i><i></i></button>
+  </div>
+</header>
+
+<!-- ===================== 智能梯控演示 ===================== -->
+<main class="lift-page">
+  <div class="container">
+    <div class="crumb">
+      <a href="../index.html">首页</a><span>›</span>
+      <a href="services.html#monitor">运行保障</a><span>›</span>
+      <b>智能梯控演示</b>
+    </div>
+
+    <div class="lift-hero">
+      <div class="tag">Smart Lift Control</div>
+      <h1>智能梯控运行演示</h1>
+      <p>1F–30F 全程运行示意：轿厢按目标楼层自动运行，里程碑楼层实时高亮，运行状态、当前楼层与目标楼层同步更新。上述监控与运行逻辑，契合我方维保项目落地的运行监控与工单派单业务流程。</p>
+    </div>
+
+    <div class="lift-card">
+      <div class="elevator-head">
+        <span>SKD · 智能梯控演示 · 1F-30F</span>
+        <div class="floor-display"><span id="floorNum">1</span><small>F</small></div>
+      </div>
+      <div class="shaft" id="liftShaft">
+        <div class="car" id="liftCar">
+          <div class="car-doors"><i></i><i></i></div>
+          <span>SKD</span>
+        </div>
+      </div>
+      <div class="elevator-foot">
+        <span>楼层范围：<b>1F - 30F</b></span>
+        <span>运行状态：<b id="carState">待机</b></span>
+        <span>目标楼层：<b id="carTarget">1F</b></span>
+      </div>
+    </div>
+
+    <div class="lift-notes">
+      <div class="lift-note">
+        <div class="ico"><svg viewBox="0 0 24 24"><path d="M3 21h18M6 21V8l6-4 6 4v13"/><path d="M10 21v-5h4v5"/></svg></div>
+        <h3>实时楼层与状态</h3>
+        <p>轿厢位置、运行方向、目标楼层同步呈现，便于值班人员实时获知电梯当前位置与目标停靠楼层。</p>
+      </div>
+      <div class="lift-note">
+        <div class="ico"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></div>
+        <h3>异常自动提醒</h3>
+        <p>困人、冲顶、门锁异常等告警自动推送，值班人员接报后跟进联系，并按片区派单到就近驻点。</p>
+      </div>
+      <div class="lift-note">
+        <div class="ico"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M8 9h8M8 13h8M8 17h5"/></svg></div>
+        <h3>全周期台账</h3>
+        <p>保养、故障、更换件逐项留痕，年度自检与特检院复审资料可查阅，交付可追溯。</p>
+      </div>
+    </div>
+
+    <div class="lift-actions">
+      <a class="btn btn--orange" href="contact.html">
+        咨询维保服务
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+      <a class="btn btn--ghost" href="services.html#monitor">返回运行保障</a>
+    </div>
+  </div>
+</main>
+
+<!-- ===================== 页脚 ===================== -->
+<footer class="footer">
+  <div class="footer-slogan">
+    <div class="container">
+      <svg viewBox="0 0 24 24"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+      <strong>顺应时势 &nbsp;使命必达</strong>
+    </div>
+  </div>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="f-logo">
+          <img src="../assets/logo.jpg" alt="顺凯达电梯 SKD 商标">
+          <div>
+            <strong>深圳市顺凯达电梯有限公司</strong>
+            <small>SHUNKAIDA ELEVATOR</small>
+          </div>
+        </div>
+        <p>成立于 2020 年 3 月 4 日，专注电梯及零配件销售、电梯维修保养、电梯装潢与配套工程、电梯技术咨询及电梯安装、改造、重大修理。</p>
+      </div>
+      <div>
+        <h4>快速导航</h4>
+        <ul>
+          <li><a href="about.html">企业介绍</a></li>
+          <li><a href="services.html">业务范围</a></li>
+          <li><a href="cases.html">项目案例</a></li>
+          <li><a href="qualification.html">资质展示</a></li>
+          <li><a href="safety.html">安全科普</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>核心服务</h4>
+        <ul>
+          <li><a href="services.html">电梯及零配件销售</a></li>
+          <li><a href="services.html">电梯维修保养</a></li>
+          <li><a href="services.html">电梯装潢与配套工程</a></li>
+          <li><a href="services.html">技术咨询与专项试验</a></li>
+          <li><a href="services.html">电梯安装、改造、重大修理</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>联系方式</h4>
+        <p>服务热线：0755-84290500<br>邮箱：806890200@qq.com</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 深圳市顺凯达电梯有限公司　版权所有</span>
+      <span>粤ICP备 XXXXXXXX 号 - 1　|　部分联系方式与案例数据为示例内容，正式上线前请替换为真实信息</span>
+    </div>
+  </div>
+</footer>
+
+<script src="../js/lift-demo.js?v=20261111k"></script>
+<script>
+(function () {
+  /* 移动端菜单 + 滚动阴影（与主站一致） */
+  var hamburger = document.getElementById('hamburger');
+  var nav = document.getElementById('nav');
+  var header = document.getElementById('header');
+  if (hamburger) {
+    hamburger.addEventListener('click', function () {
+      hamburger.classList.toggle('open');
+      nav.classList.toggle('open');
+    });
+    nav.addEventListener('click', function (e) {
+      if (e.target.tagName === 'A') { hamburger.classList.remove('open'); nav.classList.remove('open'); }
+    });
+  }
+  window.addEventListener('scroll', function () {
+    header.classList.toggle('scrolled', (window.pageYOffset || 0) > 10);
+  }, { passive: true });
+
+  /* 完整演示：多段停靠，节奏放慢到一趟约 3.4 秒。
+     停靠楼层只取里程碑（1/5/10/15/20/25/30）：轿厢高正好是一格，
+     停在里程碑上才刚好落在格内、上下贴线；停 8F、12F 这种层间位置时，
+     车身必然跨在两条线中间，看上去像是「没装进格子里」。 */
+  if (window.SKD_LIFT) {
+    SKD_LIFT({
+      shaft: 'liftShaft',
+      car: 'liftCar',
+      floor: 'floorNum',
+      state: 'carState',
+      target: 'carTarget',
+      seq: [1, 10, 20, 30, 15, 5, 1],
+      move: 3400,
+      hold: 2200,
+      start: 1,
+      mobileStatic: true,
+      staticFloor: 15
+    });
+  }
+})();
+</script>
+<script src="../js/nav-map.js?v=20261111k"></script>
+<script src="../js/nav-sub.js?v=20261111k"></script>
+</body>
+</html>

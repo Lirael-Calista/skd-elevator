@@ -1,0 +1,93 @@
+/* ============================================================
+   智能梯控演示 · 二级页
+   复用 style.css 的导航/页脚/井道轿厢样式，这里只补页面版式
+   ============================================================ */
+/* 二级页不再自铺一层两段渐变：交给 style.css 里那层固定的页面底渐变，
+   主页与本页因此是同一块底、同一个光源方向，跳页时不会出现色温差 */
+.lift-page{
+  background:transparent;
+  padding-bottom:80px;
+}
+
+/* 面包屑 */
+.crumb{padding:22px 0 0;font-size:14px;color:var(--text-light);}
+.crumb a{color:var(--primary-3);}
+.crumb a:hover{color:var(--orange);}
+.crumb span{margin:0 8px;color:#c6cddf;}
+.crumb b{color:var(--text);font-weight:600;}
+
+/* 页头 */
+.lift-hero{text-align:center;padding:26px 0 32px;}
+.lift-hero .tag{
+  display:inline-block;font-size:13px;letter-spacing:3px;color:var(--orange);
+  text-transform:uppercase;font-weight:600;margin-bottom:12px;
+}
+.lift-hero h1{font-size:32px;font-weight:700;letter-spacing:2px;color:var(--primary);}
+.lift-hero p{max-width:680px;margin:14px auto 0;font-size:15px;line-height:1.85;color:var(--text-light);}
+
+/* 演示卡：整体等比收一档（宽 720→600、井道 460→385、轿厢 96→80）。
+   井道高取 385 而不是 384/380：385 = 7 × 55，七个里程碑段段整 55px，
+   轿厢高由 js 按「井道高 / 7」写入，正好 55px —— 上下都压在格线上，
+   不溢出、不留缝，也不会有除不尽的小数在跑几趟后让车底与线错开。 */
+.lift-card{
+  max-width:600px;margin:0 auto;background:#fff;
+  border:1px solid var(--border);border-radius:16px;
+  box-shadow:var(--shadow-lg);padding:20px 20px 16px;
+}
+.lift-card .elevator-head{margin-bottom:12px;}
+.lift-card .elevator-head span{font-size:14px;color:var(--text-light);letter-spacing:.4px;}
+/* 楼层数字牌随卡片同比收一档，否则 68px 的方牌压在窄卡片右角会显得头重 */
+.lift-card .floor-display{width:58px;height:58px;flex:0 0 58px;font-size:31px;}
+.lift-card .floor-display #floorNum{font-size:24px;}
+.lift-card .floor-display small{font-size:15px;}
+.lift-card .shaft{
+  height:385px;border-radius:9px;
+  background:linear-gradient(180deg,#eaf0fb,#fcfdff);
+  box-shadow:inset 0 0 26px rgba(27,42,135,.07);
+}
+/* 轿厢宽度：80（旧）→ 52（白边收没了）→ 62（白边 5px）→ 78。
+   78px = 门区 68 + 左右各 5px 门套：门套宽度不变，加宽的 16px 全给门，
+   轿厢在这条 385 高的井道里不再显得细高；车高仍由 js 按「井道高 / 7」写入，
+   停站时正好占满一格（55px），宽高比 78:55 ≈ 1.42，与业务范围页那只 68:47 同一种比例。 */
+.lift-card .car{width:78px;}
+.lift-card .elevator-foot{margin-top:14px;padding-top:14px;border-top:1px solid var(--border);}
+.lift-card .elevator-foot{font-size:14px;}
+.lift-card .elevator-foot b{font-size:15px;}
+
+/* 说明三卡 */
+.lift-notes{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:20px;
+  max-width:940px;margin:36px auto 0;
+}
+.lift-note{
+  background:#fff;border:1px solid var(--border);border-radius:12px;
+  padding:22px 20px;box-shadow:0 10px 26px rgba(27,42,135,.05);
+}
+.lift-note .ico{
+  width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,rgba(27,42,135,.08),rgba(30,170,240,.14));margin-bottom:14px;
+}
+.lift-note .ico svg{width:21px;height:21px;stroke:var(--primary-2);fill:none;stroke-width:1.7;}
+.lift-note h3{font-size:16px;color:var(--primary);margin-bottom:8px;letter-spacing:.4px;}
+.lift-note p{font-size:14px;line-height:1.8;color:var(--text-light);}
+
+/* 底部操作 */
+.lift-actions{display:flex;justify-content:center;gap:14px;margin-top:38px;flex-wrap:wrap;}
+
+@media (max-width:900px){
+  .lift-notes{grid-template-columns:1fr;max-width:640px;}
+  .lift-hero h1{font-size:26px;}
+}
+@media (max-width:640px){
+  .lift-page{padding-bottom:56px;}
+  .lift-card{padding:16px 14px 14px;border-radius:14px;}
+  /* 同理取 7 的整数倍：294 = 7 × 42，手机上车高正好 42px */
+  .lift-card .shaft{height:294px;}
+  /* 手机端车高 42，宽度跟着收到 64（宽高比 1.52），按桌面那个 70 会显得扁 */
+  .lift-card .car{width:64px;}
+  .lift-card .car span{font-size:10px;letter-spacing:.6px;}
+  .lift-card .elevator-foot{font-size:13px;gap:8px 14px;}
+  .lift-hero h1{font-size:23px;}
+  .lift-hero p{font-size:14px;}
+  .lift-actions .btn{width:100%;justify-content:center;}
+}

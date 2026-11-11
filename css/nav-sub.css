@@ -1,0 +1,204 @@
+/* ============================================================
+   导航栏 · 页内快捷菜单（下拉）
+   ------------------------------------------------------------
+   挂在当前页对应的那个导航项下面，列出本页所有标题模块。
+   结构与内容由 js/nav-sub.js 生成，这里只管长相。
+
+   视觉参照「产品中心」那类经典企业站下拉：
+   · 纯白面板、浅灰描边、极轻投影、3px 圆角，顶部一枚小尖角指回导航项；
+   · 菜单项整行铺满、文字水平居中、行与行之间用 1px 分割线隔开，
+     没有圆点、没有图标、没有粗描边 —— 越简单越像参考稿；
+   · 悬停整行浅底色，当前所在模块保留橙色高亮（底 + 字 + 字重）；
+   · 所有项（含子项）左右内边距一致、字号字重颜色一致，中线统一。
+
+   动效：位移 + 淡入，展开 170ms「起步快收尾缓」，收起 180ms 稍缓；
+   收起延后 150ms，鼠标斜向穿过缝隙时不会闪跳。这道「过渡带」
+   由 JS 写入的 padding-top 承担，鼠标从导航项移进面板不会中断展开。
+   ============================================================ */
+
+/* 导航项里的小箭头：桌面不显示（参考稿的导航项后没有箭头），
+   只在抽屉里出现，作为「这里还能展开」的提示 */
+.nav-sub__caret{display:none;}
+
+/* ---------- 桌面：悬浮面板 ---------- */
+/* top / left / padding-top 由 nav-sub.js 按导航条与导航项的实际下沿写入，
+   这里留一份兜底值，避免脚本没跑到时面板飞出去 */
+.nav-sub{
+  position:absolute;top:74px;left:50%;
+  z-index:60;
+  /* 全站统一 208px：站内最长的一条标题「老旧电梯何时做安全评估」
+     实测 154px，加左右各 26px 内边距与 2px 描边正好 208 —— 刚好兜住最长那条，
+     不再多留空白。七个导航项的目录长短不一，但面板同宽，
+     鼠标横扫过去时盒子不会忽宽忽窄，每块都像同一套组件。
+     必须是显式宽度：绝对定位元素宽度 auto 时是 shrink-to-fit，
+     算的是「包含块剩余宽度」，靠右的导航项会被压窄，offsetWidth 也就量歪了。 */
+  width:208px;
+  padding-top:10px;                     /* 兼作鼠标从导航项移到面板的过渡带 */
+  transform:translateX(-50%) translateY(-10px);
+  transform-origin:50% 0;
+  opacity:0;visibility:hidden;pointer-events:none;
+  /* 收起：先把 opacity 收到 0，visibility 等动画走完再切，
+     否则面板会在半透明状态下被瞬间抽走，看着像闪了一下 */
+  transition:opacity .12s ease-in,
+             transform .16s cubic-bezier(.4,0,.7,.3),
+             visibility 0s linear .16s;
+  will-change:opacity,transform;
+}
+.nav-sub.is-open{
+  opacity:1;visibility:visible;pointer-events:auto;
+  transform:translateX(-50%) translateY(0);
+  /* 展开：visibility 立刻生效（0s）；位移走 200ms 的缓出曲线，
+     透明度只用 140ms、曲线不带前冲 —— 两者速率接近，
+     看到的是「从上沿滑下来」而不是「凭空亮出来」。 */
+  transition:opacity .14s ease,
+             transform .2s cubic-bezier(.22,.61,.36,1),
+             visibility 0s linear 0s;
+}
+
+/* 面板本体：白底 + 细描边，不给内边距，让分割线通到两边。
+   宽度就吃 .nav-sub 的 208px，全站一致（见上面的注释）。
+   最长那条标题正好铺满内容区，其余短标题按中线居中，两边留白等量。 */
+.nav-sub__panel{
+  position:relative;
+  width:100%;
+  background:#fff;
+  border:1px solid #e3e6ee;
+  border-radius:3px;
+  box-shadow:0 10px 26px rgba(16,25,62,.13),0 2px 6px rgba(16,25,62,.06);
+}
+/* 顶部小尖角，指回导航项；两条边沿用面板描边色，接缝才连续 */
+.nav-sub__panel::before{
+  content:"";position:absolute;top:-5px;left:50%;
+  width:9px;height:9px;margin-left:-4.5px;
+  background:#fff;
+  border-left:1px solid #e3e6ee;
+  border-top:1px solid #e3e6ee;
+  transform:rotate(45deg);
+}
+
+/* 列表容器：模块特别多的页面（资质展示 8 项）内部滚动，
+   尖角挂在 panel 上而不是这里，滚动条出现时也不会被裁掉 */
+.nav-sub__list{
+  max-height:calc(100vh - var(--nav-h) - 48px);
+  overflow-y:auto;overscroll-behavior:contain;
+  border-radius:2px;
+}
+.nav-sub__list::-webkit-scrollbar{width:6px;}
+.nav-sub__list::-webkit-scrollbar-thumb{background:rgba(27,42,135,.16);border-radius:3px;}
+
+/* 菜单项：整行铺满、文字水平居中、行间 1px 分割线。
+   这里统一用 #nav 提权重 —— 首页导航是「压图白字」态
+   （.header--over:not(.scrolled) .nav a 是 3 个类），
+   不加 id 的话下拉里的字会被继承成白色，白底白字直接看不见。
+   同理要掐掉 .nav a 的悬停底色与橙色下划线，那是导航项专用的。
+
+   居中对齐：每行的左右内边距完全相同（26 / 26），于是不论标题长短，
+   文字的中线都落在面板的同一条中轴上，长短只体现在两边等量的留白上。
+   面板宽度按最长的一条自适应（见 .nav-sub），所以这套居中是有边界的，
+   不会像固定 220 宽时那样出现一条长题把短题挤成参差的锯齿。 */
+#nav .nav-sub .nav-sub__link{
+  position:relative;
+  display:block;white-space:nowrap;text-align:center;
+  padding:10px 26px;
+  font-size:14px;font-weight:500;line-height:1.5;
+  color:#333b50;text-decoration:none;text-shadow:none;
+  background:transparent;
+  border-top:1px solid #eef0f5;
+  transition:background .16s ease,color .16s ease;
+}
+#nav .nav-sub .nav-sub__link::after{display:none;}
+.nav-sub__list > .nav-sub__link:first-child{border-top:0;}
+.nav-sub .nav-sub__link:last-child{border-radius:0 0 2px 2px;}
+#nav .nav-sub .nav-sub__link:hover{background:#f5f7fc;color:var(--primary);}
+
+.nav-sub__txt{display:block;overflow:hidden;text-overflow:ellipsis;}
+
+/* 二级：字号 / 字重 / 颜色与一级完全一致，左右内边距也保持一致。
+   它是某个一级标题下面的子块，原先靠「左 34、右 26」的 8px 缩进表示归属；
+   居中排版下这 8px 会把文字中轴整体右推 4px，于是「每个标题都居中」就不成立了
+   —— 所以这里去掉缩进，靠排列顺序（紧跟在父项后面）表达归属。 */
+#nav .nav-sub .nav-sub__link--sub{
+  padding:10px 26px;
+  font-size:14px;font-weight:500;color:#333b50;
+}
+
+/* 当前所在模块：保留原来的橙色高亮，只是换成整行浅橙底 + 橙色字 */
+#nav .nav-sub .nav-sub__link.is-current{
+  background:rgba(242,106,33,.09);
+  color:#b2490f;font-weight:600;
+}
+#nav .nav-sub .nav-sub__link.is-current:hover{background:rgba(242,106,33,.14);color:#9d3f0d;}
+/* 二级命中时，父项只淡淡透个色，避免与二级抢 */
+#nav .nav-sub .nav-sub__link.is-current-root{color:var(--primary);}
+
+/* ---------- 抽屉（≤1080）：导航项下方的缩进列表 ---------- */
+@media (max-width:1080px){
+  .nav a.has-sub{padding-right:34px;}
+  /* 抽屉里箭头不跟着换行，绝对定位贴右边 */
+  .nav-sub__caret{
+    display:block;position:absolute;right:12px;top:50%;
+    width:10px;height:10px;margin:-5px 0 0;
+    stroke:currentColor;fill:none;stroke-width:3.2;
+    stroke-linecap:round;stroke-linejoin:round;
+    opacity:.6;transition:transform .24s ease,opacity .24s ease;
+  }
+  .nav a.has-sub.is-subopen .nav-sub__caret{transform:rotate(180deg);opacity:1;}
+
+  .nav-sub{
+    position:static;z-index:auto;
+    width:auto;                          /* 抽屉里是整行铺满的竖列表，不要内容宽度 */
+    padding-top:0;
+    transform:none;opacity:1;visibility:visible;pointer-events:auto;
+    max-height:0;overflow:hidden;
+    transition:max-height .3s ease;
+    will-change:auto;
+  }
+  /* 桌面那条 .nav-sub.is-open 的 translateX(-50%) 会压过这里的 transform:none，
+     展开时面板被整体左移半个自身宽度（实测 left 从 20 变成 -155）。必须同样提权重。 */
+  .nav-sub.is-open{max-height:58vh;overflow-y:auto;transform:none;}
+
+  .nav-sub__panel{
+    width:auto;min-width:0;max-width:none;
+    margin:0 0 10px;padding:6px;
+    background:#f4f7fd;
+    border:1px solid rgba(27,42,135,.09);
+    border-radius:9px;
+    box-shadow:none;
+  }
+  .nav-sub__panel::before{display:none;}
+  .nav-sub__list{max-height:none;overflow:visible;}
+
+  /* 抽屉里是左对齐的竖排列表，与桌面那套「居中 + 分割线」不同：
+     去掉分割线、改回圆角行，并同样用 #nav 提权重，否则会被 style.css 的
+     #nav a（padding 12px 6px、下边距分割线）盖掉，每项都贴边。 */
+  #nav .nav-sub .nav-sub__link{
+    padding:11px 12px;font-size:15px;text-align:left;
+    border-radius:7px;border-top:0;
+  }
+  #nav .nav-sub .nav-sub__link:hover{background:rgba(255,255,255,.92);}
+  #nav .nav-sub .nav-sub__link--sub{padding-left:32px;font-size:15px;}
+
+  /* 别的页面的目录不进抽屉：抽屉本身已经是整站页面清单，
+     再把 7 页的标题目录全摊开会撑成几十行，反而不好点。
+     抽屉里只保留「当前页」那一份页内目录，配小箭头展开。 */
+  .nav-sub--static{display:none;}
+}
+
+
+/* 抽屉展开时必须摘掉导航条的毛玻璃：backdrop-filter 会为后代建立包含块，
+   并把这层 fixed 的下拉面板裁进 74px 的条子里——菜单直接看不见。
+   面板本身是实心白底，摘掉 blur 后观感没有差别。 */
+@media (max-width:1080px){
+  .header.menu-open{
+    -webkit-backdrop-filter:none;
+            backdrop-filter:none;
+    background:#fff;
+  }
+}
+
+/* 跨页锚点的落点由 style.css 的 html{scroll-padding-top:nav+10} 统一让位，
+   这里不再重复加 scroll-margin —— 两者会叠加，落点会被顶低一大截。 */
+
+@media (prefers-reduced-motion:reduce){
+  .nav-sub,.nav-sub__caret{transition:none;}
+}
