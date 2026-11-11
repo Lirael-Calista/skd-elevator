@@ -20,3 +20,6 @@ __pycache__/
 
 # 部署脚本临时生成的凭据通道
 tools/.askpass.sh
+
+# 验证用的临时截图与探针（不入库）
+tools/_*
