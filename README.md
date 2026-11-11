@@ -36,7 +36,42 @@ tools/              图片生成脚本（仅本地使用，不参与部署）
   `.github/workflows/deploy.yml`（`actions/upload-pages-artifact` + `actions/deploy-pages`）即可，
   当前分支部署模式不需要该文件。
 
+## 日常更新（改完内容就两条命令）
+
+```bash
+cd "E:/SKD网站"
+git add -A && git commit -m "说明改了什么" && git push
+```
+
+推送后 30 秒–2 分钟自动重建，不用再进仓库设置页。
+
+**改了 css/ 或 js/ 的话**：同步把 12 个 HTML 里的 `?v=` 版本串换掉（如 `?v=20261111k` → 新日期），
+否则线上仍是旧样式。批量改法：Python 正则 `((?:href|src)=")([^"?:]+\.(?:css|js))(")` → 追加 `?v=`。
+
+## 推送认证（已配置 SSH，无需令牌）
+
+- 密钥：`~/.ssh/id_ed25519_skd`（ed25519，无口令），公钥已加到 GitHub 账号。
+- 本机 22 端口被运营商拦截，故 `~/.ssh/config` 里把 github.com 指向 `ssh.github.com:443`。
+- 远程地址用 SSH 形式：`git@github.com:Lirael-Calista/skd-elevator.git`。
+- 验证连通：`ssh -T git@github.com`，出现 `Hi Lirael-Calista!` 即正常。
+
+**仅在 SSH 不可用时**才回退到 HTTPS + 临时令牌（令牌需 `repo` 权限，用完即删）：
+本机还需 `git config --global http.schannelCheckRevoke false`，否则 `schannel` 吊销检查超时会报 TLS 失败；
+`git push` 前必须加 `-c credential.helper=`，否则会被 Windows 凭据管理器的弹窗卡死无输出。
+
+## 部署排查手册
+
+| 现象 | 原因 | 处理 |
+|---|---|---|
+| 站点 404 | Pages 没开 / 分支名不对 / 刚推送还没构建完 | 看 Settings→Pages 与 Actions 无关的构建历史，等 1–2 分钟 |
+| 页面能开但没样式 | 资源用了 `/` 开头的根路径引用 | 改相对路径（子路径站点必须） |
+| 样式没变 | `?v=` 版本串没换，浏览器用了缓存 | 换版本串后强刷 Ctrl+F5 |
+| push 403 | 令牌缺 `repo` 权限 | 重新生成并勾选顶级 `repo` |
+| push 无反应卡住 | 凭据管理器弹窗 | `git -c credential.helper= push` |
+| TLS/吊销检查报错 | 本机 schannel 吊销服务器不通 | `http.schannelCheckRevoke=false` + `curl --ssl-no-revoke` |
+
 ## 本地预览
+
 
 ```bash
 python -m http.server 5173
